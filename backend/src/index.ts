@@ -1,9 +1,11 @@
 import { registerControllers } from './controller/registerControllers'
-import connectToDatabase from './db/mongoClient'
+import {connectToDatabase} from './db/mongoClient'
 import User from './model/User.model'
 import { createServer } from './server/createServer'
+import dotenv from 'dotenv'
 
 function main() {
+    dotenv.config()
     connectToDatabase()
         .then(() => {
             console.log('[INFO] Connected to database')

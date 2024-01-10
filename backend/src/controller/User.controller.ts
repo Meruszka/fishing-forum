@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express'
 import { UserService } from '../service/User.service'
 
-export class UserController {
+class UserController {
     public router: Router
     private path: string = '/user'
     private userService: UserService
@@ -14,7 +14,6 @@ export class UserController {
 
     private initRoutes() {
         this.router.get(`${this.path}/:id`, this.getUser)
-        this.router.post(`${this.path}`, this.createUser)
         this.router.put(`${this.path}/:id`, this.updateUser)
         this.router.delete(`${this.path}/:id`, this.deleteUser)
     }
@@ -33,12 +32,6 @@ export class UserController {
         res.send(user)
     }
 
-    private createUser = async (req: Request, res: Response) => {
-        const user = req.body
-        const newUser = await this.userService.createUser(user)
-        res.send(newUser)
-    }
-
     private updateUser = async (req: Request, res: Response) => {
         const id = req.params.id
         const user = req.body
@@ -52,3 +45,5 @@ export class UserController {
         res.send(deletedUser)
     }
 }
+
+export { UserController }
