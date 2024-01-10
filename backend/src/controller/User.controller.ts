@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { UserService } from '../service/User.service'
+import { RequestWithUser, verifyToken } from '../middleware/Auth.middleware'
 
 class UserController {
     public router: Router
@@ -14,8 +15,8 @@ class UserController {
 
     private initRoutes() {
         this.router.get(`${this.path}/:id`, this.getUser)
-        this.router.put(`${this.path}/:id`, this.updateUser)
-        this.router.delete(`${this.path}/:id`, this.deleteUser)
+        this.router.put(`${this.path}/:id`, verifyToken, this.updateUser)
+        this.router.delete(`${this.path}/:id`, verifyToken, this.deleteUser)
     }
 
     private getUser = async (req: Request, res: Response) => {
@@ -32,15 +33,23 @@ class UserController {
         res.send(user)
     }
 
-    private updateUser = async (req: Request, res: Response) => {
+    private updateUser = async (req: RequestWithUser, res: Response) => {
         const id = req.params.id
+        if (!req.user || req.user._id !== id) {
+            res.status(403).send({ message: 'Forbidden' })
+            return
+        }
         const user = req.body
         const updatedUser = await this.userService.updateUser(id, user)
         res.send(updatedUser)
     }
 
-    private deleteUser = async (req: Request, res: Response) => {
+    private deleteUser = async (req: RequestWithUser, res: Response) => {
         const id = req.params.id
+        if (!req.user || req.user._id !== id) {
+            res.status(403).send({ message: 'Forbidden' })
+            return
+        }
         const deletedUser = await this.userService.deleteUser(id)
         res.send(deletedUser)
     }
