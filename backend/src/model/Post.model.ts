@@ -5,7 +5,9 @@ const PostSchema = new Schema({
     content: String,
     creationDate: Date,
     type: String,
-    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    topic: { type: Schema.Types.ObjectId, ref: 'Topic' },
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
+    responses: [{ type: Schema.Types.ObjectId, ref: 'Response' }],
 })
 
 const Post = model('Post', PostSchema)

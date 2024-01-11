@@ -1,15 +1,17 @@
-import { Topic } from "../model"
+import { Topic } from '../model'
 
 class TopicService {
     async getTopics() {
         const topics = Topic.find()
             .populate({
                 path: 'lastPost',
-                select: 'title creationDate _id'
+                select: 'title creationDate _id',
             })
-            .exec().then((topics) => {
+            .exec()
+            .then((topics) => {
                 return topics
-            }).catch((err) => {
+            })
+            .catch((err) => {
                 console.error(err)
                 return null
             })
@@ -20,11 +22,13 @@ class TopicService {
         const topic = Topic.findById(id)
             .populate({
                 path: 'lastPost',
-                select: 'title creationDate _id'
+                select: 'title creationDate _id',
             })
-            .exec().then((topic) => {
+            .exec()
+            .then((topic) => {
                 return topic
-            }).catch((err) => {
+            })
+            .catch((err) => {
                 console.error(err)
                 return null
             })

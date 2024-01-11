@@ -1,5 +1,5 @@
-import { Request, Response, Router } from "express"
-import { TopicService } from "../service/Topic.service"
+import { Request, Response, Router } from 'express'
+import { TopicService } from '../service/Topic.service'
 
 class TopicController {
     public router: Router

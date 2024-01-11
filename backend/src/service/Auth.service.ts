@@ -45,10 +45,10 @@ class AuthService {
         // Save user
         const savedUser = await user.save()
         // Return token
-        try{
+        try {
             const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET || '')
             return token
-        } catch(err){
+        } catch (err) {
             throw new Error('Something went very wrong')
         }
     }

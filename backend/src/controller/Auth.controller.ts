@@ -20,7 +20,8 @@ class AuthController {
     private login = async (req: Request, res: Response) => {
         const username = req.body.username
         const password = req.body.password
-        await this.authService.login(username, password)
+        await this.authService
+            .login(username, password)
             .then((token) => {
                 res.send({ token })
             })
@@ -36,7 +37,8 @@ class AuthController {
             res.status(400).send({ message: 'Invalid credentials' })
             return
         }
-        this.authService.register(username, password)
+        this.authService
+            .register(username, password)
             .then((token) => {
                 res.send({ token })
             })

@@ -1,5 +1,6 @@
 import { registerControllers } from './controller/registerControllers'
-import {connectToDatabase} from './db/mongoClient'
+import { connectToDatabase } from './db/mongoClient'
+import { Badge } from './model'
 import { createServer } from './server/createServer'
 import dotenv from 'dotenv'
 
@@ -22,7 +23,24 @@ function main() {
 
 main()
 
-async function test(){
+async function test() {
+    // new Badge({
+    //     name: 'Pierwszy post',
+    //     icon: 'first_post.png',
+    // }).save().then((badge) => {
+    //     console.log(badge)
+    // }).catch((err) => {
+    //     console.error(err)
+    // })
+    // new Badge({
+    //     name: 'Wyjadacz',
+    //     icon: 'wyjadacz.png',
+    // }).save().then((badge) => {
+    //     console.log(badge)
+    // }
+    // ).catch((err) => {
+    //     console.error(err)
+    // })
     // new Topic({
     //     name: 'Topic o rybkach',
     //     description: 'Rybki itp',

@@ -1,28 +1,28 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from 'express'
+import jwt from 'jsonwebtoken'
 
 interface RequestWithUser extends Request {
-    user?: JWTUser;
+    user?: JWTUser
 }
 
 interface JWTUser {
-    _id: string;
-    iat: number;
+    _id: string
+    iat: number
 }
 
 const verifyToken = (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.status(401).send('Access Denied: No Token Provided!');
+    const token = req.headers['authorization']
+    if (!token) return res.status(401).send('Access Denied: No Token Provided!')
 
     try {
-        const secret = process.env.JWT_SECRET || '';
-        const verified = jwt.verify(token, secret) as JWTUser;
-        req.user = verified;
-        next();
+        const secret = process.env.JWT_SECRET || ''
+        const verified = jwt.verify(token, secret) as JWTUser
+        req.user = verified
+        next()
     } catch (error) {
-        res.status(400).send('Invalid Token');
+        res.status(400).send('Invalid Token')
     }
-};
+}
 
-export { verifyToken };
-export type { RequestWithUser };
+export { verifyToken }
+export type { RequestWithUser }
