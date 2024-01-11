@@ -5,7 +5,6 @@ const TopicSchema = new Schema({
     description: String,
     numberOfPosts: Number,
     lastPost: { type: Schema.Types.ObjectId, ref: 'Post' },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
 })
 
 const Topic = model('Topic', TopicSchema)

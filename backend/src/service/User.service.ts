@@ -1,4 +1,4 @@
-import User from '../model/User.model'
+import { User } from "../model"
 
 class UserService {
     async getUser(id: string) {
@@ -46,6 +46,7 @@ class UserService {
 
     async deleteUser(id: string) {
         const deletedUser = User.findByIdAndDelete(id)
+        //TODO dependencies
         return deletedUser
     }
 }

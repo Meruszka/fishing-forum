@@ -1,6 +1,5 @@
 import { registerControllers } from './controller/registerControllers'
 import {connectToDatabase} from './db/mongoClient'
-import User from './model/User.model'
 import { createServer } from './server/createServer'
 import dotenv from 'dotenv'
 
@@ -11,7 +10,7 @@ function main() {
             console.log('[INFO] Connected to database')
             const app = createServer()
             registerControllers(app)
-            // test()
+            test()
             app.listen(3000, () => {
                 console.log('[INFO] Server listening on port 3000')
             })
@@ -24,6 +23,24 @@ function main() {
 main()
 
 async function test(){
-    const user = await User.findById("659da4652b4945a8f902f02f")
-    console.log(user)
+    // new Topic({
+    //     name: 'Topic o rybkach',
+    //     description: 'Rybki itp',
+    //     numberOfPosts: 0,
+    //     lastPost: null
+    // }).save().then((topic) => {
+    //     console.log(topic)
+    // }).catch((err) => {
+    //     console.error(err)
+    // })
+    // new Topic({
+    //     name: 'Topic o programowaniu',
+    //     description: 'fajne ',
+    //     numberOfPosts: 0,
+    //     lastPost: null
+    // }).save().then((topic) => {
+    //     console.log(topic)
+    // }).catch((err) => {
+    //     console.error(err)
+    // })
 }

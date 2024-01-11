@@ -1,6 +1,6 @@
-import User from '../model/User.model'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { User } from '../model'
 
 class AuthService {
     async login(username: string, password: string): Promise<string> {

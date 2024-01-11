@@ -1,0 +1,11 @@
+import Badge from "./Badge.model";
+import Conversation from "./Conversation.model";
+import FishingSpot from "./FIshingSpot.model";
+import Friend from "./Friend.model";
+import Gear from "./Gear.model";
+import Message from "./Message.model";
+import Post from "./Post.model";
+import Response from "./Response.model";
+import Topic from "./Topic.model";
+import User from "./User.model";
+export { Badge, Conversation, FishingSpot, Friend, Gear, Message, Post, Response, Topic, User };
