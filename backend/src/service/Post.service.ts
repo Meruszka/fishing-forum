@@ -63,7 +63,7 @@ class PostService {
             })
 
             await User.findByIdAndUpdate(authorId, {
-                $push: { posts: savedPost._id }
+                $push: { posts: savedPost._id },
             })
 
             return savedPost
