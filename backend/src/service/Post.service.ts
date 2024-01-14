@@ -1,104 +1,101 @@
-import { Post, Response, Topic } from '../model'
+import { Post, Response, Topic, User } from '../model'
 
 class PostService {
     async getPostsByTopic(topicId: string) {
-        const posts = await Post.find({ topic: topicId })
-            .populate({
+        try {
+            const posts = await Post.find({ topic: topicId }).populate({
                 path: 'author',
                 select: 'username _id',
             })
-            .exec()
-            .then((posts) => {
-                return posts
-            })
-            .catch((err) => {
-                console.error(err)
-                return null
-            })
-        return posts
+
+            return posts
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
     async getPost(id: string) {
-        const post = await Post.findById(id)
-            .populate({
-                path: 'author',
-                select: 'username _id',
-            })
-            .populate({
-                path: 'responses',
-                populate: {
+        try {
+            const post = await Post.findById(id)
+                .populate({
                     path: 'author',
                     select: 'username _id',
-                },
-            })
-            .populate({
-                path: 'topic',
-                select: 'name _id',
-            })
-            .exec()
-            .then((post) => {
-                return post
-            })
-            .catch((err) => {
-                console.error(err)
-                return null
-            })
-        return post
+                })
+                .populate({
+                    path: 'responses',
+                    populate: {
+                        path: 'author',
+                        select: 'username _id',
+                    },
+                })
+                .populate({
+                    path: 'topic',
+                    select: 'name _id',
+                })
+
+            if (!post) throw new Error('Post not found')
+
+            return post
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
-    async createPost(post: any, topicId: string, authorId: string) {
-        const topic = await Topic.findById(topicId)
-        if (!topic) throw new Error('Topic not found')
-        const newPost = new Post({
-            title: post.title,
-            content: post.content,
-            creationDate: new Date(),
-            topic: topicId,
-            type: 'Default',
-            author: authorId,
-        })
-            .save()
-            .then(async (post) => {
-                await Topic.findOneAndUpdate(
-                    { _id: topicId },
-                    {
-                        $inc: { numberOfPosts: 1 },
-                        lastPost: post._id,
-                    }
-                )
-                return post
+    async createPost(postData: any, topicId: string, authorId: string) {
+        try {
+            const topic = await Topic.findById(topicId)
+            if (!topic) throw new Error('Topic not found')
+
+            const newPost = new Post({
+                ...postData,
+                creationDate: new Date(),
+                topic: topicId,
+                author: authorId,
             })
-            .catch((err) => {
-                console.error(err)
-                return null
+
+            const savedPost = await newPost.save()
+
+            await Topic.findByIdAndUpdate(topicId, {
+                $inc: { numberOfPosts: 1 },
+                lastPost: savedPost._id,
             })
-        return newPost
+
+            await User.findByIdAndUpdate(authorId, {
+                $push: { posts: savedPost._id }
+            })
+
+            return savedPost
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 
-    async addResponse(postId: string, response: any, authorId: string) {
-        const post = await Post.findById(postId)
-        if (!post) throw new Error('Post not found')
-        const newResponse = new Response({
-            content: response.content,
-            creationDate: new Date(),
-            author: authorId,
-            post: postId,
-        })
-            .save()
-            .then(async (response) => {
-                await Post.findOneAndUpdate(
-                    { _id: postId },
-                    {
-                        $push: { responses: response._id },
-                    }
-                )
-                return response
+    async addResponse(postId: string, responseData: any, authorId: string) {
+        try {
+            const post = await Post.findById(postId)
+            if (!post) throw new Error('Post not found')
+
+            const newResponse = new Response({
+                ...responseData,
+                creationDate: new Date(),
+                author: authorId,
+                post: postId,
             })
-            .catch((err) => {
-                console.error(err)
-                return null
+
+            const savedResponse = await newResponse.save()
+
+            await Post.findByIdAndUpdate(postId, {
+                $push: { responses: savedResponse._id },
             })
-        return newResponse
+
+            return savedResponse
+        } catch (err) {
+            console.error(err)
+            return null
+        }
     }
 }
 
