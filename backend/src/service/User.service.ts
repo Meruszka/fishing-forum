@@ -22,6 +22,10 @@ class UserService {
                     select: 'username _id',
                 },
             })
+            .populate({
+                path: 'fishingSpots',
+                select: 'name image _id',
+            })
             .exec()
             .then((user) => {
                 // map _id to id

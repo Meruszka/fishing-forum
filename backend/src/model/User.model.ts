@@ -14,6 +14,7 @@ const UserSchema = new Schema({
     gear: [{ type: Schema.Types.ObjectId, ref: 'Gear' }],
     conversations: [{ type: Schema.Types.ObjectId, ref: 'Conversation' }],
     friends: [{ type: Schema.Types.ObjectId, ref: 'Friend' }],
+    fishingSpots: [{ type: Schema.Types.ObjectId, ref: 'FishingSpot' }],
 })
 
 const User = model('User', UserSchema)

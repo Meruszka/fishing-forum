@@ -3,6 +3,7 @@ import { UserController } from './User.controller'
 import { AuthController } from './Auth.controller'
 import { TopicController } from './Topic.controller'
 import { PostController } from './Post.controller'
+import { FishingSpotController } from './FishingSpot.controller'
 
 function registerControllers(app: express.Application): void {
     const userController = new UserController()
@@ -16,6 +17,9 @@ function registerControllers(app: express.Application): void {
 
     const postController = new PostController()
     app.use(postController.router)
+
+    const fishingSpotController = new FishingSpotController()
+    app.use(fishingSpotController.router)
 
     console.log('[INFO] Registered controllers')
 }

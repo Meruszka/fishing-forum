@@ -8,7 +8,7 @@ const FishingSpotSchema = new Schema({
     rating: Number,
     type: String,
     image: String,
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    author: { type: Schema.Types.ObjectId, ref: 'User' },
 })
 
 const FishingSpot = model('FishingSpot', FishingSpotSchema)
