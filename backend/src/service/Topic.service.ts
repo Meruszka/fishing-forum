@@ -2,37 +2,35 @@ import { Topic } from '../model'
 
 class TopicService {
     async getTopics() {
-        const topics = Topic.find()
-            .populate({
-                path: 'lastPost',
-                select: 'title creationDate _id',
-            })
-            .exec()
-            .then((topics) => {
-                return topics
-            })
-            .catch((err) => {
-                console.error(err)
-                return null
-            })
-        return topics
+        try {
+            const topics = await Topic.find()
+                .populate({
+                    path: 'lastPost',
+                    select: 'title creationDate _id',
+                });
+
+            return topics;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
     }
 
     async getTopic(id: string) {
-        const topic = Topic.findById(id)
-            .populate({
-                path: 'lastPost',
-                select: 'title creationDate _id',
-            })
-            .exec()
-            .then((topic) => {
-                return topic
-            })
-            .catch((err) => {
-                console.error(err)
-                return null
-            })
-        return topic
+        try {
+            const topic = await Topic.findById(id)
+                .populate({
+                    path: 'lastPost',
+                    select: 'title creationDate _id',
+                });
+
+            if (!topic) throw new Error("Topic not found");
+
+            return topic;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
     }
 }
 
