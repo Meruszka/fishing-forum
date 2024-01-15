@@ -110,6 +110,44 @@ class UserService {
             return { code: 500, error: 'Internal Server Error' }
         }
     }
+
+    async removeFriend(userId: string, friendId: string) {
+        try { 
+            const user = await User.findById(userId).populate<{ friends: IFriend[] }>({
+                path: 'friends',
+                populate: {
+                    path: 'friend',
+                    select: 'username _id',
+                },
+            })
+
+            if (!user) return { code: 404, error: 'User not found' }
+
+            const friend = await User.findById(friendId)
+            if (!friend) return { code: 404, error: 'Friend not found' }
+
+            if (userId === friendId) return { code: 400, error: 'Cannot remove yourself' }
+
+            // Check if already friends
+            const isFriend = user.friends.some((friend) => friend.friend._id.toString() === friendId)
+            if (!isFriend) return { code: 400, error: 'Not friends' }
+
+            const friendToDelete = user.friends.find((friend) => friend.friend._id.toString() === friendId)
+            if (!friendToDelete) return { code: 404, error: 'Friend not found' }
+
+            await Friend.findByIdAndDelete(friendToDelete._id)
+
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                { $pull: { friends: friendToDelete._id } },
+                { new: true }
+            )
+            return { code: 200, data: updatedUser }
+        } catch(err){
+            console.error(err)
+            return { code: 500, error: 'Internal Server Error' }
+        }
+    }
 }
 
 export { UserService }
