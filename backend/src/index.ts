@@ -12,8 +12,8 @@ function main() {
             const app = createServer()
             registerControllers(app)
             test()
-            app.listen(3000, () => {
-                console.log('[INFO] Server listening on port 3000')
+            app.listen(5000, () => {
+                console.log('[INFO] Server listening on port 5000')
             })
         })
         .catch((err) => {
