@@ -17,8 +17,12 @@ class UserController {
         this.router.get(`${this.path}/:id`, this.getUser)
         this.router.put(`${this.path}/:id`, verifyToken, this.updateUser)
         this.router.delete(`${this.path}/:id`, verifyToken, this.deleteUser)
+
         this.router.post(`${this.path}/:id/friend`, verifyToken, this.addFriend)
         this.router.delete(`${this.path}/:id/friend`, verifyToken, this.removeFriend)
+
+        this.router.post(`${this.path}/:id/gear`, verifyToken, this.addGear)
+        this.router.delete(`${this.path}/:userid/gear/:id`, verifyToken, this.removeGear)
     }
 
     private getUser = async (req: Request, res: Response) => {
@@ -85,6 +89,49 @@ class UserController {
         }
 
         const result = await this.userService.removeFriend(userId, friendId)
+
+        if (result.error) {
+            res.status(result.code).json({ error: result.error })
+            return
+        }
+
+        res.json(result.data)
+    }
+
+    private addGear = async (req: RequestWithUser, res: Response) => {
+        const userId = req.user?._id
+        const gearData = req.body
+
+        if (!userId) {
+            res.status(401).json({ error: 'Access Denied: No Token Provided!' })
+            return
+        }
+
+        if (!gearData || !gearData.name || !gearData.yearOfProduction || !gearData.kind) {
+            res.status(400).json({ error: 'Missing gear data' })
+            return
+        }
+
+        const result = await this.userService.addGear(userId, gearData)
+
+        if (result.error) {
+            res.status(result.code).json({ error: result.error })
+            return
+        }
+
+        res.json(result.data)
+    }
+
+    private removeGear = async (req: RequestWithUser, res: Response) => {
+        const userId = req.user?._id
+        const gearId = req.params.id
+
+        if (!userId) {
+            res.status(401).json({ error: 'Access Denied: No Token Provided!' })
+            return
+        }
+
+        const result = await this.userService.removeGear(userId, gearId)
 
         if (result.error) {
             res.status(result.code).json({ error: result.error })
