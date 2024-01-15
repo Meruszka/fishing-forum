@@ -77,37 +77,39 @@ class UserService {
 
     async addFriend(userId: string, friendId: string) {
         try {
-            const user = await User.findById(userId).populate<{friends: IFriend[]}>({
+            const user = await User.findById(userId).populate<{ friends: IFriend[] }>({
                 path: 'friends',
                 populate: {
                     path: 'friend',
                     select: 'username _id',
                 },
             })
-    
-            if (!user) return { code: 404, error: 'User not found' };
-    
-            const friend = await User.findById(friendId);
-            if (!friend) return { code: 404, error: 'Friend not found' };
-    
-            if (userId === friendId) return { code: 400, error: 'Cannot add yourself' };
-    
+
+            if (!user) return { code: 404, error: 'User not found' }
+
+            const friend = await User.findById(friendId)
+            if (!friend) return { code: 404, error: 'Friend not found' }
+
+            if (userId === friendId) return { code: 400, error: 'Cannot add yourself' }
+
             // Check if already friends
-            const isFriend = user.friends.some((friend) => friend.friend._id.toString() === friendId);
-            if (isFriend) return { code: 400, error: 'Already friends' };
-    
-            const newFriend = new Friend({ friend: friendId, dateOfFriendship: new Date() });
-            await newFriend.save();
-    
-            const updatedUser = await User.findByIdAndUpdate(userId, { $push: { friends: newFriend._id } }, { new: true })
-            return { code: 200, data: updatedUser };
+            const isFriend = user.friends.some((friend) => friend.friend._id.toString() === friendId)
+            if (isFriend) return { code: 400, error: 'Already friends' }
+
+            const newFriend = new Friend({ friend: friendId, dateOfFriendship: new Date() })
+            await newFriend.save()
+
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                { $push: { friends: newFriend._id } },
+                { new: true }
+            )
+            return { code: 200, data: updatedUser }
         } catch (err) {
-            console.error(err);
-            return { code: 500, error: "Internal Server Error" };
+            console.error(err)
+            return { code: 500, error: 'Internal Server Error' }
         }
     }
-    
-
 }
 
 export { UserService }

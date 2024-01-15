@@ -56,22 +56,22 @@ class UserController {
     }
 
     private addFriend = async (req: RequestWithUser, res: Response) => {
-        const userId = req.user?._id;
-        const friendId = req.params.id;
-    
+        const userId = req.user?._id
+        const friendId = req.params.id
+
         if (!userId) {
-            res.status(401).json({ error: 'Access Denied: No Token Provided!' });
-            return;
+            res.status(401).json({ error: 'Access Denied: No Token Provided!' })
+            return
         }
-    
-        const result = await this.userService.addFriend(userId, friendId);
-    
+
+        const result = await this.userService.addFriend(userId, friendId)
+
         if (result.error) {
-            res.status(result.code).json({ error: result.error });
-            return;
+            res.status(result.code).json({ error: result.error })
+            return
         }
-    
-        res.json(result.data);
+
+        res.json(result.data)
     }
 }
 
