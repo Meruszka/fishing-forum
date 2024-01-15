@@ -17,6 +17,7 @@ class UserController {
         this.router.get(`${this.path}/:id`, this.getUser)
         this.router.put(`${this.path}/:id`, verifyToken, this.updateUser)
         this.router.delete(`${this.path}/:id`, verifyToken, this.deleteUser)
+        this.router.post(`${this.path}/:id/friend`, verifyToken, this.addFriend)
     }
 
     private getUser = async (req: Request, res: Response) => {
@@ -52,6 +53,25 @@ class UserController {
         }
         const deletedUser = await this.userService.deleteUser(id)
         res.send(deletedUser)
+    }
+
+    private addFriend = async (req: RequestWithUser, res: Response) => {
+        const userId = req.user?._id
+        const friendId = req.params.id
+
+        if (!userId) {
+            res.status(401).json({ error: 'Access Denied: No Token Provided!' })
+            return
+        }
+
+        const result = await this.userService.addFriend(userId, friendId)
+
+        if (result.error) {
+            res.status(result.code).json({ error: result.error })
+            return
+        }
+
+        res.json(result.data)
     }
 }
 
