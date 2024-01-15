@@ -6,6 +6,10 @@ import { PostController } from './Post.controller'
 import { FishingSpotController } from './FishingSpot.controller'
 
 function registerControllers(app: express.Application): void {
+    app.get('/health', (_, res) => {
+        res.send({ status: 'UP' })
+    })
+
     const userController = new UserController()
     app.use(userController.router)
 
