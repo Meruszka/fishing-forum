@@ -2,3 +2,6 @@
 . "$(dirname -- "$0")/_/husky.sh"
 cd backend
 npm run format
+cd ..
+cd frontend
+npm run format

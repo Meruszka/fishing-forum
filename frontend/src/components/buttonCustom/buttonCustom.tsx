@@ -1,10 +1,11 @@
-import React, { FormEvent, ReactElement } from "react";
+import React, { ReactElement } from "react";
 
 interface ButtonCustomProps {
-  label: string;
-  onClick: (e: FormEvent) => void;
-  color: string;
-  size: string;
+  label?: string;
+  onClick: (e: never) => void;
+  color?: string;
+  size?: string;
+  children?: React.ReactNode;
 }
 
 const ButtonCustom = (props: ButtonCustomProps): ReactElement => {
@@ -15,7 +16,7 @@ const ButtonCustom = (props: ButtonCustomProps): ReactElement => {
 
   return (
     <button onClick={onClick} className={buttonStyles}>
-      {label}
+      {label} {props.children}
     </button>
   );
 };

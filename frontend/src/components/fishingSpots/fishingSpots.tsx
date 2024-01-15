@@ -1,38 +1,39 @@
-// src/components/LeafletMap.tsx
-import React, { useRef, useEffect, ReactElement } from "react";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import React, { ReactElement, useState } from "react";
+import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import SideBar from "./sideBar";
+import { Coords } from "./sideBar.type";
 
-interface LeafletMapProps {
-  center: [number, number];
-  zoom: number;
-}
+const FishingSpots: React.FC = (): ReactElement => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [map, setMap] = useState<any>(null);
+  const [coords, setCoords] = useState<Coords>({ lat: 54.0364, lng: 21.7667 });
 
-const FishingSpots: React.FC<LeafletMapProps> = ({
-  center,
-  zoom,
-}): ReactElement => {
-  const mapRef = useRef(null);
-
-  useEffect(() => {
-    if (mapRef.current) {
-      const map = mapRef.current.leafletElement;
-      map.setView(center, zoom);
-    }
-  }, [center, zoom]);
+  const handleClick = (newCoords: Coords) => {
+    setCoords(newCoords);
+    map.flyTo(newCoords, 13, {
+      duration: 2,
+    });
+  };
 
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <Marker position={[51.505, -0.09]}>
-        <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-      </Marker>
-    </MapContainer>
+    <div className="h-screen flex">
+      <MapContainer
+        center={[coords.lat, coords.lng]}
+        zoom={13}
+        scrollWheelZoom={true}
+        ref={setMap}
+        className="w-full h-screen"
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+      </MapContainer>
+      <div className="w-1/5">
+        <SideBar handleClick={handleClick} />
+      </div>
+    </div>
   );
 };
 

@@ -23,10 +23,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Home />}>
       <Route path="login" element={<LoginScreen />} />
-      <Route
-        path="fishing-spots"
-        element={<FishingSpots center={[51.505, -0.09]} zoom={13} />}
-      />
+      <Route path="fishing-spots" element={<FishingSpots />} />
     </Route>
   )
 );

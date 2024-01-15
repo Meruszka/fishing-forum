@@ -91,6 +91,14 @@ class ApiClient {
     return res;
   }
 
+  public async register<T>(data: LoginRequest): Promise<LoginResponse> {
+    const res: LoginResponse = await this.axiosInstance.post<T>('/user/register', data);
+    if (res.token) {
+      localStorage.setItem('token', res.token);
+    }
+    return res;
+  }
+
   // Add other HTTP methods as needed (put, delete, etc.)
 
   private async refreshToken(): Promise<string | null> {

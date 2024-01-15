@@ -26,6 +26,25 @@ const LoginScreen = () => {
     }
   };
 
+  const handleRegister = async (e: FormEvent) => {
+    e.preventDefault();
+    console.log("handleRegister");
+
+    try {
+      const res: LoginResponse = await apiClient.register({
+        username,
+        password,
+      });
+      if (res.status === 200) {
+        navigate("/");
+      } else {
+        console.error("Register failed:", res.status);
+      }
+    } catch (error) {
+      console.error("An error occurred during register:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-96">
@@ -66,6 +85,12 @@ const LoginScreen = () => {
           <ButtonCustom
             label="Login"
             onClick={handleLogin}
+            color="blue"
+            size="large"
+          />
+          <ButtonCustom
+            label="Register"
+            onClick={handleRegister}
             color="blue"
             size="large"
           />

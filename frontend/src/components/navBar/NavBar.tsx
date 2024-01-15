@@ -11,6 +11,7 @@ function NavBar(): ReactElement {
         <div className="flex space-x-4">
           <LinkCustom to="/">Home</LinkCustom>
           <LinkCustom to="/fishing-spots">Fishing Spots</LinkCustom>
+          <LinkCustom to="/forum">Forum</LinkCustom>
           <LinkCustom to="/contact">Contact</LinkCustom>
           <LinkCustom to="/login">Login</LinkCustom>
         </div>
