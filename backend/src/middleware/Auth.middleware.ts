@@ -12,7 +12,7 @@ interface JWTUser {
 
 const verifyToken = (req: RequestWithUser, res: Response, next: NextFunction) => {
     const token = req.headers['authorization']
-    if (!token) return res.status(401).send('Access Denied: No Token Provided!')
+    if (!token) return res.status(401).json({ error: 'Access Denied: No Token Provided!' })
 
     try {
         const secret = process.env.JWT_SECRET || ''
@@ -20,7 +20,7 @@ const verifyToken = (req: RequestWithUser, res: Response, next: NextFunction) =>
         req.user = verified
         next()
     } catch (error) {
-        res.status(400).send('Invalid Token')
+        res.status(400).json({ error: 'Invalid Token' })
     }
 }
 
