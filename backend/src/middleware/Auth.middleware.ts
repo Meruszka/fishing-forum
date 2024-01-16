@@ -10,13 +10,17 @@ interface JWTUser {
     iat: number
 }
 
-const verifyToken = (req: RequestWithUser, res: Response, next: NextFunction) => {
+function verifyToken(token: string): JWTUser {
+    const secret = process.env.JWT_SECRET || ''
+    return jwt.verify(token, secret) as JWTUser
+}
+
+const verifyTokenMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
     const token = req.headers['authorization']
     if (!token) return res.status(401).json({ error: 'Access Denied: No Token Provided!' })
 
     try {
-        const secret = process.env.JWT_SECRET || ''
-        const verified = jwt.verify(token, secret) as JWTUser
+        const verified = verifyToken(token)
         req.user = verified
         next()
     } catch (error) {
@@ -24,5 +28,5 @@ const verifyToken = (req: RequestWithUser, res: Response, next: NextFunction) =>
     }
 }
 
-export { verifyToken }
+export { verifyTokenMiddleware, verifyToken }
 export type { RequestWithUser }

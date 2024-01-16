@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { FishingSpotService } from '../service'
-import { RequestWithUser, verifyToken } from '../middleware/Auth.middleware'
+import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
 
 class FishingSpotController {
     public router: Router
@@ -16,7 +16,7 @@ class FishingSpotController {
     private initRoutes() {
         this.router.get(`${this.path}/:id`, this.getFishingSpot)
         this.router.get(`${this.path}`, this.getFishingSpots)
-        this.router.post(`${this.path}`, verifyToken, this.addFishingSpot)
+        this.router.post(`${this.path}`, verifyTokenMiddleware, this.addFishingSpot)
     }
 
     private getFishingSpot = async (req: Request, res: Response) => {

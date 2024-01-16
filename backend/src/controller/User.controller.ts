@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
 import { UserService } from '../service/User.service'
-import { RequestWithUser, verifyToken } from '../middleware/Auth.middleware'
+import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
 
 class UserController {
     public router: Router
@@ -15,14 +15,14 @@ class UserController {
 
     private initRoutes() {
         this.router.get(`${this.path}/:id`, this.getUser)
-        this.router.put(`${this.path}/:id`, verifyToken, this.updateUser)
-        this.router.delete(`${this.path}/:id`, verifyToken, this.deleteUser)
+        this.router.put(`${this.path}/:id`, verifyTokenMiddleware, this.updateUser)
+        this.router.delete(`${this.path}/:id`, verifyTokenMiddleware, this.deleteUser)
 
-        this.router.post(`${this.path}/:id/friend`, verifyToken, this.addFriend)
-        this.router.delete(`${this.path}/:id/friend`, verifyToken, this.removeFriend)
+        this.router.post(`${this.path}/:id/friend`, verifyTokenMiddleware, this.addFriend)
+        this.router.delete(`${this.path}/:id/friend`, verifyTokenMiddleware, this.removeFriend)
 
-        this.router.post(`${this.path}/:id/gear`, verifyToken, this.addGear)
-        this.router.delete(`${this.path}/:userid/gear/:id`, verifyToken, this.removeGear)
+        this.router.post(`${this.path}/:id/gear`, verifyTokenMiddleware, this.addGear)
+        this.router.delete(`${this.path}/:userid/gear/:id`, verifyTokenMiddleware, this.removeGear)
     }
 
     private getUser = async (req: Request, res: Response) => {

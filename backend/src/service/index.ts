@@ -3,5 +3,6 @@ import { PostService } from './Post.service'
 import { TopicService } from './Topic.service'
 import { UserService } from './User.service'
 import { FishingSpotService } from './FishingSpot.service'
+import { ConversationService } from './Conversation.service'
 
-export { AuthService, PostService, TopicService, UserService, FishingSpotService }
+export { AuthService, PostService, TopicService, UserService, FishingSpotService, ConversationService }
