@@ -1,8 +1,8 @@
 import { registerControllers } from './controller/registerControllers'
 import { connectToDatabase } from './db/mongoClient'
-import { Badge } from './model'
-import { createServer } from './server/createServer'
+import { createServer } from './server/createHTTPserver'
 import dotenv from 'dotenv'
+import { createWSserver } from './server/createWSserver'
 
 function main() {
     dotenv.config()
@@ -11,10 +11,10 @@ function main() {
             console.log('[INFO] Connected to database')
             const app = createServer()
             registerControllers(app)
-            test()
-            app.listen(5000, () => {
+            const server = app.listen(5000, () => {
                 console.log('[INFO] Server listening on port 5000')
             })
+            createWSserver(server)
         })
         .catch((err) => {
             console.error(err)
@@ -22,43 +22,3 @@ function main() {
 }
 
 main()
-
-async function test() {
-    // new Badge({
-    //     name: 'Pierwszy post',
-    //     icon: 'first_post.png',
-    // }).save().then((badge) => {
-    //     console.log(badge)
-    // }).catch((err) => {
-    //     console.error(err)
-    // })
-    // new Badge({
-    //     name: 'Wyjadacz',
-    //     icon: 'wyjadacz.png',
-    // }).save().then((badge) => {
-    //     console.log(badge)
-    // }
-    // ).catch((err) => {
-    //     console.error(err)
-    // })
-    // new Topic({
-    //     name: 'Topic o rybkach',
-    //     description: 'Rybki itp',
-    //     numberOfPosts: 0,
-    //     lastPost: null
-    // }).save().then((topic) => {
-    //     console.log(topic)
-    // }).catch((err) => {
-    //     console.error(err)
-    // })
-    // new Topic({
-    //     name: 'Topic o programowaniu',
-    //     description: 'fajne ',
-    //     numberOfPosts: 0,
-    //     lastPost: null
-    // }).save().then((topic) => {
-    //     console.log(topic)
-    // }).catch((err) => {
-    //     console.error(err)
-    // })
-}

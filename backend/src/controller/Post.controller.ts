@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { PostService } from '../service'
-import { RequestWithUser, verifyToken } from '../middleware/Auth.middleware'
+import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
 
 class PostController {
     public router: Router
@@ -16,8 +16,8 @@ class PostController {
     private initRoutes() {
         this.router.get(`${this.path}/:id`, this.getPost)
         this.router.get(`${this.path}/topic/:id`, this.getPostsByTopic)
-        this.router.post(`${this.path}/topic/:id`, verifyToken, this.createPost)
-        this.router.post(`${this.path}/:id`, verifyToken, this.addResponse)
+        this.router.post(`${this.path}/topic/:id`, verifyTokenMiddleware, this.createPost)
+        this.router.post(`${this.path}/:id`, verifyTokenMiddleware, this.addResponse)
     }
 
     private getPostsByTopic = async (req: Request, res: Response) => {
