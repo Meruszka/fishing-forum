@@ -4,4 +4,4 @@ cd backend
 npm run format
 cd ..
 cd frontend
-npm run format
+npm run lint
