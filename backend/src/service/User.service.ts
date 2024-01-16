@@ -52,7 +52,7 @@ class UserService {
             ])
 
             await User.findByIdAndDelete(id)
-            return { code: 200, message: 'User successfully deleted' }
+            return { code: 200, data: 'User successfully deleted' }
         } catch (err) {
             console.error(err)
             return { code: 500, error: 'Internal Server Error' }

@@ -30,50 +30,50 @@ class UserController {
     private getSelf = async (req: RequestWithUser, res: Response) => {
         const id = req.user?._id
         if (!id) {
-            res.status(400).send({ message: 'Missing id' })
-            return
+            return res.status(400).send({ error: 'Missing id' })
         }
-        const user = await this.userService.getUser(id)
-        if (!user) {
-            res.status(404).send({ message: 'User not found' })
-            return
+        const result = await this.userService.getUser(id)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
         }
-        res.send(user)
+        res.send(result.data)
     }
 
     private getUser = async (req: Request, res: Response) => {
-        const id = req?.params?.id
+        const id = req.params.id
         if (!id) {
-            res.status(400).send({ message: 'Missing id' })
-            return
+            return res.status(400).send({ error: 'Missing id' })
         }
-        const user = await this.userService.getUser(id)
-        if (!user) {
-            res.status(404).send({ message: 'User not found' })
-            return
+        const result = await this.userService.getUser(id)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
         }
-        res.send(user)
+        res.send(result.data)
     }
 
     private updateUser = async (req: RequestWithUser, res: Response) => {
         const id = req.params.id
         if (!req.user || req.user._id !== id) {
-            res.status(403).send({ message: 'Forbidden' })
-            return
+            return res.status(403).send({ error: 'Forbidden' })
         }
-        const user = req.body
-        const updatedUser = await this.userService.updateUser(id, user)
-        res.send(updatedUser)
+        const userData = req.body
+        const result = await this.userService.updateUser(id, userData)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.send(result.data)
     }
 
     private deleteUser = async (req: RequestWithUser, res: Response) => {
         const id = req.params.id
         if (!req.user || req.user._id !== id) {
-            res.status(403).send({ message: 'Forbidden' })
-            return
+            return res.status(403).send({ error: 'Forbidden' })
         }
-        const deletedUser = await this.userService.deleteUser(id)
-        res.send(deletedUser)
+        const result = await this.userService.deleteUser(id)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.send(result.data)
     }
 
     private addFriend = async (req: RequestWithUser, res: Response) => {
