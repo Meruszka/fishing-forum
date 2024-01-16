@@ -5,57 +5,41 @@ class UserService {
     async getUser(id: string) {
         try {
             const user = await User.findById(id)
-                .populate({
-                    path: 'posts',
-                    select: 'title creationDate _id',
-                })
-                .populate({
-                    path: 'badges',
-                    select: 'name icon',
-                })
-                .populate({
-                    path: 'gear',
-                    select: 'name kind _id',
-                })
+                .populate('posts', 'title creationDate _id')
+                .populate('badges', 'name icon')
+                .populate('gear', 'name kind _id')
                 .populate({
                     path: 'friends',
-                    populate: {
-                        path: 'friend',
-                        select: 'username _id',
-                    },
+                    populate: { path: 'friend', select: 'username _id' },
                 })
-                .populate({
-                    path: 'fishingSpots',
-                    select: 'name image _id',
-                })
+                .populate('fishingSpots', 'name image _id')
 
-            if (user) {
-                const { _id, password, ...userWithoutPassword } = user.toObject()
-                return { id: _id, ...userWithoutPassword }
-            } else {
-                return null
-            }
+            if (!user) return { code: 404, error: 'User not found' }
+
+            const { _id, password, ...userWithoutPassword } = user.toObject()
+            return { code: 200, data: { id: _id, ...userWithoutPassword } }
         } catch (err) {
             console.error(err)
-            return null
+            return { code: 500, error: 'Internal Server Error' }
         }
     }
 
     async updateUser(id: string, userData: any) {
         try {
-            await User.findByIdAndUpdate(id, userData, { new: true })
-            const updatedUser = await User.findById(id)
-            return updatedUser
+            const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true, select: '-password' })
+            if (!updatedUser) return { code: 404, error: 'User not found' }
+
+            return { code: 200, data: updatedUser }
         } catch (err) {
             console.error(err)
-            return null
+            return { code: 500, error: 'Internal Server Error' }
         }
     }
 
     async deleteUser(id: string) {
         try {
             const user = await User.findById(id)
-            if (!user) return null
+            if (!user) return { code: 404, error: 'User not found' }
 
             const postsToDelete = user.posts.map((post) => post._id)
             const gearsToDelete = user.gear.map((gear) => gear._id)
@@ -67,11 +51,11 @@ class UserService {
                 ...fishingSpotsToDelete.map((fishingSpotId) => FishingSpot.findByIdAndDelete(fishingSpotId)),
             ])
 
-            const deletedUser = await User.findByIdAndDelete(id)
-            return deletedUser
+            await User.findByIdAndDelete(id)
+            return { code: 200, message: 'User successfully deleted' }
         } catch (err) {
             console.error(err)
-            return null
+            return { code: 500, error: 'Internal Server Error' }
         }
     }
 
