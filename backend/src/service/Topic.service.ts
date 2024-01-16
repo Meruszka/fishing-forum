@@ -8,10 +8,10 @@ class TopicService {
                 select: 'title creationDate _id',
             })
 
-            return topics
+            return { code: 200, data: topics }
         } catch (err) {
             console.error(err)
-            return null
+            return { code: 500, error: 'Internal Server Error' }
         }
     }
 
@@ -22,12 +22,14 @@ class TopicService {
                 select: 'title creationDate _id',
             })
 
-            if (!topic) throw new Error('Topic not found')
+            if (!topic) {
+                return { code: 404, error: 'Topic not found' }
+            }
 
-            return topic
+            return { code: 200, data: topic }
         } catch (err) {
             console.error(err)
-            return null
+            return { code: 500, error: 'Internal Server Error' }
         }
     }
 }
