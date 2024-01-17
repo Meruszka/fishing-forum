@@ -8,7 +8,7 @@ interface SideBarProps {
 }
 
 const SideBar: React.FC<SideBarProps> = (props: SideBarProps): ReactElement => {
-  const [spots, setSpots] = useState<Spot[]>(getInitialSpots());
+  const [spots] = useState<Spot[]>(getInitialSpots());
 
   return (
     <div className="bg-gray-200 p-4">

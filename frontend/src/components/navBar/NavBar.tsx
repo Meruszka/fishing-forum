@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 import LinkCustom from "../linkCustom/LinkCustom";
 
 function NavBar(): ReactElement {
