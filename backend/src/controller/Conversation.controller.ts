@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express'
+import { Response, Router } from 'express'
 import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
 import { ConversationService } from '../service'
 

@@ -18,6 +18,7 @@ class FishingSpotController {
         this.router.get(`${this.path}`, this.getFishingSpots)
         this.router.post(`${this.path}`, verifyTokenMiddleware, this.addFishingSpot)
         this.router.patch(`${this.path}/:id`, verifyTokenMiddleware, this.updateFishingSpot)
+        this.router.delete(`${this.path}/:id`, verifyTokenMiddleware, this.deleteFishingSpot)
     }
 
     private getFishingSpot = async (req: Request, res: Response) => {
@@ -80,6 +81,18 @@ class FishingSpotController {
             return res.status(401).send({ error: 'Access Denied: No Token Provided!' })
         }
         const result = await this.fishingSpotService.updateFishingSpot(req.params.id, fishingSpotData)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.send(result.data)
+    }
+
+    private deleteFishingSpot = async (req: RequestWithUser, res: Response) => {
+        const authorId = req.user?._id
+        if (!authorId) {
+            return res.status(401).send({ error: 'Access Denied: No Token Provided!' })
+        }
+        const result = await this.fishingSpotService.deleteFishingSpot(req.params.id, authorId)
         if (result.error) {
             return res.status(result.code).send({ error: result.error })
         }

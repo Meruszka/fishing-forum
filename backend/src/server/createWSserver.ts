@@ -86,5 +86,9 @@ function sendWSMessage(userId: string, message: WSResponse) {
     }
 }
 
-export { createWSserver, sendWSMessage }
+function getClients() {
+    return clients
+}
+
+export { createWSserver, sendWSMessage, getClients }
 export type { WSRequest, WSResponse }

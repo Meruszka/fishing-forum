@@ -1,4 +1,4 @@
-import { WSRequest, WSResponse } from '../server/createWSserver'
+import { WSRequest, WSResponse, getClients } from '../server/createWSserver'
 
 class WebSocketController {
     public static handleMessage = async (message: WSRequest): Promise<WSResponse> => {
@@ -11,7 +11,8 @@ class WebSocketController {
     }
 
     public static ping = (): WSResponse => {
-        return { action: 'ping', data: 'pong' }
+        const clientCount = getClients().size
+        return { action: 'ping', data: { response: 'pong', clientCount } }
     }
 }
 
