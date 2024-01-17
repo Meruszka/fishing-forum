@@ -17,6 +17,7 @@ class FishingSpotController {
         this.router.get(`${this.path}/:id`, this.getFishingSpot)
         this.router.get(`${this.path}`, this.getFishingSpots)
         this.router.post(`${this.path}`, verifyTokenMiddleware, this.addFishingSpot)
+        this.router.patch(`${this.path}/:id`, verifyTokenMiddleware, this.updateFishingSpot)
     }
 
     private getFishingSpot = async (req: Request, res: Response) => {
@@ -58,6 +59,31 @@ class FishingSpotController {
             return res.status(result.code).send({ error: result.error })
         }
         res.status(201).send(result.data)
+    }
+
+    private updateFishingSpot = async (req: RequestWithUser, res: Response) => {
+        const fishingSpotData = req.body
+        if (
+            !fishingSpotData ||
+            !fishingSpotData.name ||
+            !fishingSpotData.longitude ||
+            !fishingSpotData.latitude ||
+            !fishingSpotData.description ||
+            !fishingSpotData.rating ||
+            !fishingSpotData.type ||
+            !fishingSpotData.image
+        ) {
+            return res.status(400).send({ error: 'Invalid fishingSpot data' })
+        }
+        const authorId = req.user?._id
+        if (!authorId) {
+            return res.status(401).send({ error: 'Access Denied: No Token Provided!' })
+        }
+        const result = await this.fishingSpotService.updateFishingSpot(req.params.id, fishingSpotData)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.send(result.data)
     }
 }
 

@@ -26,6 +26,19 @@ class FishingSpotService {
         }
     }
 
+    async updateFishingSpot(id: string, fishingSpotData: any) {
+        try {
+            const fishingSpot = await FishingSpot.findByIdAndUpdate(id, fishingSpotData, { new: true })
+            if (!fishingSpot) {
+                return { code: 404, error: 'FishingSpot not found' }
+            }
+            return { code: 200, data: fishingSpot }
+        } catch (err) {
+            console.error(err)
+            return { code: 500, error: 'Internal Server Error' }
+        }
+    }
+
     async addFishingSpot(fishingSpotData: any, authorId: string) {
         try {
             const user = await User.findById(authorId)
