@@ -1,5 +1,4 @@
-// Login.jsx
-import React, { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 import { useNavigate } from "react-router-dom";
 import {
