@@ -5,7 +5,10 @@ class TopicService {
         try {
             const topics = await Topic.find().populate({
                 path: 'lastPost',
-                select: 'title creationDate _id',
+                populate: {
+                    path: 'author',
+                    select: 'username profilePicture _id',
+                },
             })
 
             return { code: 200, data: topics }
@@ -19,7 +22,10 @@ class TopicService {
         try {
             const topic = await Topic.findById(id).populate({
                 path: 'lastPost',
-                select: 'title creationDate _id',
+                populate: {
+                    path: 'author',
+                    select: 'username profilePicture _id',
+                },
             })
 
             if (!topic) {

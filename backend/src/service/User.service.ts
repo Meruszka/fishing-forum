@@ -11,7 +11,7 @@ class UserService {
                 .populate('gear', 'name kind _id')
                 .populate({
                     path: 'friends',
-                    populate: { path: 'friend', select: 'username _id' },
+                    populate: { path: 'friend', select: 'username profilePicture _id' },
                 })
                 .populate('fishingSpots', 'name image _id')
 

@@ -57,6 +57,24 @@ class FishingSpotService {
             return { code: 500, error: 'Internal Server Error' }
         }
     }
+
+    async deleteFishingSpot(id: string, authorId: string) {
+        try {
+            const fishingSpot = await FishingSpot.findById(id)
+            if (!fishingSpot) {
+                return { code: 404, error: 'FishingSpot not found' }
+            }
+            if (fishingSpot.author && fishingSpot.author.toString() !== authorId) {
+                return { code: 403, error: 'Access Denied: You are not the author of this fishingSpot' }
+            }
+            await FishingSpot.findByIdAndDelete(id)
+            await User.findByIdAndUpdate(authorId, { $pull: { fishingSpots: id } })
+            return { code: 200, data: 'FishingSpot deleted' }
+        } catch (err) {
+            console.error(err)
+            return { code: 500, error: 'Internal Server Error' }
+        }
+    }
 }
 
 export { FishingSpotService }
