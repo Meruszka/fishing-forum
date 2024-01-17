@@ -26,7 +26,7 @@ function Home(): ReactElement {
 
 function ErrorBoundry(): ReactElement {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-red-500 text-white">
+    <div className="h-screen flex items-center justify-center bg-red-500 text-white">
       <div className="text-center">
         <h1 className="text-6xl font-bold mb-4">Error</h1>
         <p className="text-lg">Something went wrong. Please try again later.</p>
