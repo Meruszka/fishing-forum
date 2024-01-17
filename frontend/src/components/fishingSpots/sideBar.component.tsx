@@ -1,7 +1,7 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { Coords, Spot, getInitialSpots } from "./sideBar.type";
-import SpotCustom from "./spotCustom";
-import ButtonCustom from "../buttonCustom/buttonCustom";
+import SpotCustom from "./spotCustom.component";
+import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 
 interface SideBarProps {
   handleClick: (newCoords: Coords) => void;
@@ -9,7 +9,9 @@ interface SideBarProps {
 
 const SideBar: React.FC<SideBarProps> = (props: SideBarProps): ReactElement => {
   const [spots, setSpots] = useState<Spot[]>(getInitialSpots());
-
+  useEffect(() => {
+    setSpots(getInitialSpots());
+  }, []);
   return (
     <div className="bg-gray-200 p-4">
       <h2 className="font-bold text-xl mb-4">Your Fishing Spots</h2>
