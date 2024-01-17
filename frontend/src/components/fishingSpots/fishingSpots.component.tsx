@@ -1,10 +1,11 @@
 import React, { ReactElement, useRef, useState } from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import SideBar from "./sideBar.component";
 import { Coords } from "./sideBar.type";
-import { Map, Marker, Popup } from "leaflet";
+import { Map } from "leaflet";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
+import { FishingSpot } from "../../providers/currentUser/currentUser.type";
 
 const FishingSpots: React.FC = (): ReactElement => {
   const mapRef = useRef<Map | null>(null);
@@ -19,6 +20,23 @@ const FishingSpots: React.FC = (): ReactElement => {
       });
     }
   };
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+  user.fishingSpots = [
+    {
+      _id: "1",
+      name: "Test spot",
+      latitude: 54.0364,
+      longitude: 31.7667,
+      description: "Test",
+      rating: 5,
+      type: "river",
+      image: "https://picsum.photos/200/300",
+      author: user,
+    },
+  ];
 
   // 5rem is not ideal, but it's a quick fix for now
   return (
@@ -35,24 +53,30 @@ const FishingSpots: React.FC = (): ReactElement => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {user &&
-          user.fishingSpots.map((spot) => {
+          user.fishingSpots.map((spot: FishingSpot) => {
             return (
-              <Marker
-                key={spot.id}
-                position={[spot.coords.lat, spot.coords.lng]}
-                eventHandlers={{
-                  click: () => {
-                    handleClick(spot.coords);
-                  },
-                }}
-              >
-                <Popup>{spot.name}</Popup>
-              </Marker>
+              <div key={spot._id}>
+                <Marker position={[spot.latitude, spot.longitude]}>
+                  <Popup>
+                    <div className="flex">
+                      <img
+                        src={spot.image}
+                        className="h-16 w-16 object-cover mr-4"
+                        alt={spot.name}
+                      />
+                      <div>
+                        <h2 className="font-bold text-xl mb-4">{spot.name}</h2>
+                        <p className="text-gray-700">{spot.description}</p>
+                      </div>
+                    </div>
+                  </Popup>
+                </Marker>
+              </div>
             );
           })}
       </MapContainer>
       <div className="w-1/5">
-        <SideBar handleClick={handleClick} />
+        <SideBar handleClick={handleClick} fishingSpots={user.fishingSpots} />
       </div>
     </div>
   );

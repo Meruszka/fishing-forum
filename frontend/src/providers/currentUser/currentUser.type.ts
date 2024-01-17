@@ -2,7 +2,7 @@ export interface CurrentUserContextProps {
   currentUser: User | null;
 }
 
-export interface User {
+export interface User extends Entity {
   username: string,
   dateOfRegistration: string,
   description: string,
