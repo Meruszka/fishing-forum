@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { FishingSpotService } from '../service'
-import { RequestWithUser, verifyToken } from '../middleware/Auth.middleware'
+import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
 
 class FishingSpotController {
     public router: Router
@@ -16,53 +16,74 @@ class FishingSpotController {
     private initRoutes() {
         this.router.get(`${this.path}/:id`, this.getFishingSpot)
         this.router.get(`${this.path}`, this.getFishingSpots)
-        this.router.post(`${this.path}`, verifyToken, this.addFishingSpot)
+        this.router.post(`${this.path}`, verifyTokenMiddleware, this.addFishingSpot)
+        this.router.patch(`${this.path}/:id`, verifyTokenMiddleware, this.updateFishingSpot)
     }
 
     private getFishingSpot = async (req: Request, res: Response) => {
-        const fishingSpot = await this.fishingSpotService.getFishingSpot(req.params.id)
-        if (!fishingSpot) {
-            res.status(404).send({ message: 'FishingSpot not found' })
-            return
+        const result = await this.fishingSpotService.getFishingSpot(req.params.id)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
         }
-        res.send(fishingSpot)
+        res.send(result.data)
     }
 
     private getFishingSpots = async (req: Request, res: Response) => {
-        const fishingSpots = await this.fishingSpotService.getFishingSpots()
-        if (!fishingSpots) {
-            res.status(404).send({ message: 'FishingSpots not found' })
-            return
+        const result = await this.fishingSpotService.getFishingSpots()
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
         }
-        res.send(fishingSpots)
+        res.send(result.data)
     }
 
     private addFishingSpot = async (req: RequestWithUser, res: Response) => {
-        const fishingSpot = req.body
+        const fishingSpotData = req.body
         if (
-            !fishingSpot ||
-            !fishingSpot.name ||
-            !fishingSpot.longitude ||
-            !fishingSpot.latitude ||
-            !fishingSpot.description ||
-            !fishingSpot.rating ||
-            !fishingSpot.type ||
-            !fishingSpot.image
+            !fishingSpotData ||
+            !fishingSpotData.name ||
+            !fishingSpotData.longitude ||
+            !fishingSpotData.latitude ||
+            !fishingSpotData.description ||
+            !fishingSpotData.rating ||
+            !fishingSpotData.type ||
+            !fishingSpotData.image
         ) {
-            res.status(400).send({ message: 'Invalid fishingSpot' })
-            return
+            return res.status(400).send({ error: 'Invalid fishingSpot data' })
         }
         const authorId = req.user?._id
         if (!authorId) {
-            res.status(401).send({ message: 'Access Denied: No Token Provided!' })
-            return
+            return res.status(401).send({ error: 'Access Denied: No Token Provided!' })
         }
-        const newFishingSpot = await this.fishingSpotService.addFishingSpot(fishingSpot, authorId)
-        if (!newFishingSpot) {
-            res.status(400).send({ message: 'FishingSpot not created' })
-            return
+        const result = await this.fishingSpotService.addFishingSpot(fishingSpotData, authorId)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
         }
-        res.send(newFishingSpot)
+        res.status(201).send(result.data)
+    }
+
+    private updateFishingSpot = async (req: RequestWithUser, res: Response) => {
+        const fishingSpotData = req.body
+        if (
+            !fishingSpotData ||
+            !fishingSpotData.name ||
+            !fishingSpotData.longitude ||
+            !fishingSpotData.latitude ||
+            !fishingSpotData.description ||
+            !fishingSpotData.rating ||
+            !fishingSpotData.type ||
+            !fishingSpotData.image
+        ) {
+            return res.status(400).send({ error: 'Invalid fishingSpot data' })
+        }
+        const authorId = req.user?._id
+        if (!authorId) {
+            return res.status(401).send({ error: 'Access Denied: No Token Provided!' })
+        }
+        const result = await this.fishingSpotService.updateFishingSpot(req.params.id, fishingSpotData)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.send(result.data)
     }
 }
 

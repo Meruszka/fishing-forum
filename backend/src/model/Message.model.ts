@@ -3,8 +3,8 @@ import { Schema, model } from 'mongoose'
 const MessageSchema = new Schema({
     content: String,
     date: Date,
-    sender: { type: Schema.Types.ObjectId, ref: 'User' },
     isRead: Boolean,
+    sender: { type: Schema.Types.ObjectId, ref: 'User' },
 })
 
 const Message = model('Message', MessageSchema)

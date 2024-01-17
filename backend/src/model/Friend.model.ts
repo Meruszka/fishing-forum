@@ -1,6 +1,7 @@
 import { ObjectId, Schema, model } from 'mongoose'
 
 interface IFriend {
+    _id: ObjectId
     friend: {
         username: string
         _id: ObjectId
