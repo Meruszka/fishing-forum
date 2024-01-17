@@ -27,12 +27,18 @@ class AuthService {
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
         // Create user
+        // Get random image
+        //https://picsum.photos/200/200
+        const imageUrl = await fetch('https://picsum.photos/200/200').then((response) => {
+            return response.url
+        })
+
         const user = new User({
             username,
             password: hashedPassword,
             dateOfRegistration: new Date(),
-            description: '',
-            profilePicture: '',
+            description: "I'm new here!",
+            profilePicture: imageUrl,
             location: '',
             score: 0,
             rank: 'Newbie',
