@@ -1,5 +1,5 @@
-import { ReactElement, useEffect, useState } from "react";
-import { Coords, getInitialSpots } from "./sideBar.type";
+import { ReactElement } from "react";
+import { Coords } from "./sideBar.type";
 import SpotCustom from "./spotCustom.component";
 import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 import { FishingSpot } from "../../providers/currentUser/currentUser.type";
