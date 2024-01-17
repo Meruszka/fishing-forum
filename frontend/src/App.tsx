@@ -12,6 +12,8 @@ import { ApiProvider } from "./providers/api/apiContext.provider";
 import UserProfile from "./components/userProfile/userProfile.component";
 import NavBar from "./components/navBar/navBar.component";
 import { CurrentUserProvider } from "./providers/currentUser/currentUser.provider";
+import TopicList from "./components/forum/topicList/topicList";
+import TopicPage from "./components/forum/topicPage/topicPage";
 
 function Home(): ReactElement {
   return (
@@ -39,6 +41,8 @@ const router = createBrowserRouter(
     <Route path="/" element={<Home />} errorElement={<ErrorBoundry />}>
       <Route path="login" element={<LoginScreen />} />
       <Route path="fishing-spots" element={<FishingSpots />} />
+      <Route path="forum" element={<TopicList />} />
+      <Route path="forum/topics/:topicId" element={<TopicPage />} />
       <Route path="user-profile" element={<UserProfile />} />
       <Route path="*" element={<ErrorBoundry />} />
     </Route>
