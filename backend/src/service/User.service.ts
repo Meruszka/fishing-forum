@@ -1,5 +1,6 @@
 import { FishingSpot, Friend, Gear, Post, User } from '../model'
 import { IFriend } from '../model/Friend.model'
+import { RANKS_POINTS } from '../model/constants'
 
 class UserService {
     async getUser(id: string) {
@@ -180,6 +181,28 @@ class UserService {
             return { code: 500, error: 'Internal Server Error' }
         }
     }
+
+    static async runPointsUpdate(id: string) {
+        // get points and assign rank
+        const user = await User.findById(id)
+        if (!user) return
+
+        const points = user.score
+        if (!points) return
+
+        let rank: string | null = null
+        for (const [rankName, rankPoints] of Object.entries(RANKS_POINTS)) {
+            if (points >= rankPoints) {
+                rank = rankName
+            }
+        }
+
+        if (rank && user.rank !== rank) {
+            await User.findByIdAndUpdate(id, { $set: { rank } })
+        }
+    }
+
+    static async runBadgesUpdate(id: string) {}
 }
 
 export { UserService }

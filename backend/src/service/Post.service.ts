@@ -1,4 +1,5 @@
 import { Post, Response, Topic, User } from '../model'
+import { UserService } from './User.service'
 
 class PostService {
     async getPostsByTopic(topicId: string) {
@@ -44,6 +45,9 @@ class PostService {
 
             await Topic.findByIdAndUpdate(topicId, { $inc: { numberOfPosts: 1 }, lastPost: savedPost._id })
             await User.findByIdAndUpdate(authorId, { $push: { posts: savedPost._id } })
+            // add 10 points to the author
+            await User.findByIdAndUpdate(authorId, { $inc: { score: 10 } })
+            UserService.runPointsUpdate(authorId)
 
             return { code: 201, data: savedPost }
         } catch (err) {
@@ -68,6 +72,14 @@ class PostService {
             const savedResponse = await newResponse.save()
 
             await Post.findByIdAndUpdate(postId, { $push: { responses: savedResponse._id } })
+            // add 1 point to the post author
+            if (post.author) {
+                await User.findByIdAndUpdate(post.author, { $inc: { score: 1 } })
+                UserService.runPointsUpdate(post.author.toString())
+            }
+            // add 5 points to the author
+            await User.findByIdAndUpdate(authorId, { $inc: { score: 5 } })
+            UserService.runPointsUpdate(authorId)
 
             return { code: 201, data: savedResponse }
         } catch (err) {
