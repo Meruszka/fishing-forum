@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { User } from '../providers/currentUser/currentUser.type';
 
 export interface LoginRequest {
   username: string;
@@ -10,7 +11,7 @@ export interface LoginResponse extends AxiosResponse {
   error?: string;
 }
 
-class ApiClient {
+export class ApiClient {
   private axiosInstance: AxiosInstance;
 
   constructor() {
@@ -22,7 +23,7 @@ class ApiClient {
     this.axiosInstance.interceptors.request.use(async (config) => {
       const token = await this.getValidToken();
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.Authorization = token;
       }
       return config;
     });
@@ -36,8 +37,6 @@ class ApiClient {
         if (error.response?.status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
-          // Refresh the token and retry the original request
-          await this.refreshToken();
           return this.axiosInstance(originalRequest);
         }
 
@@ -46,21 +45,28 @@ class ApiClient {
     );
   }
 
+
   private async getValidToken(): Promise<string | null> {
-    let token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
     if (!token) {
       return null;
     }
 
-    const decodedToken: { exp: number } = JSON.parse(atob(token.split('.')[1]));
-    const isTokenExpired = decodedToken.exp * 1000 < Date.now();
-
-    if (isTokenExpired) {
-      token = await this.refreshToken();
-    }
-
     return token;
+  }
+
+  private isTokenValid(): boolean {
+    // const decodedToken: { exp: number } = JSON.parse(atob(token.split('.')[1]));
+    // console.log(decodedToken)
+    // return decodedToken.exp * 1000 > Date.now();
+    return true;
+  }
+
+  public isLogged(): boolean {
+    const token = localStorage.getItem('token');
+    const res = token ? this.isTokenValid() : false;
+    return res;
   }
 
   public async get<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
@@ -83,35 +89,43 @@ class ApiClient {
     return this.axiosInstance.patch<T>(url, data, config);
   }
 
-  public async login<T>(data: LoginRequest): Promise<LoginResponse> {
-    const res: LoginResponse = await this.axiosInstance.post<T>('/user/login', data);
-    if (res.token) {
-      localStorage.setItem('token', res.token);
+  public async login(data: LoginRequest): Promise<LoginResponse> {
+    const res: LoginResponse = await this.axiosInstance.post('/user/login', data);
+    if (res.data.token) {
+      localStorage.setItem('token', res.data.token);
     }
     return res;
   }
 
-  public async register<T>(data: LoginRequest): Promise<LoginResponse> {
-    const res: LoginResponse = await this.axiosInstance.post<T>('/user/register', data);
-    if (res.token) {
-      localStorage.setItem('token', res.token);
+  public logout(): void {
+    localStorage.removeItem('token');
+  }
+
+  public async register(data: LoginRequest): Promise<LoginResponse> {
+    const res: LoginResponse = await this.axiosInstance.post('/user/register', data);
+    if (res.data.token) {
+      localStorage.setItem('token', res.data.token);
     }
     return res;
+  }
+
+  public async getCurrentUser(): Promise<AxiosResponse<User>> {
+    return this.get<User>('/user/self');
   }
 
   // Add other HTTP methods as needed (put, delete, etc.)
 
-  private async refreshToken(): Promise<string | null> {
-    try {
-      // Implement your token refresh logic here
-      const newToken = 'newToken'; // Replace with the refreshed token
-      localStorage.setItem('token', newToken);
-      return newToken;
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-      return null;
-    }
-  }
+  // private async refreshToken(): Promise<string | null> {
+  //   try {
+  //     // Implement your token refresh logic here
+  //     const newToken = 'newToken'; // Replace with the refreshed token
+  //     localStorage.setItem('token', newToken);
+  //     return newToken;
+  //   } catch (error) {
+  //     console.error('Token refresh failed:', error);
+  //     return null;
+  //   }
+  // }
 }
 
 export default new ApiClient();
