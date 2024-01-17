@@ -15,6 +15,7 @@ const UserProfile: React.FC = (): ReactElement => {
     return <LoadingScreen />;
   }
 
+  console.log(user);
   return (
     <div className="container mx-auto mt-8">
       <div className="flex">
@@ -74,11 +75,9 @@ const UserProfile: React.FC = (): ReactElement => {
         <ul className="flex space-x-4">
           {user.friends.map((friend: Friend) => (
             <li key={friend._id}>
-              <img
-                src={friend.user.profilePicture}
-                alt={`${friend.user.username}'s profile`}
-                className="w-10 h-10 rounded-full"
-              />
+              <div className="flex flex-col items-center">
+                {friend.username}
+              </div>
             </li>
           ))}
         </ul>

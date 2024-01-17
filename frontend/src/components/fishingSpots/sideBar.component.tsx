@@ -1,13 +1,11 @@
 import { ReactElement } from "react";
-import { Coords } from "./sideBar.type";
+import { CoordsCustom } from "./sideBar.type";
 import SpotCustom from "./spotCustom.component";
 import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 import { FishingSpot } from "../../providers/currentUser/currentUser.type";
 
 interface SideBarProps {
-  handleClick: (newCoords: Coords) => void;
-  inAddingMode: boolean;
-  setInAddingMode: (addingMode: boolean) => void;
+  handleClick: (newCoords: CoordsCustom) => void;
   fishingSpots: FishingSpot[];
   onDelete: (id: string) => void;
 }
@@ -29,16 +27,6 @@ const SideBar: React.FC<SideBarProps> = (props: SideBarProps): ReactElement => {
           </ButtonCustom>
         ))}
       </div>
-      <ButtonCustom
-        onClick={() => props.setInAddingMode(!props.inAddingMode)}
-        className={`w-full p-2 mt-2 rounded transition-all duration-300 ${
-          props.inAddingMode
-            ? "bg-red-500 hover:bg-red-600"
-            : "bg-green-500 hover:bg-green-600"
-        }`}
-      >
-        {props.inAddingMode ? "Cancel" : "Add new spot"}
-      </ButtonCustom>
     </div>
   );
 };

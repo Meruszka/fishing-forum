@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import SideBar from "./sideBar.component";
-import { Coords } from "./sideBar.type";
+import { CoordsCustom } from "./sideBar.type";
 import { Map } from "leaflet";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import { FishingSpot } from "../../providers/currentUser/currentUser.type";
@@ -10,15 +10,24 @@ import LoadingScreen from "../../common/loadingScreen/loadingScreen.component";
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import {
   FishingSpotDTO,
+  deleteFishingSpotREST,
   getFishingSpotsREST,
   newFishingSpotREST,
 } from "./fishingSpots.service";
 import { ImBin } from "react-icons/im";
+import AddingFishingspot from "./addingFishingSpot.component";
+import AddingFishingSpotModal from "./addingFishingSpotModal.component";
 
 const FishingSpots: React.FC = (): ReactElement => {
   const mapRef = useRef<Map | null>(null);
-  const [coords, setCoords] = useState<Coords>({ lat: 54.0364, lng: 21.7667 });
+  const [coords, setCoords] = useState<CoordsCustom>({
+    lat: 54.0364,
+    lng: 21.7667,
+  });
   const [inAddingMode, setInAddingMode] = useState<boolean>(false);
+  const [newSpotCoords, setNewSpotCoords] = useState<CoordsCustom>(
+    {} as CoordsCustom
+  );
   const [fishingSpots, setFishingSpots] = useState<FishingSpot[]>([]);
   const user = useCurrentUser();
   const apiClient = useApiClient();
@@ -31,30 +40,17 @@ const FishingSpots: React.FC = (): ReactElement => {
     }
   }, [apiClient, user]);
 
-  useEffect(() => {
-    if (mapRef.current) {
-      mapRef.current.on("click", (e) => {
-        if (inAddingMode) {
-          const newSpot: FishingSpotDTO = {
-            name: "Test spot",
-            latitude: e.latlng.lat,
-            longitude: e.latlng.lng,
-            description: "Test",
-            rating: 5,
-            type: "river",
-            image: "https://picsum.photos/200/300",
-          };
-          newFishingSpotREST(apiClient, newSpot);
-        }
-      });
-    }
-  }, [apiClient, inAddingMode, user]);
-
   if (!user) {
     return <LoadingScreen />;
   }
 
-  const handleClick = (newCoords: Coords) => {
+  const handleNewSpot = async (newSpot: FishingSpotDTO) => {
+    const newSpotReponse = await newFishingSpotREST(apiClient, newSpot);
+    setFishingSpots((prev) => [...prev, newSpotReponse]);
+    setInAddingMode(false);
+  };
+
+  const handleClick = (newCoords: CoordsCustom) => {
     setCoords(newCoords);
     if (mapRef.current) {
       mapRef.current.flyTo(newCoords, 13, {
@@ -64,16 +60,18 @@ const FishingSpots: React.FC = (): ReactElement => {
   };
 
   const handleDeleteSpot = (id: string) => {
-    console.log(id);
+    deleteFishingSpotREST(apiClient, id);
   };
-
-  if (!user) {
-    return <LoadingScreen />;
-  }
 
   // 5rem is not ideal, but it's a quick fix for now
   return (
     <div className="h-[calc(100vh-5rem)] flex z-0">
+      <AddingFishingSpotModal
+        isOpen={inAddingMode}
+        onClose={() => setInAddingMode(false)}
+        onConfirm={handleNewSpot}
+        coords={newSpotCoords}
+      />
       <MapContainer
         center={[coords.lat, coords.lng]}
         zoom={13}
@@ -84,6 +82,11 @@ const FishingSpots: React.FC = (): ReactElement => {
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <AddingFishingspot
+          isAdding={inAddingMode}
+          setIsAdding={setInAddingMode}
+          setCoords={setNewSpotCoords}
         />
         {fishingSpots.map((spot: FishingSpot) => {
           return (
@@ -112,8 +115,6 @@ const FishingSpots: React.FC = (): ReactElement => {
         <SideBar
           handleClick={handleClick}
           fishingSpots={fishingSpots}
-          inAddingMode={inAddingMode}
-          setInAddingMode={setInAddingMode}
           onDelete={handleDeleteSpot}
         />
       </div>

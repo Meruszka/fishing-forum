@@ -50,8 +50,7 @@ export interface Message {
 }
 
 export interface Friend extends Entity {
-  user: User,
-  since: Date,
+  username: string,
 }
 
 export interface FishingSpot extends Entity {
@@ -62,5 +61,5 @@ export interface FishingSpot extends Entity {
   rating: number,
   type: string,
   image: string,
-  author?: User,
+  authorId: string,
 }

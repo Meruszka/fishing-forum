@@ -1,4 +1,4 @@
-export interface Coords {
+export interface CoordsCustom {
   lat: number;
   lng: number;
 }
