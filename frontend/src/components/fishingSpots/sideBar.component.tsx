@@ -10,11 +10,6 @@ interface SideBarProps {
 }
 
 const SideBar: React.FC<SideBarProps> = (props: SideBarProps): ReactElement => {
-  // const [spots, setSpots] = useState<Spot[]>(getInitialSpots());
-  // // const user = useCurrentUser();
-  // useEffect(() => {
-  //   setSpots(getInitialSpots());
-  // }, []);
   return (
     <div className="bg-gray-200 p-4">
       <h2 className="font-bold text-xl mb-4">Your Fishing Spots</h2>

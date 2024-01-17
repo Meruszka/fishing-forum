@@ -6,6 +6,7 @@ import { Coords } from "./sideBar.type";
 import { Map } from "leaflet";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import { FishingSpot } from "../../providers/currentUser/currentUser.type";
+import LoadingScreen from "../../common/loadingScreen/loadingScreen.component";
 
 const FishingSpots: React.FC = (): ReactElement => {
   const mapRef = useRef<Map | null>(null);
@@ -22,8 +23,10 @@ const FishingSpots: React.FC = (): ReactElement => {
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <LoadingScreen />;
   }
+
+  // TODO: remove this when backend is ready
   user.fishingSpots = [
     {
       _id: "1",
@@ -52,8 +55,7 @@ const FishingSpots: React.FC = (): ReactElement => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {user &&
-          user.fishingSpots.map((spot: FishingSpot) => {
+        {user.fishingSpots.map((spot: FishingSpot) => {
             return (
               <div key={spot._id}>
                 <Marker position={[spot.latitude, spot.longitude]}>
