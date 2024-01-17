@@ -1,47 +1,50 @@
 // Login.jsx
 import React, { FormEvent, useState } from "react";
-import ButtonCustom from "../buttonCustom/buttonCustom";
-import apiClient, { LoginResponse } from "../../common/apiClient";
+import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 import { useNavigate } from "react-router-dom";
+import {
+  ValidationResult,
+  handleLoginRest,
+  handleRegisterRest,
+  validateRegister,
+} from "./loginScreen.service";
+import { useApiClient } from "../../providers/api/apiContext.hook";
 
 const LoginScreen = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [isButtonsDisabled, setIsButtonsDisabled] = useState<boolean>(true);
+  const [errorInForm, setErrorInForm] = useState<string>("");
+  const apiClient = useApiClient();
 
   const navigate = useNavigate();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     console.log("handleLogin");
-
-    try {
-      const res: LoginResponse = await apiClient.login({ username, password });
-      if (res.status === 200) {
-        navigate("/");
-      } else {
-        console.error("Login failed:", res.status);
-      }
-    } catch (error) {
-      console.error("An error occurred during login:", error);
-    }
+    handleLoginRest(apiClient, username, password, navigate);
   };
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
     console.log("handleRegister");
+    handleRegisterRest(apiClient, username, password, navigate);
+  };
 
-    try {
-      const res: LoginResponse = await apiClient.register({
-        username,
-        password,
-      });
-      if (res.status === 200) {
-        navigate("/");
-      } else {
-        console.error("Register failed:", res.status);
-      }
-    } catch (error) {
-      console.error("An error occurred during register:", error);
+  const handleFormChange = () => {
+    const result: ValidationResult = validateRegister(username, password);
+    if (result.isValid) {
+      setIsButtonsDisabled(false);
+      setErrorInForm("");
+    } else {
+      setIsButtonsDisabled(true);
+
+      // Set the error message based on the first error in the array
+      setErrorInForm(
+        result.errors && result.errors.length > 0
+          ? result.errors[0]
+          : "Unknown error"
+      );
     }
   };
 
@@ -49,7 +52,7 @@ const LoginScreen = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-96">
         <h2 className="text-2xl font-bold mb-4">Login</h2>
-        <form>
+        <form onChange={handleFormChange}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -82,17 +85,22 @@ const LoginScreen = () => {
               className="border border-gray-300 p-2 w-full"
             />
           </div>
+          {errorInForm && (
+            <div className="mb-4 text-red-500">{errorInForm}</div>
+          )}
           <ButtonCustom
             label="Login"
             onClick={handleLogin}
             color="blue"
             size="large"
+            disabled={isButtonsDisabled}
           />
           <ButtonCustom
             label="Register"
             onClick={handleRegister}
             color="blue"
             size="large"
+            disabled={isButtonsDisabled}
           />
         </form>
       </div>

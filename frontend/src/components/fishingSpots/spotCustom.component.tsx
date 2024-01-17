@@ -1,8 +1,8 @@
 import { ReactElement } from "react";
-import { Spot } from "./sideBar.type";
+import { FishingSpot } from "../../providers/currentUser/currentUser.type";
 
 interface SpotCustomProps {
-  spot: Spot;
+  spot: FishingSpot;
 }
 
 const SpotCustom: React.FC<SpotCustomProps> = (
