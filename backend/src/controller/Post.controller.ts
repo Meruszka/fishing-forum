@@ -21,61 +21,53 @@ class PostController {
     }
 
     private getPostsByTopic = async (req: Request, res: Response) => {
-        const posts = await this.postService.getPostsByTopic(req.params.id)
-        if (!posts) {
-            res.status(404).send({ message: 'Posts not found' })
-            return
+        const result = await this.postService.getPostsByTopic(req.params.id)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
         }
-        res.send(posts)
+        res.send(result.data)
     }
 
     private getPost = async (req: Request, res: Response) => {
-        const post = await this.postService.getPost(req.params.id)
-        if (!post) {
-            res.status(404).send({ message: 'Post not found' })
-            return
+        const result = await this.postService.getPost(req.params.id)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
         }
-        res.send(post)
+        res.send(result.data)
     }
 
     private createPost = async (req: RequestWithUser, res: Response) => {
         const post = req.body
         if (!post || !post.title || !post.content) {
-            res.status(400).send({ message: 'Invalid post' })
-            return
+            return res.status(400).send({ error: 'Invalid post' })
         }
         const topicId = req.params.id
         const authorId = req.user?._id
         if (!authorId) {
-            res.status(401).send({ message: 'Access Denied: No Token Provided!' })
-            return
+            return res.status(401).send({ error: 'Access Denied: No Token Provided!' })
         }
-        const newPost = await this.postService.createPost(post, topicId, authorId)
-        if (!newPost) {
-            res.status(400).send({ message: 'Post not created' })
-            return
+        const result = await this.postService.createPost(post, topicId, authorId)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
         }
-        res.send(newPost)
+        res.status(201).send(result.data)
     }
 
     private addResponse = async (req: RequestWithUser, res: Response) => {
         const response = req.body
         if (!response || !response.content) {
-            res.status(400).send({ message: 'Invalid response' })
-            return
+            return res.status(400).send({ error: 'Invalid response' })
         }
         const postId = req.params.id
         const authorId = req.user?._id
         if (!authorId) {
-            res.status(401).send({ message: 'Access Denied: No Token Provided!' })
-            return
+            return res.status(401).send({ error: 'Access Denied: No Token Provided!' })
         }
-        const newResponse = await this.postService.addResponse(postId, response, authorId)
-        if (!newResponse) {
-            res.status(400).send({ message: 'Response not created' })
-            return
+        const result = await this.postService.addResponse(postId, response, authorId)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
         }
-        res.send(newResponse)
+        res.status(201).send(result.data)
     }
 }
 

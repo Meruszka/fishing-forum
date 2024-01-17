@@ -30,13 +30,13 @@ class ConversationService {
                 members: { $in: [userId] },
             })
                 .populate({
-                    path: 'messages',
+                    path: 'lastMessage',
                     populate: {
                         path: 'sender',
                         select: 'username _id',
                     },
                 })
-                .sort({ 'messages.date': -1 })
+                .sort({ 'lastMessage.date': -1 })
             return { code: 200, data: conversations }
         } catch (err) {
             console.error(err)

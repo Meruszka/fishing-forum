@@ -19,16 +19,18 @@ class TopicController {
 
     private getTopics = async (req: Request, res: Response) => {
         const topics = await this.topicService.getTopics()
-        res.send(topics)
+        if (topics.error) {
+            return res.status(topics.code).send({ error: topics.error })
+        }
+        res.send(topics.data)
     }
 
     private getTopic = async (req: Request, res: Response) => {
         const topic = await this.topicService.getTopic(req.params.id)
-        if (!topic) {
-            res.status(404).send({ message: 'Topic not found' })
-            return
+        if (topic.error) {
+            return res.status(topic.code).send({ error: topic.error })
         }
-        res.send(topic)
+        res.send(topic.data)
     }
 }
 
