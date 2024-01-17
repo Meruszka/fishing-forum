@@ -1,4 +1,3 @@
-import { NavigateFunction } from "react-router-dom";
 import { ApiClient, LoginResponse } from "../../common/apiClient";
 
 export interface ValidationResult {
@@ -19,8 +18,6 @@ export const validateRegister = (username: string, password: string): Validation
       errors.push("Username and password must have a length greater than 0.");
     }
 
-    // Add other error messages based on your specific character validation rules
-
     return { isValid: false, errors };
   }
 };
@@ -39,34 +36,16 @@ const validateCharacters = (): ValidationResult => {
   return { isValid: true };
 };
 
-export const handleLoginRest = async (apiClient: ApiClient, username: string, password: string, callback: NavigateFunction): Promise<void> => {
-  try {
-    const res: LoginResponse = await apiClient.login({
+export const handleLoginRest = async (apiClient: ApiClient, username: string, password: string): Promise<LoginResponse> => {
+  return await apiClient.login({
       username,
       password,
-    });
-    if (res.status === 200) {
-      callback("/");
-    } else {
-      console.error("Login failed:", res.status);
-    }
-  } catch (error) {
-    console.error("An error occurred during login:", error);
-  }
+  });
 }
 
-export const handleRegisterRest = async (apiClient: ApiClient, username: string, password: string, callback: NavigateFunction): Promise<void> => {
-  try {
-    const res = await apiClient.register({
-      username,
-      password,
-    });
-    if (res.status === 200) {
-      callback("/");
-    } else {
-      console.error("Registration failed:", res.status);
-    }
-  } catch (error) {
-    console.error("An error occurred during registration:", error);
-  }
+export const handleRegisterRest = async (apiClient: ApiClient, username: string, password: string): Promise<LoginResponse> => {
+  return await apiClient.register({
+    username,
+    password,
+  });
 }

@@ -12,6 +12,8 @@ import { ApiProvider } from "./providers/api/apiContext.provider";
 import UserProfile from "./components/userProfile/userProfile.component";
 import NavBar from "./components/navBar/navBar.component";
 import { CurrentUserProvider } from "./providers/currentUser/currentUser.provider";
+import TopicList from "./components/forum/topicList/topicList";
+import TopicPage from "./components/forum/topicPage/topicPage";
 
 function Home(): ReactElement {
   return (
@@ -24,7 +26,7 @@ function Home(): ReactElement {
 
 function ErrorBoundry(): ReactElement {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-red-500 text-white">
+    <div className="h-screen flex items-center justify-center bg-red-500 text-white">
       <div className="text-center">
         <h1 className="text-6xl font-bold mb-4">Error</h1>
         <p className="text-lg">Something went wrong. Please try again later.</p>
@@ -39,6 +41,8 @@ const router = createBrowserRouter(
     <Route path="/" element={<Home />} errorElement={<ErrorBoundry />}>
       <Route path="login" element={<LoginScreen />} />
       <Route path="fishing-spots" element={<FishingSpots />} />
+      <Route path="forum" element={<TopicList />} />
+      <Route path="forum/topics/:topicId" element={<TopicPage />} />
       <Route path="user-profile" element={<UserProfile />} />
       <Route path="*" element={<ErrorBoundry />} />
     </Route>

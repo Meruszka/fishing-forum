@@ -5,13 +5,17 @@ import {
   Friend,
   Gear,
   Post,
-  User,
 } from "../../providers/currentUser/currentUser.type";
+import LoadingScreen from "../../common/loadingScreen/loadingScreen.component";
 
 const UserProfile: React.FC = (): ReactElement => {
-  const user: User | null = useCurrentUser();
+  const user = useCurrentUser();
+
+  if (!user) {
+    return <LoadingScreen />;
+  }
+
   console.log(user);
-  if (!user) return <div>Loading...</div>;
   return (
     <div className="container mx-auto mt-8">
       <div className="flex">
@@ -71,11 +75,9 @@ const UserProfile: React.FC = (): ReactElement => {
         <ul className="flex space-x-4">
           {user.friends.map((friend: Friend) => (
             <li key={friend._id}>
-              <img
-                src={friend.user.profilePicture}
-                alt={`${friend.user.username}'s profile`}
-                className="w-10 h-10 rounded-full"
-              />
+              <div className="flex flex-col items-center">
+                {friend.username}
+              </div>
             </li>
           ))}
         </ul>
