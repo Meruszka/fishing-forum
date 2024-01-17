@@ -5,13 +5,16 @@ import {
   Friend,
   Gear,
   Post,
-  User,
 } from "../../providers/currentUser/currentUser.type";
+import LoadingScreen from "../../common/loadingScreen/loadingScreen.component";
 
 const UserProfile: React.FC = (): ReactElement => {
-  const user: User | null = useCurrentUser();
-  console.log(user);
-  if (!user) return <div>Loading...</div>;
+  const user = useCurrentUser();
+
+  if (!user) {
+    return <LoadingScreen />;
+  }
+
   return (
     <div className="container mx-auto mt-8">
       <div className="flex">

@@ -15,20 +15,24 @@ const LoginScreen = () => {
   const [password, setPassword] = useState<string>("");
   const [isButtonsDisabled, setIsButtonsDisabled] = useState<boolean>(true);
   const [errorInForm, setErrorInForm] = useState<string>("");
-  const apiClient = useApiClient();
 
+  const apiClient = useApiClient();
   const navigate = useNavigate();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("handleLogin");
-    handleLoginRest(apiClient, username, password, navigate);
+    const result = await handleLoginRest(apiClient, username, password);
+    if (result.status === 200) {
+      navigate("/");
+    }
   };
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("handleRegister");
-    handleRegisterRest(apiClient, username, password, navigate);
+    const result = await handleRegisterRest(apiClient, username, password);
+    if (result.status === 200) {
+      navigate("/");
+    }
   };
 
   const handleFormChange = () => {

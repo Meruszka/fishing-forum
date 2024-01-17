@@ -92,6 +92,7 @@ export class ApiClient {
   public async login(data: LoginRequest): Promise<LoginResponse> {
     const res: LoginResponse = await this.axiosInstance.post('/user/login', data);
     if (res.data.token) {
+      console.log(res.data.token);
       localStorage.setItem('token', res.data.token);
     }
     return res;
@@ -112,20 +113,6 @@ export class ApiClient {
   public async getCurrentUser(): Promise<AxiosResponse<User>> {
     return this.get<User>('/user/self');
   }
-
-  // Add other HTTP methods as needed (put, delete, etc.)
-
-  // private async refreshToken(): Promise<string | null> {
-  //   try {
-  //     // Implement your token refresh logic here
-  //     const newToken = 'newToken'; // Replace with the refreshed token
-  //     localStorage.setItem('token', newToken);
-  //     return newToken;
-  //   } catch (error) {
-  //     console.error('Token refresh failed:', error);
-  //     return null;
-  //   }
-  // }
 }
 
 export default new ApiClient();
