@@ -4,7 +4,9 @@ import { UserService } from './User.service'
 class PostService {
     async getPostsByTopic(topicId: string) {
         try {
-            const posts = await Post.find({ topic: topicId }).populate('author', 'username _id')
+            const posts = await Post.find({ topic: topicId })
+                .populate('author', 'username _id')
+                .sort({ creationDate: -1 })
             return { code: 200, data: posts }
         } catch (err) {
             console.error(err)
