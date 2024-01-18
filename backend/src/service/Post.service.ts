@@ -65,7 +65,9 @@ class PostService {
             await User.findByIdAndUpdate(authorId, { $inc: { score: 10 } })
             UserService.runPointsUpdate(authorId)
 
-            return { code: 201, data: savedPost }
+            const populatedPost = await Post.findById(savedPost._id).populate('author', 'username _id')
+
+            return { code: 201, data: populatedPost }
         } catch (err) {
             console.error(err)
             return { code: 500, error: 'Internal Server Error' }
