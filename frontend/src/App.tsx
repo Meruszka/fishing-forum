@@ -14,6 +14,7 @@ import NavBar from "./components/navBar/navBar.component";
 import { CurrentUserProvider } from "./providers/currentUser/currentUser.provider";
 import TopicList from "./components/forum/topicList/topicList";
 import TopicPage from "./components/forum/topicPage/topicPage";
+import PostPage from "./components/forum/postPage/postPage";
 
 function Home(): ReactElement {
   return (
@@ -43,6 +44,7 @@ const router = createBrowserRouter(
       <Route path="fishing-spots" element={<FishingSpots />} />
       <Route path="forum" element={<TopicList />} />
       <Route path="forum/topics/:topicId" element={<TopicPage />} />
+      <Route path="forum/topics/:topicId/post/:postId" element={<PostPage />} />
       <Route path="user-profile" element={<UserProfile />} />
       <Route path="*" element={<ErrorBoundry />} />
     </Route>
