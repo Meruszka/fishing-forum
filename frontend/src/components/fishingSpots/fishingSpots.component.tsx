@@ -45,7 +45,11 @@ const FishingSpots: React.FC = (): ReactElement => {
   }
 
   const handleNewSpot = async (newSpot: FishingSpotDTO) => {
-    const newSpotReponse = await newFishingSpotREST(apiClient, newSpot);
+    const newSpotReponse = await newFishingSpotREST(apiClient, {
+      ...newSpot,
+      latitude: newSpotCoords.lat,
+      longitude: newSpotCoords.lng,
+    });
     setFishingSpots((prev) => [...prev, newSpotReponse]);
     setInAddingMode(false);
   };
@@ -61,6 +65,7 @@ const FishingSpots: React.FC = (): ReactElement => {
 
   const handleDeleteSpot = (id: string) => {
     deleteFishingSpotREST(apiClient, id);
+    setFishingSpots((prev) => prev.filter((spot) => spot._id !== id));
   };
 
   // 5rem is not ideal, but it's a quick fix for now
@@ -70,7 +75,6 @@ const FishingSpots: React.FC = (): ReactElement => {
         isOpen={inAddingMode}
         onClose={() => setInAddingMode(false)}
         onConfirm={handleNewSpot}
-        coords={newSpotCoords}
       />
       <MapContainer
         center={[coords.lat, coords.lng]}
@@ -111,13 +115,11 @@ const FishingSpots: React.FC = (): ReactElement => {
           );
         })}
       </MapContainer>
-      <div className="w-1/5">
-        <SideBar
-          handleClick={handleClick}
-          fishingSpots={fishingSpots}
-          onDelete={handleDeleteSpot}
-        />
-      </div>
+      <SideBar
+        handleClick={handleClick}
+        fishingSpots={fishingSpots}
+        onDelete={handleDeleteSpot}
+      />
     </div>
   );
 };
