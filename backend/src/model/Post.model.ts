@@ -6,6 +6,7 @@ const PostSchema = new Schema({
     content: String,
     creationDate: Date,
     type: String,
+    lastResponse: { type: Schema.Types.ObjectId, ref: 'Response' },
     topic: { type: Schema.Types.ObjectId, ref: 'Topic' },
     author: { type: Schema.Types.ObjectId, ref: 'User' },
     responses: [{ type: Schema.Types.ObjectId, ref: 'Response' }],
