@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express'
 import { PostService } from '../service'
 import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
 import { PostValidator } from '../model/Post.model'
+import { ResponseValidator } from '../model/Response.model'
 
 class PostController {
     public router: Router
@@ -57,8 +58,9 @@ class PostController {
 
     private addResponse = async (req: RequestWithUser, res: Response) => {
         const response = req.body
-        if (!response || !response.content) {
-            return res.status(400).send({ error: 'Invalid response' })
+        const validationResult = ResponseValidator.safeParse(response)
+        if (!validationResult.success) {
+            return res.status(400).send({ error: validationResult.error.format() })
         }
         const postId = req.params.id
         const authorId = req.user?._id
