@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import LinkCustom from "../../common/linkCustom/LinkCustom.component";
 import { useApiClient } from "../../providers/api/apiContext.hook";
-import Logo from "../../../public/fishingLogo.svg";
+import Logo from "../../../public/logo.png";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 
 const Navbar: React.FC = (): ReactElement => {
@@ -32,7 +32,6 @@ const Navbar: React.FC = (): ReactElement => {
               src={Logo}
               alt="logo"
               className="w-10 h-10"
-              style={{ filter: "invert(100)" }}
             />
           </div>
         </LinkCustom>

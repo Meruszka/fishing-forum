@@ -4,7 +4,9 @@ import { UserService } from './User.service'
 class PostService {
     async getPostsByTopic(topicId: string) {
         try {
-            const posts = await Post.find({ topic: topicId }).populate('author', 'username _id')
+            const posts = await Post.find({ topic: topicId })
+                .populate('author', 'username _id')
+                .sort({ creationDate: -1 })
             return { code: 200, data: posts }
         } catch (err) {
             console.error(err)
@@ -63,7 +65,9 @@ class PostService {
             await User.findByIdAndUpdate(authorId, { $inc: { score: 10 } })
             UserService.runPointsUpdate(authorId)
 
-            return { code: 201, data: savedPost }
+            const populatedPost = await Post.findById(savedPost._id).populate('author', 'username _id')
+
+            return { code: 201, data: populatedPost }
         } catch (err) {
             console.error(err)
             return { code: 500, error: 'Internal Server Error' }
@@ -95,7 +99,9 @@ class PostService {
             await User.findByIdAndUpdate(authorId, { $inc: { score: 5 } })
             UserService.runPointsUpdate(authorId)
 
-            return { code: 201, data: savedResponse }
+            const populatedResponse = await Response.findById(savedResponse._id).populate('author', 'username _id')
+
+            return { code: 201, data: populatedResponse }
         } catch (err) {
             console.error(err)
             return { code: 500, error: 'Internal Server Error' }

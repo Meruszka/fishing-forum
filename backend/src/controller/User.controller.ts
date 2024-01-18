@@ -17,6 +17,7 @@ class UserController {
     private initRoutes() {
         this.router.get(`${this.path}/self`, verifyTokenMiddleware, this.getSelf)
 
+        this.router.get(`${this.path}/username/:username`, this.getUserByUsername)
         this.router.get(`${this.path}/:id`, this.getUser)
         this.router.put(`${this.path}/:id`, verifyTokenMiddleware, this.updateUser)
         this.router.delete(`${this.path}/:id`, verifyTokenMiddleware, this.deleteUser)
@@ -34,6 +35,18 @@ class UserController {
             return res.status(400).send({ error: 'Missing id' })
         }
         const result = await this.userService.getUser(id)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.send(result.data)
+    }
+
+    private getUserByUsername = async (req: Request, res: Response) => {
+        const username = req.params.username
+        if (!username) {
+            return res.status(400).send({ error: 'Missing username' })
+        }
+        const result = await this.userService.getUserByUsername(username)
         if (result.error) {
             return res.status(result.code).send({ error: result.error })
         }

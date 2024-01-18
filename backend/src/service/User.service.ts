@@ -17,8 +17,8 @@ class UserService {
 
             if (!user) return { code: 404, error: 'User not found' }
 
-            const { _id, password, ...userWithoutPassword } = user.toObject()
-            return { code: 200, data: { id: _id, ...userWithoutPassword } }
+            const { password, ...userWithoutPassword } = user.toObject()
+            return { code: 200, data: userWithoutPassword }
         } catch (err) {
             console.error(err)
             return { code: 500, error: 'Internal Server Error' }
@@ -203,6 +203,18 @@ class UserService {
     }
 
     static async runBadgesUpdate(id: string) {}
+
+    async getUserByUsername(username: string) {
+        try {
+            const users = await User.find({ username: { $regex: new RegExp(username, 'i') } }).select(
+                'username profilePicture _id'
+            )
+            return { code: 200, data: users }
+        } catch (err) {
+            console.error(err)
+            return { code: 500, error: 'Internal Server Error' }
+        }
+    }
 }
 
 export { UserService }

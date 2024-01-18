@@ -15,12 +15,15 @@ import { CurrentUserProvider } from "./providers/currentUser/currentUser.provide
 import TopicList from "./components/forum/topicList/topicList";
 import TopicPage from "./components/forum/topicPage/topicPage";
 import PostPage from "./components/forum/postPage/postPage";
+import { WebsocketProvider } from "./providers/websocket/websocket.provider";
+import Chat from "./components/chat/chat";
 
 function Home(): ReactElement {
   return (
     <div className="h-full w-full">
       <NavBar />
       <Outlet />
+      <Chat />
     </div>
   );
 }
@@ -56,7 +59,9 @@ function App(): ReactElement {
     <>
       <ApiProvider>
         <CurrentUserProvider>
-          <RouterProvider router={router} />
+          <WebsocketProvider>
+            <RouterProvider router={router} />
+          </WebsocketProvider>
         </CurrentUserProvider>
       </ApiProvider>
     </>
