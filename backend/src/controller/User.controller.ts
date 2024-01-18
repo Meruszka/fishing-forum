@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express'
 import { UserService } from '../service/User.service'
 import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
+import { GearValidator } from '../model/Gear.model'
 
 class UserController {
     public router: Router
@@ -123,8 +124,9 @@ class UserController {
             return
         }
 
-        if (!gearData || !gearData.name || !gearData.yearOfProduction || !gearData.kind) {
-            res.status(400).json({ error: 'Missing gear data' })
+        const validationResult = GearValidator.safeParse(gearData)
+        if (!validationResult.success) {
+            res.status(400).json({ error: validationResult.error.format() })
             return
         }
 

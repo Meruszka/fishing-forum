@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
 import { FishingSpotService } from '../service'
 import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
+import { FishingSpotValidator } from '../model/FishingSpot.model'
 
 class FishingSpotController {
     public router: Router
@@ -39,17 +40,9 @@ class FishingSpotController {
 
     private addFishingSpot = async (req: RequestWithUser, res: Response) => {
         const fishingSpotData = req.body
-        if (
-            !fishingSpotData ||
-            !fishingSpotData.name ||
-            !fishingSpotData.longitude ||
-            !fishingSpotData.latitude ||
-            !fishingSpotData.description ||
-            !fishingSpotData.rating ||
-            !fishingSpotData.type ||
-            !fishingSpotData.image
-        ) {
-            return res.status(400).send({ error: 'Invalid fishingSpot data' })
+        const validationResult = FishingSpotValidator.safeParse(fishingSpotData)
+        if (!validationResult.success) {
+            return res.status(400).send({ error: validationResult.error })
         }
         const authorId = req.user?._id
         if (!authorId) {
