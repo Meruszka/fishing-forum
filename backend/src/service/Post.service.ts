@@ -33,6 +33,20 @@ class PostService {
         }
     }
 
+    async getRecentPosts(count: number) {
+        try {
+            const posts = await Post.find()
+                .sort({ creationDate: -1 })
+                .limit(count)
+                .populate('author', 'username profilePicture _id')
+
+            return { code: 200, data: posts }
+        } catch (err) {
+            console.error(err)
+            return { code: 500, error: 'Internal Server Error' }
+        }
+    }
+
     async createPost(postData: any, topicId: string, authorId: string) {
         try {
             const topic = await Topic.findById(topicId)

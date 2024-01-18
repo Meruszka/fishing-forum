@@ -2,11 +2,13 @@ import React, { ReactElement, useEffect, useState } from "react";
 import LinkCustom from "../../common/linkCustom/LinkCustom.component";
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import Logo from "../../../public/fishingLogo.svg";
+import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 
 const Navbar: React.FC = (): ReactElement => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const apiClient = useApiClient();
+  const user = useCurrentUser();
 
   useEffect(() => {
     setIsLoggedIn(apiClient.isLogged());
@@ -46,7 +48,7 @@ const Navbar: React.FC = (): ReactElement => {
                 className="focus:outline-none h-full"
               >
                 <img
-                  src="https://www.wideopenspaces.com/wp-content/uploads/sites/3/2014/10/ftd-boss.jpg?fit=900%2C484"
+                  src={user?.profilePicture}
                   alt="XD"
                   className="w-8 h-8 rounded-full"
                 />

@@ -11,8 +11,8 @@ export interface FishingSpotDTO {
   image: string,
 }
 
-export const newFishingSpotREST = async (apiClient: ApiClient, fishingSpot: FishingSpotDTO): Promise<void> => {
-  const response = await apiClient.post<void>('/fishingSpot', fishingSpot);
+export const newFishingSpotREST = async (apiClient: ApiClient, fishingSpot: FishingSpotDTO): Promise<FishingSpot> => {
+  const response = await apiClient.post<FishingSpot>('/fishingSpot', fishingSpot);
   return response.data;
 }
 
