@@ -7,7 +7,6 @@ interface AddingFishingSpotModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (newFishingspot: FishingSpotDTO) => void;
-  coords: { lat: number; lng: number };
 }
 
 const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
@@ -15,15 +14,21 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
 ): ReactElement => {
   const { isOpen, onClose, onConfirm } = props;
 
-  const [newFishingspot, setNewFishingspot] = useState<FishingSpotDTO>({
-    name: "",
-    latitude: props.coords.lat,
-    longitude: props.coords.lng,
-    description: "",
-    rating: 0,
-    type: "",
-    image: "",
-  });
+  const getPlaceholderValues = () => {
+    return {
+      name: "",
+      latitude: 0,
+      longitude: 0,
+      description: "",
+      rating: 0,
+      type: "",
+      image: "",
+    };
+  };
+
+  const [newFishingspot, setNewFishingspot] = useState<FishingSpotDTO>(
+    getPlaceholderValues()
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -31,6 +36,11 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
       ...prev,
       [id]: value,
     }));
+  };
+
+  const handleSubmit = () => {
+    onConfirm(newFishingspot);
+    setNewFishingspot(getPlaceholderValues());
   };
 
   return (
@@ -43,7 +53,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
         <input
           type="text"
           id="name"
-          className="border-2 border-gray-500"
+          className="border-2 border-gray-500 p-2"
           placeholder="Name of the spot"
           value={newFishingspot.name}
           onChange={handleChange}
@@ -52,7 +62,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
         <input
           type="text"
           id="description"
-          className="border-2 border-gray-500"
+          className="border-2 border-gray-500 p-2"
           placeholder="Description of the spot"
           value={newFishingspot.description}
           onChange={handleChange}
@@ -61,7 +71,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
         <input
           type="number"
           id="rating"
-          className="border-2 border-gray-500"
+          className="border-2 border-gray-500 p-2"
           placeholder="Rating of the spot"
           value={newFishingspot.rating}
           onChange={handleChange}
@@ -70,7 +80,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
         <input
           type="text"
           id="type"
-          className="border-2 border-gray-500"
+          className="border-2 border-gray-500 p-2"
           placeholder="Type of the spot"
           value={newFishingspot.type}
           onChange={handleChange}
@@ -79,14 +89,14 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
         <input
           type="text"
           id="image"
-          className="border-2 border-gray-500"
+          className="border-2 border-gray-500 p-2"
           placeholder="Image (URL) of the spot"
           value={newFishingspot.image}
           onChange={handleChange}
         />
         <button
           className="bg-green-500 text-white px-4 py-2 mt-2"
-          onClick={() => onConfirm(newFishingspot)}
+          onClick={handleSubmit}
         >
           Add
         </button>

@@ -17,6 +17,7 @@ import {
 import { ImBin } from "react-icons/im";
 import AddingFishingspot from "./addingFishingSpot.component";
 import AddingFishingSpotModal from "./addingFishingSpotModal.component";
+import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 
 const FishingSpots: React.FC = (): ReactElement => {
   const mapRef = useRef<Map | null>(null);
@@ -45,7 +46,11 @@ const FishingSpots: React.FC = (): ReactElement => {
   }
 
   const handleNewSpot = async (newSpot: FishingSpotDTO) => {
-    const newSpotReponse = await newFishingSpotREST(apiClient, newSpot);
+    const newSpotReponse = await newFishingSpotREST(apiClient, {
+      ...newSpot,
+      latitude: newSpotCoords.lat,
+      longitude: newSpotCoords.lng,
+    });
     setFishingSpots((prev) => [...prev, newSpotReponse]);
     setInAddingMode(false);
   };
@@ -61,6 +66,7 @@ const FishingSpots: React.FC = (): ReactElement => {
 
   const handleDeleteSpot = (id: string) => {
     deleteFishingSpotREST(apiClient, id);
+    setFishingSpots((prev) => prev.filter((spot) => spot._id !== id));
   };
 
   // 5rem is not ideal, but it's a quick fix for now
@@ -70,7 +76,6 @@ const FishingSpots: React.FC = (): ReactElement => {
         isOpen={inAddingMode}
         onClose={() => setInAddingMode(false)}
         onConfirm={handleNewSpot}
-        coords={newSpotCoords}
       />
       <MapContainer
         center={[coords.lat, coords.lng]}
@@ -93,16 +98,16 @@ const FishingSpots: React.FC = (): ReactElement => {
             <div key={spot._id}>
               <Marker position={[spot.latitude, spot.longitude]}>
                 <Popup>
-                  <div className="flex w-fit">
+                  <div className="flex w-fit min-w-32">
                     <div>
                       <h2 className="font-bold text-xl mb-4">{spot.name}</h2>
                       <p className="text-gray-700">{spot.description}</p>
-                      <button
-                        className="bg-red-500 text-white px-4 py-2 mt-2"
+                      <ButtonCustom
+                        type="removal"
                         onClick={() => handleDeleteSpot(spot._id)}
                       >
                         <ImBin />
-                      </button>
+                      </ButtonCustom>
                     </div>
                   </div>
                 </Popup>
@@ -111,13 +116,11 @@ const FishingSpots: React.FC = (): ReactElement => {
           );
         })}
       </MapContainer>
-      <div className="w-1/5">
-        <SideBar
-          handleClick={handleClick}
-          fishingSpots={fishingSpots}
-          onDelete={handleDeleteSpot}
-        />
-      </div>
+      <SideBar
+        handleClick={handleClick}
+        fishingSpots={fishingSpots}
+        onDelete={handleDeleteSpot}
+      />
     </div>
   );
 };

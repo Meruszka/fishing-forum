@@ -92,7 +92,6 @@ export class ApiClient {
   public async login(data: LoginRequest): Promise<LoginResponse> {
     const res: LoginResponse = await this.axiosInstance.post('/user/login', data);
     if (res.data.token) {
-      console.log(res.data.token);
       localStorage.setItem('token', res.data.token);
     }
     return res;
