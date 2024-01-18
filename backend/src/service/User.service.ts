@@ -17,8 +17,8 @@ class UserService {
 
             if (!user) return { code: 404, error: 'User not found' }
 
-            const { _id, password, ...userWithoutPassword } = user.toObject()
-            return { code: 200, data: { id: _id, ...userWithoutPassword } }
+            const { password, ...userWithoutPassword } = user.toObject()
+            return { code: 200, data: userWithoutPassword }
         } catch (err) {
             console.error(err)
             return { code: 500, error: 'Internal Server Error' }
