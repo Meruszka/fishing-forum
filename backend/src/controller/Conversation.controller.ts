@@ -1,6 +1,7 @@
 import { Response, Router } from 'express'
 import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
 import { ConversationService } from '../service'
+import { MessageValidator } from '../model/Message.model'
 
 class ConversationController {
     public router: Router
@@ -60,6 +61,12 @@ class ConversationController {
         }
 
         const { _id: userId } = req.user
+
+        const validationResult = MessageValidator.safeParse(req.body)
+        if (!validationResult.success) {
+            res.status(400).json({ error: validationResult.error.format() })
+            return
+        }
         const { interlocutorId, content } = req.body
 
         const message = await this.conversationService.sendMessage(userId, interlocutorId, content)
