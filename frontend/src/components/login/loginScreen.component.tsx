@@ -94,15 +94,13 @@ const LoginScreen = () => {
           <ButtonCustom
             label="Login"
             onClick={handleLogin}
-            color="blue"
-            size="large"
+            type="login"
             disabled={isButtonsDisabled}
           />
           <ButtonCustom
             label="Register"
             onClick={handleRegister}
-            color="blue"
-            size="large"
+            type="register"
             disabled={isButtonsDisabled}
           />
         </form>

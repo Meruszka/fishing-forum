@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 import { FishingSpot } from "../../providers/currentUser/currentUser.type";
 import { ImBin } from "react-icons/im";
+import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 
 interface SpotCustomProps {
   spot: FishingSpot;
@@ -23,12 +24,13 @@ const SpotCustom: React.FC<SpotCustomProps> = (
         <p className="text-gray-700">{spot.description}</p>
       </div>
 
-      <button
-        className="bg-red-500 text-white absolute top-0 right-0 p-2 rounded transition-all duration-300 hover:bg-red-600 m-1"
+      <ButtonCustom
+        className="absolute top-1 right-1"
+        type="removal"
         onClick={() => props.onDelete(spot._id)}
       >
         <ImBin />
-      </button>
+      </ButtonCustom>
     </div>
   );
 };

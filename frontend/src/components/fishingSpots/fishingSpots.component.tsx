@@ -17,6 +17,7 @@ import {
 import { ImBin } from "react-icons/im";
 import AddingFishingspot from "./addingFishingSpot.component";
 import AddingFishingSpotModal from "./addingFishingSpotModal.component";
+import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 
 const FishingSpots: React.FC = (): ReactElement => {
   const mapRef = useRef<Map | null>(null);
@@ -97,16 +98,16 @@ const FishingSpots: React.FC = (): ReactElement => {
             <div key={spot._id}>
               <Marker position={[spot.latitude, spot.longitude]}>
                 <Popup>
-                  <div className="flex w-fit">
+                  <div className="flex w-fit min-w-32">
                     <div>
                       <h2 className="font-bold text-xl mb-4">{spot.name}</h2>
                       <p className="text-gray-700">{spot.description}</p>
-                      <button
-                        className="bg-red-500 text-white px-4 py-2 mt-2"
+                      <ButtonCustom
+                        type="removal"
                         onClick={() => handleDeleteSpot(spot._id)}
                       >
                         <ImBin />
-                      </button>
+                      </ButtonCustom>
                     </div>
                   </div>
                 </Popup>
