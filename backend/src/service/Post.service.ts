@@ -6,6 +6,10 @@ class PostService {
         try {
             const posts = await Post.find({ topic: topicId })
                 .populate('author', 'username _id')
+                .populate({
+                    path: 'lastResponse',
+                    populate: { path: 'author', select: 'username profilePicture _id' },
+                })
                 .sort({ creationDate: -1 })
             return { code: 200, data: posts }
         } catch (err) {
@@ -90,6 +94,7 @@ class PostService {
             const savedResponse = await newResponse.save()
 
             await Post.findByIdAndUpdate(postId, { $push: { responses: savedResponse._id } })
+            await Post.findByIdAndUpdate(postId, { lastResponse: savedResponse._id })
             // add 1 point to the post author
             if (post.author) {
                 await User.findByIdAndUpdate(post.author, { $inc: { score: 1 } })
