@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { z } from "zod";
+import { z } from 'zod'
 
 const PostSchema = new Schema({
     title: String,
