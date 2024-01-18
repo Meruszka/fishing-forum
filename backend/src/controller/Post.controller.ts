@@ -20,6 +20,20 @@ class PostController {
         this.router.get(`${this.path}/topic/:id`, this.getPostsByTopic)
         this.router.post(`${this.path}/topic/:id`, verifyTokenMiddleware, this.createPost)
         this.router.post(`${this.path}/:id`, verifyTokenMiddleware, this.addResponse)
+        this.router.get(`${this.path}`, this.getRecentPosts)
+    }
+
+    private getRecentPosts = async (req: Request, res: Response) => {
+        const n = req.query.n
+        const count = n ? parseInt(n as string) : 5
+        if (isNaN(count) || count < 1) {
+            return res.status(400).send({ error: 'Invalid count' })
+        }
+        const result = await this.postService.getRecentPosts(count)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.send(result.data)
     }
 
     private getPostsByTopic = async (req: Request, res: Response) => {
