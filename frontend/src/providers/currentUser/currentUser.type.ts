@@ -35,7 +35,7 @@ export interface Post extends Entity {
   content: string;
   creationDate: string;
   type: string;
-  topic: { _id: string };
+  topic: { _id: string, name: string };
   author: { _id: string, username: string };
   responses: Response[];
 }

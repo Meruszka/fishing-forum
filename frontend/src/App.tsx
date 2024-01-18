@@ -42,7 +42,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<Home />} errorElement={<ErrorBoundry />}>
       <Route path="login" element={<LoginScreen />} />
       <Route path="fishing-spots" element={<FishingSpots />} />
-      <Route path="forum" element={<TopicList />} />
+      <Route path="" element={<TopicList />} />
       <Route path="forum/topics/:topicId" element={<TopicPage />} />
       <Route path="forum/topics/:topicId/post/:postId" element={<PostPage />} />
       <Route path="user-profile" element={<UserProfile />} />
