@@ -1,20 +1,29 @@
-import React, { ReactElement, useState } from "react";
-import { Post, getInitialPosts } from "./post.type";
-import { getInitialTopics } from "../topicList/topicList.type";
+import React, { ReactElement, useState, useEffect } from "react";
+import { Post } from "../../../providers/currentUser/currentUser.type";
 import PostItem from "./postItem";
 import { useParams } from 'react-router-dom';
+import { useApiClient } from "../../../providers/api/apiContext.hook";
+import { getPostsByTopicREST } from "./topicPage.service";
+
 
 const TopicPage: React.FC = (): ReactElement => {
     const { topicId } = useParams<{ topicId: string }>();
-    const topic = getInitialTopics().find(topic => topic._id === topicId);
-    const [posts] = useState<Post[]>(getInitialPosts().filter(post => post.topic?._id === topic?._id));
+    const [posts, setPosts] = useState<Post[]>([]);
+    const apiClient = useApiClient();
+  
+    useEffect(() => {
+      getPostsByTopicREST(apiClient, topicId ?? "").then((posts) => {
+        setPosts(posts);
+      });
+      
+    }, [apiClient, topicId]);
   
     return (
         <div>
           <h1 className="text-2xl font-bold mb-4 max-w-screen-lg mx-auto">Forum</h1>
           <ul>
             {posts.map((post) => (
-              <PostItem key={post._id} post={post} topicId={topicId ?? "topic"} />
+              <PostItem key={post._id} post={post} />
             ))}
           </ul>
         </div>

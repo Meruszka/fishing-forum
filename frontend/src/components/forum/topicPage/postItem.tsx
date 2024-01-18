@@ -1,26 +1,29 @@
 import React from "react";
-import { Post } from "./post.type";
+import { Post } from "../../../providers/currentUser/currentUser.type";
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 interface PostCustomProps {
     post: Post;
-    topicId: string;
 }
 
-const PostItem: React.FC<PostCustomProps> = ({ post, topicId }) => {
-    const formattedDate = post.creationDate.toLocaleDateString('en-GB', {
+const PostItem: React.FC<PostCustomProps> = ({ post }) => {
+  const creationDate = new Date(post.creationDate)
+  const formattedDate = creationDate.toLocaleDateString('en-GB', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
-      });
+  });
+    const { topicId } = useParams<{ topicId: string }>();
+
     return (
         <div className="max-w-screen-lg mx-auto"> 
           <div className="bg-white p-4 mb-4 shadow-md rounded-md">
-            <Link to={`/forum/topics/${topicId}/${post._id}`} className="block">
+            <Link to={`/forum/topics/${topicId}/post/${post._id}`} className="block">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
-                  <p className="text-gray-600 mb-2">{`by ${post.author?._id}, ${formattedDate}`}</p>
+                  <p className="text-gray-600 mb-2">{`by ${post.author?.username}, ${formattedDate}`}</p>
                 </div>
                 <div className="flex items-end text-center gap-10"> 
                   <div className="flex flex-col items-center"> 
