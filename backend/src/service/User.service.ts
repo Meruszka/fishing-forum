@@ -203,6 +203,18 @@ class UserService {
     }
 
     static async runBadgesUpdate(id: string) {}
+
+    async getUserByUsername(username: string) {
+        try {
+            const users = await User.find({ username: { $regex: new RegExp(username, 'i') } }).select(
+                'username profilePicture _id'
+            )
+            return { code: 200, data: users }
+        } catch (err) {
+            console.error(err)
+            return { code: 500, error: 'Internal Server Error' }
+        }
+    }
 }
 
 export { UserService }
