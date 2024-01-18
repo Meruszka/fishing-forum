@@ -30,6 +30,10 @@ class ConversationService {
                 members: { $in: [userId] },
             })
                 .populate({
+                    path: 'members',
+                    select: 'username profilePicture _id',
+                })
+                .populate({
                     path: 'lastMessage',
                     populate: {
                         path: 'sender',
