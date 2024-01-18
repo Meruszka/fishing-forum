@@ -1,6 +1,8 @@
 import { Request, Response, Router } from 'express'
 import { PostService } from '../service'
 import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
+import { PostValidator } from '../model/Post.model'
+import { ResponseValidator } from '../model/Response.model'
 
 class PostController {
     public router: Router
@@ -18,6 +20,20 @@ class PostController {
         this.router.get(`${this.path}/topic/:id`, this.getPostsByTopic)
         this.router.post(`${this.path}/topic/:id`, verifyTokenMiddleware, this.createPost)
         this.router.post(`${this.path}/:id`, verifyTokenMiddleware, this.addResponse)
+        this.router.get(`${this.path}`, this.getRecentPosts)
+    }
+
+    private getRecentPosts = async (req: Request, res: Response) => {
+        const n = req.query.n
+        const count = n ? parseInt(n as string) : 5
+        if (isNaN(count) || count < 1) {
+            return res.status(400).send({ error: 'Invalid count' })
+        }
+        const result = await this.postService.getRecentPosts(count)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.send(result.data)
     }
 
     private getPostsByTopic = async (req: Request, res: Response) => {
@@ -38,8 +54,9 @@ class PostController {
 
     private createPost = async (req: RequestWithUser, res: Response) => {
         const post = req.body
-        if (!post || !post.title || !post.content) {
-            return res.status(400).send({ error: 'Invalid post' })
+        const validationResult = PostValidator.safeParse(post)
+        if (!validationResult.success) {
+            return res.status(400).send({ error: validationResult.error.format() })
         }
         const topicId = req.params.id
         const authorId = req.user?._id
@@ -55,8 +72,9 @@ class PostController {
 
     private addResponse = async (req: RequestWithUser, res: Response) => {
         const response = req.body
-        if (!response || !response.content) {
-            return res.status(400).send({ error: 'Invalid response' })
+        const validationResult = ResponseValidator.safeParse(response)
+        if (!validationResult.success) {
+            return res.status(400).send({ error: validationResult.error.format() })
         }
         const postId = req.params.id
         const authorId = req.user?._id
