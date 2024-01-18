@@ -1,5 +1,5 @@
 import React from "react";
-import { Topic } from "./topicList.type";
+import { Topic } from "../../../providers/currentUser/currentUser.type";
 import { Link } from 'react-router-dom';
 
 interface TopicCustomProps {
@@ -26,7 +26,7 @@ const TopicItem: React.FC<TopicCustomProps> = ({ topic }) => {
                     </div>
                   </div>
                   <div className="self-center">
-                    {topic.lastPost ? `Last Post: ${topic.lastPost._id}` : 'No posts in this topic yet'}
+                    {topic.lastPost ? `Last Post: ${topic.lastPost.title}` : 'No posts in this topic yet'}
                   </div>
                 </div>
               </div>

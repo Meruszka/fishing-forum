@@ -23,10 +23,28 @@ export interface Entity {
   _id: string,
 }
 
+export interface Topic extends Entity {
+  name: string;
+  description: string;
+  numberOfPosts: number;
+  lastPost?: Post | null;
+}
+
 export interface Post extends Entity {
-  title: string,
-  description: string,
-  date: Date,
+  title: string;
+  content: string;
+  creationDate: string;
+  type: string;
+  topic: { _id: string };
+  author: { _id: string, username: string };
+  responses: Response[];
+}
+
+export interface Response extends Entity {
+  content: string;
+  creationDate: string;
+  author: { _id: string, username: string };
+  post: { _id: string};
 }
 
 export interface Badge extends Entity {
