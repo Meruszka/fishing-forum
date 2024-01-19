@@ -7,13 +7,16 @@ import LinkCustom from "../../../common/linkCustom/LinkCustom.component";
 
 const TopicList: React.FC = (): ReactElement => {
     const [topics, setTopics] = useState<Topic[]>([]);
+    // const [posts, setPosts] = useState<Post[]>([]);
     const apiClient = useApiClient();
   
     useEffect(() => {
       getTopicsREST(apiClient).then((topics) => {
         setTopics(topics);
       });
-      
+      // getLastPosts(apiClient).then((posts) => {
+      //   setPosts(posts);
+      // });
     }, [apiClient]);
   
 

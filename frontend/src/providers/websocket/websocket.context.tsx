@@ -1,8 +1,9 @@
 import { createContext } from "react";
+import { WebsocketMessage } from "./websocket.provider";
 
 interface WebsocketContext {
     isReady: boolean
-    val: any
+    val: WebsocketMessage | null
     send: (data: string) => void
 }
 

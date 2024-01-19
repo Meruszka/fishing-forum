@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useEffect, useCallback } from "react";
-import { Post, Topic } from "../../../providers/currentUser/currentUser.type";
+import { Post, Topic, User } from "../../../providers/currentUser/currentUser.type";
 import PostItem from "./postItem";
 import { useParams } from 'react-router-dom';
 import { useApiClient } from "../../../providers/api/apiContext.hook";
@@ -17,6 +17,7 @@ const TopicPage: React.FC = (): ReactElement => {
     const [newPostContent, setNewPostContent] = useState<string>("");
     const [errorInForm, setErrorInForm] = useState<string>("");
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [currentUser, setCurrentUser] = useState<User>();
     const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
     const apiClient = useApiClient();
     const navigate = useNavigate();
@@ -32,7 +33,13 @@ const TopicPage: React.FC = (): ReactElement => {
 
     useEffect(() => {
       setIsLoggedIn(apiClient.isLogged());
-    }, [apiClient]);
+      if(isLoggedIn) {
+        apiClient.getCurrentUser().then((user) => {
+          setCurrentUser(user.data)
+          console.log(user.data._id)
+        });
+      } 
+    }, [apiClient, isLoggedIn]);
 
     const handleButtonClick = useCallback(async () => {
       if(isLoggedIn) {
@@ -117,8 +124,8 @@ const TopicPage: React.FC = (): ReactElement => {
             </form>
           }
           <ul>
-            {posts.map((post) => (
-              <PostItem key={post._id} post={post} />
+            {posts.length === 0 ? <h3 className="text-2xl font-bold mb-4">No posts in this topic for now :((</h3> : posts.map((post) => (
+              <PostItem key={post._id} post={post} currentUserId={currentUser?._id} />
             ))}
           </ul>
         </div>

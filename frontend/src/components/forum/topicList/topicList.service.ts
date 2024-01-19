@@ -16,3 +16,8 @@ export const addPostforTopicId = async (apiClient: ApiClient, topicId: string, t
   const response = await apiClient.post<Post>(`/post/topic/${topicId}`, request);
   return response.data;
 }
+
+export const getLastPosts = async (apiClient: ApiClient): Promise<Post[]> => {
+  const response = await apiClient.get<Post[]>('/post');
+  return response.data;
+}

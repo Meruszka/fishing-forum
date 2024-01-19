@@ -5,11 +5,17 @@ interface WebsocketContextProps {
     children: React.ReactNode
 }
 
+export interface WebsocketMessage {
+    action: string
+    error?: string
+    data?: object
+}
+
 export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
      children 
 }) => {
     const [isReady, setIsReady] = useState(false)
-    const [val, setVal] = useState(null)
+    const [val, setVal] = useState<WebsocketMessage | null>(null)
   
     const ws = useRef<WebSocket | null>(null)
   
@@ -18,7 +24,10 @@ export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   
       socket.onopen = () => setIsReady(true)
       socket.onclose = () => setIsReady(false)
-      socket.onmessage = (event) => setVal(event.data)
+      socket.onmessage = (event) =>{
+        const data = JSON.parse(event.data) as WebsocketMessage
+        setVal(data)
+      }
   
       ws.current = socket
   

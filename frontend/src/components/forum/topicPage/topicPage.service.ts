@@ -21,3 +21,7 @@ export const getUserById = async (apiClient: ApiClient, userId: string): Promise
   const response = await apiClient.get<User>(`/user/${userId}`)
   return response.data
 }
+
+// export const deletePostById = async (apiClient: ApiClient, postId: string): Promise<void> =>{
+
+// }
