@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 import { z } from 'zod'
 
-const FISHING_SPOT_TYPES_VALUES = ['Lake', 'River', 'Pond', 'Other'] as const
+const FISHING_SPOT_TYPES_VALUES = ['Lake', 'River', 'Pond', 'Other', 'Sea', 'Ocean'] as const
 
 const FishingSpotSchema = new Schema({
     name: String,
