@@ -27,16 +27,16 @@ const TopicList: React.FC = (): ReactElement => {
         <LinkCustom to="/" className="text-gray-400" >Home</LinkCustom>
         <h1 className="text-2xl font-bold mb-4">Forum</h1>
         <div className="flex"> 
-          <ul className="w-full"> 
+          <ul key={"topics"} className="w-full"> 
             {topics.map((topic) => (
               <TopicItem key={topic._id} topic={topic} />
             ))}
           </ul>
           <div className="ml-4 h-full bg-white p-4 mb-4 shadow-md rounded-md ">
             <h1 className="text-center text-xl font-bold mb-4" >Last Posts</h1>
-            <ul>
+            <ul key={"posts"}>
               {posts.map((post) => (
-              <Link to={`/forum/topics/${post.topic._id}/post/${post._id}`}>
+              <Link key={post._id} to={`/forum/topics/${post.topic._id}/post/${post._id}`}>
                 <LastPostCard key={post._id} post={post} />
               </Link>
               ))}
