@@ -32,6 +32,8 @@ export const validateAddingSpot = (id: string, value: string): ValidationResult 
       return validateNumber(value, 1, 5, `${id} must be between 1 and 5.`);
     case "image":
       return validateURL(value, `${id} must be a valid URL.`);
+    case 'type':
+      return validateType(value, `${id} must be a valid type.`);
     default:
       return { isValid: false, errors: ["Invalid id"] };
   }
@@ -59,6 +61,15 @@ const validateURL = (url: string, error: string): ValidationResult => {
     new URL(url);
     return { isValid: true };
   } catch (_) {
+    return { isValid: false, errors: [error] };
+  }
+}
+
+const validateType = (type: string, error: string): ValidationResult => {
+  const types = ['Lake', 'River', 'Stream', 'Pond', 'Ocean', 'Sea', 'Other'];
+  if (types.includes(type)) {
+    return { isValid: true };
+  } else {
     return { isValid: false, errors: [error] };
   }
 }
