@@ -106,7 +106,16 @@ class ConversationService {
                 members: { $in: [userId] },
             })
             if (conversation) {
-                await Message.updateMany({ _id: { $in: conversation.messages } }, { $set: { isRead: true } })
+                // mark only the messages that are not already read
+                // mark only the messages from non-current user
+                await Message.updateMany(
+                    {
+                        _id: { $in: conversation.messages },
+                        sender: { $ne: userId },
+                        isRead: false,
+                    },
+                    { $set: { isRead: true } }
+                )
                 return { code: 200, data: 'Messages marked as read' }
             } else {
                 return { code: 404, error: 'Conversation not found' }
