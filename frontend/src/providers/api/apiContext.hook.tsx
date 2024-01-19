@@ -6,5 +6,5 @@ export const useApiClient = () => {
   if (!context) {
     throw new Error("useApiClient must be used within an ApiProvider");
   }
-  return context.apiClient;
+  return context;
 };

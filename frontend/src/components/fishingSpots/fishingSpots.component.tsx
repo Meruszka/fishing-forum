@@ -36,10 +36,8 @@ const FishingSpots: React.FC = (): ReactElement => {
   );
   const [fishingSpots, setFishingSpots] = useState<FishingSpot[]>([]);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
-
-  console.log("fishingSpots", fishingSpots);
   const user = useCurrentUser();
-  const apiClient = useApiClient();
+  const { apiClient } = useApiClient();
 
   useEffect(() => {
     if (user) {
