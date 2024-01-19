@@ -2,10 +2,11 @@ import { ReactElement, useState } from "react";
 import { Marker, useMapEvents } from "react-leaflet";
 import { CoordsCustom } from "./sideBar.type";
 import { LatLng } from "leaflet";
+import { ModalOpenType } from "./addingFishingSpotModal.component";
 
 interface AddingFishingspotProps {
-  isAdding: boolean;
-  setIsAdding: (isAdding: boolean) => void;
+  isAdding: ModalOpenType;
+  setIsAdding: (obj: ModalOpenType) => void;
   setCoords: (coords: CoordsCustom) => void;
 }
 
@@ -16,11 +17,12 @@ const AddingFishingspot: React.FC<AddingFishingspotProps> = (
   useMapEvents({
     click(e) {
       setPosition(e.latlng);
-      props.setIsAdding(true);
+      props.setIsAdding({ isOpen: true, type: "add" } as ModalOpenType);
       props.setCoords(e.latlng);
     },
   });
-  if (!props.isAdding) {
+
+  if (!props.isAdding.isOpen) {
     return null;
   }
 
