@@ -6,6 +6,12 @@ interface WebsocketContextProps {
   children: React.ReactNode
 }
 
+export interface WebsocketMessage {
+    action: string
+    error?: string
+    data?: object
+}
+
 export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   children
 }) => {

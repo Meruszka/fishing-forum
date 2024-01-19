@@ -16,14 +16,14 @@ import TopicList from "./components/forum/topicList/topicList";
 import TopicPage from "./components/forum/topicPage/topicPage";
 import PostPage from "./components/forum/postPage/postPage";
 import { WebsocketProvider } from "./providers/websocket/websocket.provider";
-import Chat from "./components/chat/chat";
+// import Chat from "./components/chat/chat";
 
 function Home(): ReactElement {
   return (
     <div className="h-full w-full">
       <NavBar />
       <Outlet />
-      <Chat />
+      {/* <Chat /> */}
     </div>
   );
 }
@@ -45,7 +45,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<Home />} errorElement={<ErrorBoundry />}>
       <Route path="login" element={<LoginScreen />} />
       <Route path="fishing-spots" element={<FishingSpots />} />
-      <Route path="forum" element={<TopicList />} />
+      <Route path="" element={<TopicList />} />
       <Route path="forum/topics/:topicId" element={<TopicPage />} />
       <Route path="forum/topics/:topicId/post/:postId" element={<PostPage />} />
       <Route path="user-profile" element={<UserProfile />} />
