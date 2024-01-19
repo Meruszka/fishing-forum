@@ -6,12 +6,6 @@ interface WebsocketContextProps {
   children: React.ReactNode
 }
 
-export interface WebsocketMessage {
-    action: string
-    error?: string
-    data?: object
-}
-
 export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   children
 }) => {
@@ -19,6 +13,7 @@ export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   const [val, setVal] = useState<WebsocketMessage | null>(null)
   const token = localStorage.getItem("token") || ""
   const [onlineCount, setOnlineCount] = useState(0)
+  const clearMessage = () => setVal(null)
 
   const ws = useRef<WebSocket | null>(null)
 
@@ -50,7 +45,7 @@ export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   }
 
   return (
-    <WebsocketContext.Provider value={{ isReady, onlineCount, val, send }}>
+    <WebsocketContext.Provider value={{ isReady, onlineCount, val, send,clearMessage }}>
       {children}
     </WebsocketContext.Provider>
   )
