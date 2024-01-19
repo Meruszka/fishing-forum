@@ -19,7 +19,6 @@ interface WSRequest {
 
 interface WSResponse {
     action: string
-    error?: string
     data?: any
 }
 

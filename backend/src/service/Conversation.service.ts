@@ -73,7 +73,7 @@ class ConversationService {
                 sendWSMessage(interlocutorId, {
                     action: 'newMessage',
                     data: {
-                        sender: userId,
+                        conversationId: conversation._id,
                         message,
                     },
                 })
@@ -87,8 +87,8 @@ class ConversationService {
                 sendWSMessage(interlocutorId, {
                     action: 'newMessage',
                     data: {
-                        sender: userId,
-                        message,
+                        conversationId: newConversation._id,
+                        message: await message.populate('sender', 'username _id'),
                     },
                 })
                 return { code: 200, data: newConversation }
