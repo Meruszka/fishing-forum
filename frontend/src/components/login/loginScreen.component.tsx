@@ -1,19 +1,18 @@
 import { FormEvent, useState } from "react";
 import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 import { useNavigate } from "react-router-dom";
+import { handleLoginRest, handleRegisterRest } from "./loginScreen.service";
+import { useApiClient } from "../../providers/api/apiContext.hook";
 import {
   ValidationResult,
-  handleLoginRest,
-  handleRegisterRest,
   validateRegister,
-} from "./loginScreen.service";
-import { useApiClient } from "../../providers/api/apiContext.hook";
+} from "../../common/utils/validator.utils";
 
 const LoginScreen = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isButtonsDisabled, setIsButtonsDisabled] = useState<boolean>(true);
-  const [errorInForm, setErrorInForm] = useState<string>("");
+  const [errorInForm, setErrorInForm] = useState<string[]>([]);
 
   const apiClient = useApiClient();
   const navigate = useNavigate();
@@ -38,15 +37,13 @@ const LoginScreen = () => {
     const result: ValidationResult = validateRegister(username, password);
     if (result.isValid) {
       setIsButtonsDisabled(false);
-      setErrorInForm("");
+      setErrorInForm([]);
     } else {
       setIsButtonsDisabled(true);
-
-      // Set the error message based on the first error in the array
       setErrorInForm(
         result.errors && result.errors.length > 0
-          ? result.errors[0]
-          : "Unknown error"
+          ? result.errors
+          : ["Unknown error"]
       );
     }
   };
@@ -89,7 +86,11 @@ const LoginScreen = () => {
             />
           </div>
           {errorInForm && (
-            <div className="mb-4 text-red-500">{errorInForm}</div>
+            <>
+              {errorInForm.map((error: string) => (
+                <div className="mb-4 text-red-500">{error}</div>
+              ))}
+            </>
           )}
           <ButtonCustom
             label="Login"

@@ -80,5 +80,5 @@ export interface FishingSpot extends Entity {
   rating: number,
   type: string,
   image: string,
-  authorId: string,
+  author: { _id: string, username: string },
 }

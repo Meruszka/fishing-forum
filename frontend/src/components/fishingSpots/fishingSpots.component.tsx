@@ -1,7 +1,6 @@
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import SideBar from "./sideBar.component";
 import { CoordsCustom } from "./sideBar.type";
 import { Map } from "leaflet";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
@@ -16,8 +15,11 @@ import {
 } from "./fishingSpots.service";
 import { ImBin } from "react-icons/im";
 import AddingFishingspot from "./addingFishingSpot.component";
-import AddingFishingSpotModal from "./addingFishingSpotModal.component";
+import AddingFishingSpotModal, {
+  ModalOpenType,
+} from "./addingFishingSpotModal.component";
 import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
+import SideBar from "./sideBar.component";
 
 const FishingSpots: React.FC = (): ReactElement => {
   const mapRef = useRef<Map | null>(null);
@@ -25,11 +27,17 @@ const FishingSpots: React.FC = (): ReactElement => {
     lat: 54.0364,
     lng: 21.7667,
   });
-  const [inAddingMode, setInAddingMode] = useState<boolean>(false);
+  const [isModalVisable, setIsModalVisable] = useState<ModalOpenType>({
+    isOpen: false,
+  } as ModalOpenType);
+  const [newSpot, setNewSpot] = useState<FishingSpotDTO>({} as FishingSpotDTO);
   const [newSpotCoords, setNewSpotCoords] = useState<CoordsCustom>(
     {} as CoordsCustom
   );
   const [fishingSpots, setFishingSpots] = useState<FishingSpot[]>([]);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
+
+  console.log("fishingSpots", fishingSpots);
   const user = useCurrentUser();
   const apiClient = useApiClient();
 
@@ -41,85 +49,119 @@ const FishingSpots: React.FC = (): ReactElement => {
     }
   }, [apiClient, user]);
 
+  useEffect(() => {
+    setNewSpot({} as FishingSpotDTO);
+  }, [isModalVisable]);
+
   if (!user) {
     return <LoadingScreen />;
   }
 
   const handleNewSpot = async (newSpot: FishingSpotDTO) => {
-    const newSpotReponse = await newFishingSpotREST(apiClient, {
-      ...newSpot,
-      latitude: newSpotCoords.lat,
-      longitude: newSpotCoords.lng,
-    });
-    setFishingSpots((prev) => [...prev, newSpotReponse]);
-    setInAddingMode(false);
+    try {
+      const newSpotReponse = await newFishingSpotREST(apiClient, {
+        ...newSpot,
+        rating: Number(newSpot.rating),
+        latitude: newSpotCoords.lat,
+        longitude: newSpotCoords.lng,
+      });
+      setFishingSpots((prev) => [...prev, newSpotReponse]);
+      setIsModalVisable({ isOpen: false } as ModalOpenType);
+    } catch (error) {
+      console.error("Error creating new fishing spot:", error);
+    }
   };
 
-  const handleClick = (newCoords: CoordsCustom) => {
+  const handleSelectSpot = (newCoords: CoordsCustom) => {
     setCoords(newCoords);
     if (mapRef.current) {
-      mapRef.current.flyTo(newCoords, 13, {
+      mapRef.current.flyTo(newCoords, 10, {
         duration: 2,
       });
     }
   };
 
-  const handleDeleteSpot = (id: string) => {
-    deleteFishingSpotREST(apiClient, id);
-    setFishingSpots((prev) => prev.filter((spot) => spot._id !== id));
+  const handleDeleteSpot = async (id: string) => {
+    try {
+      await deleteFishingSpotREST(apiClient, id);
+      setFishingSpots((prev) => prev.filter((spot) => spot._id !== id));
+    } catch (error) {
+      console.error("Error deleting fishing spot:", error);
+    }
   };
 
-  // 5rem is not ideal, but it's a quick fix for now
+  const handleEditSpot = (id: string) => {
+    const spotToEdit = fishingSpots.find((spot) => spot._id === id);
+    if (spotToEdit) {
+      setNewSpot(spotToEdit);
+      setIsModalVisable({ isOpen: true, type: "edit" } as ModalOpenType);
+    }
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarExpanded((prev) => !prev);
+    mapRef.current?.invalidateSize();
+  };
+
   return (
-    <div className="h-[calc(100vh-5rem)] flex z-0">
+    <div className="flex flex-row-reverse overflow-hidden relative">
       <AddingFishingSpotModal
-        isOpen={inAddingMode}
-        onClose={() => setInAddingMode(false)}
+        isOpen_Type={isModalVisable}
+        onClose={() => setIsModalVisable({ isOpen: false } as ModalOpenType)}
         onConfirm={handleNewSpot}
+        initialSpot={newSpot}
       />
+      <div
+        className={`lg:w-1/4 ${
+          isSidebarExpanded ? "" : "hidden"
+        } p-4 bg-gray-700 h-[calc(100vh-72px)]`}
+      >
+        <SideBar
+          handleClick={handleSelectSpot}
+          fishingSpots={fishingSpots}
+          onDelete={handleDeleteSpot}
+          onEdit={handleEditSpot}
+        />
+      </div>
+      <button
+        className="absolute top-15 right-0 m-4 p-2 bg-blue-500 text-white rounded-full z-10"
+        onClick={toggleSidebar}
+      >
+        {isSidebarExpanded ? "Hide Sidebar" : "Show Sidebar"}
+      </button>
       <MapContainer
         center={[coords.lat, coords.lng]}
-        zoom={13}
+        zoom={10}
         scrollWheelZoom={true}
         ref={mapRef}
-        className="w-full z-0"
+        style={{ zIndex: 0, height: "calc(100vh - 72px)", width: "100vw" }}
       >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <AddingFishingspot
-          isAdding={inAddingMode}
-          setIsAdding={setInAddingMode}
+          isAdding={isModalVisable}
+          setIsAdding={setIsModalVisable}
           setCoords={setNewSpotCoords}
         />
-        {fishingSpots.map((spot: FishingSpot) => {
-          return (
-            <div key={spot._id}>
-              <Marker position={[spot.latitude, spot.longitude]}>
-                <Popup>
-                  <div className="flex w-fit min-w-32">
-                    <div>
-                      <h2 className="font-bold text-xl mb-4">{spot.name}</h2>
-                      <p className="text-gray-700">{spot.description}</p>
-                      <ButtonCustom
-                        type="removal"
-                        onClick={() => handleDeleteSpot(spot._id)}
-                      >
-                        <ImBin />
-                      </ButtonCustom>
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
-            </div>
-          );
-        })}
+
+        {fishingSpots.map((spot: FishingSpot) => (
+          <Marker key={spot._id} position={[spot.latitude, spot.longitude]}>
+            <Popup>
+              <div className="flex w-fit min-w-32">
+                <div>
+                  <h2 className="font-bold text-xl mb-4">{spot.name}</h2>
+                  <p className="text-gray-700">{spot.description}</p>
+                  <ButtonCustom
+                    type="removal"
+                    onClick={() => handleDeleteSpot(spot._id)}
+                  >
+                    <ImBin />
+                  </ButtonCustom>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
-      <SideBar
-        handleClick={handleClick}
-        fishingSpots={fishingSpots}
-        onDelete={handleDeleteSpot}
-      />
     </div>
   );
 };
