@@ -1,9 +1,4 @@
 import { createContext } from "react";
+import { IWebsocketContext } from "../../components/chat/chat.types";
 
-interface WebsocketContext {
-    isReady: boolean
-    val: any
-    send: (data: string) => void
-}
-
-export const WebsocketContext = createContext<WebsocketContext|null>(null)
+export const WebsocketContext = createContext<IWebsocketContext|null>(null)
