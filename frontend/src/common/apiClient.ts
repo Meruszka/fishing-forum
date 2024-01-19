@@ -57,13 +57,10 @@ export class ApiClient {
   }
 
   private isTokenValid(): boolean {
-    // const decodedToken: { exp: number } = JSON.parse(atob(token.split('.')[1]));
-    // console.log(decodedToken)
-    // return decodedToken.exp * 1000 > Date.now();
     return true;
   }
 
-  public isLogged(): boolean {
+  public isLoggedIn(): boolean {
     const token = localStorage.getItem('token');
     const res = token ? this.isTokenValid() : false;
     return res;

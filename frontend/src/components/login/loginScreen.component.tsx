@@ -14,13 +14,14 @@ const LoginScreen = () => {
   const [isButtonsDisabled, setIsButtonsDisabled] = useState<boolean>(true);
   const [errorInForm, setErrorInForm] = useState<string[]>([]);
 
-  const apiClient = useApiClient();
+  const { apiClient, setIsLoggedIn } = useApiClient();
   const navigate = useNavigate();
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     const result = await handleLoginRest(apiClient, username, password);
     if (result.status === 200) {
+      setIsLoggedIn(true);
       navigate("/");
     }
   };
@@ -29,6 +30,7 @@ const LoginScreen = () => {
     e.preventDefault();
     const result = await handleRegisterRest(apiClient, username, password);
     if (result.status === 200) {
+      setIsLoggedIn(true);
       navigate("/");
     }
   };

@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 const TopicList: React.FC = (): ReactElement => {
     const [topics, setTopics] = useState<Topic[]>([]);
     const [posts, setPosts] = useState<Post[]>([]);
-    const apiClient = useApiClient();
+    const { apiClient } = useApiClient();
   
     useEffect(() => {
       getTopicsREST(apiClient).then((topics) => {
