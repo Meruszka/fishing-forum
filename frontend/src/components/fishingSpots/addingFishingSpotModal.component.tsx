@@ -2,6 +2,11 @@ import { ReactElement, useState } from "react";
 import ModalCustom from "../../common/modalCustom/modalCustom.component";
 import { IoMdClose } from "react-icons/io";
 import { FishingSpotDTO } from "./fishingSpots.service";
+import {
+  ValidationResult,
+  validateAddingSpot,
+} from "../../common/utils/validator.utils";
+import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 
 interface AddingFishingSpotModalProps {
   isOpen: boolean;
@@ -13,6 +18,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
   props: AddingFishingSpotModalProps
 ): ReactElement => {
   const { isOpen, onClose, onConfirm } = props;
+  const [errosInForm, setErrorsInForm] = useState<string[]>([]);
 
   const getPlaceholderValues = () => {
     return {
@@ -20,7 +26,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
       latitude: 0,
       longitude: 0,
       description: "",
-      rating: 0,
+      rating: 1,
       type: "",
       image: "",
     };
@@ -30,8 +36,23 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
     getPlaceholderValues()
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFormChange = (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { id, value } = e.target;
+    const result: ValidationResult = validateAddingSpot(id, value);
+    console.log(result);
+    if (result.isValid) {
+      setErrorsInForm([]);
+    } else {
+      setErrorsInForm(
+        result.errors && result.errors.length > 0
+          ? result.errors
+          : ["Unknown error"]
+      );
+    }
     setNewFishingspot((prev) => ({
       ...prev,
       [id]: value,
@@ -56,7 +77,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           className="border-2 border-gray-500 p-2"
           placeholder="Name of the spot"
           value={newFishingspot.name}
-          onChange={handleChange}
+          onChange={handleFormChange}
         />
         <label htmlFor="description">Description</label>
         <input
@@ -65,26 +86,32 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           className="border-2 border-gray-500 p-2"
           placeholder="Description of the spot"
           value={newFishingspot.description}
-          onChange={handleChange}
+          onChange={handleFormChange}
         />
         <label htmlFor="rating">Rating</label>
         <input
           type="number"
           id="rating"
+          max={5}
+          min={1}
           className="border-2 border-gray-500 p-2"
           placeholder="Rating of the spot"
           value={newFishingspot.rating}
-          onChange={handleChange}
+          onChange={handleFormChange}
         />
         <label htmlFor="type">Type</label>
-        <input
-          type="text"
+        <select
           id="type"
+          onChange={handleFormChange}
           className="border-2 border-gray-500 p-2"
-          placeholder="Type of the spot"
-          value={newFishingspot.type}
-          onChange={handleChange}
-        />
+        >
+          <option value="River">River</option>
+          <option value="Lake">Lake</option>
+          <option value="Pond">Pond</option>
+          <option value="Sea">Sea</option>
+          <option value="Ocean">Ocean</option>
+          <option value="Other">Other</option>
+        </select>
         <label htmlFor="image">Image</label>
         <input
           type="text"
@@ -92,17 +119,24 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           className="border-2 border-gray-500 p-2"
           placeholder="Image (URL) of the spot"
           value={newFishingspot.image}
-          onChange={handleChange}
+          onChange={handleFormChange}
         />
-        <button
-          className="bg-green-500 text-white px-4 py-2 mt-2"
+        <div>
+          {errosInForm.map((error) => (
+            <div className="text-red-500">{error}</div>
+          ))}
+        </div>
+        <ButtonCustom
           onClick={handleSubmit}
+          type="add"
+          disabled={errosInForm.length > 0}
         >
           Add
-        </button>
+        </ButtonCustom>
       </div>
     </ModalCustom>
   );
 };
 
 export default AddingFishingSpotModal;
+
