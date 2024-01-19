@@ -18,7 +18,7 @@ const Chat = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState<ConversationMember[]>([]);
     const [selectedUser, setSelectedUser] = useState<ConversationMember | null>(null);
-    const { apiClient } = useApiClient();
+    const { apiClient, isLoggedIn } = useApiClient();
     const currentUser = useCurrentUser();
     const { val, clearMessage } = useWebsocket();
 
@@ -42,7 +42,7 @@ const Chat = () => {
                 setConversations(updatedConversations);
             }
         }
-    }, [val,conversations,clearMessage]);
+    }, [val, conversations, clearMessage]);
 
     useEffect(() => {
         getConversations(apiClient).then(setConversations);
@@ -79,6 +79,10 @@ const Chat = () => {
         setSelectedUser(null);
         setIsCreating(false);
     };
+
+    if (!isLoggedIn) {
+        return null;
+    }
 
     return (
         <div className="fixed bottom-4 right-4">
