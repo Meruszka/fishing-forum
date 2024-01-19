@@ -1,6 +1,7 @@
 import React from "react";
 import { Topic } from "../../../providers/currentUser/currentUser.type";
 import { Link } from 'react-router-dom';
+import LastPostCard from "./lastPostCard";
 
 interface TopicCustomProps {
     topic: Topic;
@@ -16,7 +17,7 @@ const TopicItem: React.FC<TopicCustomProps> = ({ topic }) => {
                   <h3 className="text-xl font-semibold mb-2">{topic.name}</h3>
                   <p className="text-gray-600 mb-2">{topic.description}</p>
                 </div>
-                <div className="flex items-end text-center gap-10"> 
+                <div className="flex items-end text-center gap-10 w-1/3"> 
                   <div className="flex flex-col items-center"> 
                     <div className="text-gray-700 mb-2">
                       Posts:
@@ -26,7 +27,7 @@ const TopicItem: React.FC<TopicCustomProps> = ({ topic }) => {
                     </div>
                   </div>
                   <div className="self-center">
-                    {topic.lastPost ? `Last Post: ${topic.lastPost.title}` : 'No posts in this topic yet'}
+                    {topic.lastPost ? <LastPostCard post={topic.lastPost}/> : 'No posts in this topic yet'}
                   </div>
                 </div>
               </div>
