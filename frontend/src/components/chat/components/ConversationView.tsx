@@ -13,7 +13,7 @@ interface MessageItemProps {
 
 const MessageItem = (props: MessageItemProps): ReactElement => {
     const { message, currentUser } = props;
-    
+
     const { content, date, sender, isRead } = message;
     const isCurrentUser = sender._id === currentUser?._id;
 
@@ -92,6 +92,7 @@ const ConversationView = (props: ConversationViewProps): ReactElement => {
                     <input
                         type="text"
                         value={newMessage}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type a message..."
                         className="flex-grow p-2 border rounded-l-lg"
