@@ -6,13 +6,18 @@ class ConversationService {
         try {
             const conversation = await Conversation.findOne({
                 members: { $all: [userId, interlocutorId] },
-            }).populate({
-                path: 'messages',
-                populate: {
-                    path: 'sender',
-                    select: 'username _id',
-                },
             })
+                .populate({
+                    path: 'messages',
+                    populate: {
+                        path: 'sender',
+                        select: 'username _id',
+                    },
+                })
+                .populate({
+                    path: 'members',
+                    select: 'username profilePicture _id',
+                })
             if (conversation) {
                 return { code: 200, data: conversation }
             } else {
@@ -29,6 +34,10 @@ class ConversationService {
             const conversations = await Conversation.find({
                 members: { $in: [userId] },
             })
+                .populate({
+                    path: 'members',
+                    select: 'username profilePicture _id',
+                })
                 .populate({
                     path: 'lastMessage',
                     populate: {

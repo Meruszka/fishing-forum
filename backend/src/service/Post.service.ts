@@ -4,7 +4,13 @@ import { UserService } from './User.service'
 class PostService {
     async getPostsByTopic(topicId: string) {
         try {
-            const posts = await Post.find({ topic: topicId }).populate('author', 'username _id')
+            const posts = await Post.find({ topic: topicId })
+                .populate('author', 'username _id')
+                .populate({
+                    path: 'lastResponse',
+                    populate: { path: 'author', select: 'username profilePicture _id' },
+                })
+                .sort({ creationDate: -1 })
             return { code: 200, data: posts }
         } catch (err) {
             console.error(err)
@@ -63,7 +69,9 @@ class PostService {
             await User.findByIdAndUpdate(authorId, { $inc: { score: 10 } })
             UserService.runPointsUpdate(authorId)
 
-            return { code: 201, data: savedPost }
+            const populatedPost = await Post.findById(savedPost._id).populate('author', 'username _id')
+
+            return { code: 201, data: populatedPost }
         } catch (err) {
             console.error(err)
             return { code: 500, error: 'Internal Server Error' }
@@ -86,6 +94,7 @@ class PostService {
             const savedResponse = await newResponse.save()
 
             await Post.findByIdAndUpdate(postId, { $push: { responses: savedResponse._id } })
+            await Post.findByIdAndUpdate(postId, { lastResponse: savedResponse._id })
             // add 1 point to the post author
             if (post.author) {
                 await User.findByIdAndUpdate(post.author, { $inc: { score: 1 } })

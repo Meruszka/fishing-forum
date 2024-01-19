@@ -10,6 +10,8 @@ const FISHING_SPOT_TYPES = {
     LAKE: 'Lake',
     RIVER: 'River',
     POND: 'Pond',
+    SEA: 'Sea',
+    OCEAN: 'Ocean',
     OTHER: 'Other',
 }
 
