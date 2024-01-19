@@ -1,10 +1,9 @@
 import { ReactElement, useEffect, useRef, useState } from "react"
 import { getConversation, markAsRead, sendMessage } from ".././chat.service";
-import { ConversationMember, Message } from ".././chat.types";
+import { ConversationMember, Message } from "../chat.types";
 import { useApiClient } from "../../../providers/api/apiContext.hook";
 import { User } from "../../../providers/currentUser/currentUser.type";
 import { useCurrentUser } from "../../../providers/currentUser/currentUser.hook";
-
 
 interface MessageItemProps {
     message: Message;
@@ -12,7 +11,9 @@ interface MessageItemProps {
     currentUser: User | null;
 }
 
-const MessageItem = ({ message, currentUser }: MessageItemProps): ReactElement => {
+const MessageItem = (props: MessageItemProps): ReactElement => {
+    const { message, currentUser } = props;
+    
     const { content, date, sender, isRead } = message;
     const isCurrentUser = sender._id === currentUser?._id;
 
@@ -34,10 +35,17 @@ const MessageItem = ({ message, currentUser }: MessageItemProps): ReactElement =
         </div>
     );
 }
-const ConversationView = ({ user }: { user: ConversationMember }): ReactElement => {
+
+interface ConversationViewProps {
+    user: ConversationMember;
+}
+
+const ConversationView = (props: ConversationViewProps): ReactElement => {
+    const { user } = props;
+
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
-    const apiClient = useApiClient();
+    const { apiClient } = useApiClient();
     const currentUser = useCurrentUser();
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
