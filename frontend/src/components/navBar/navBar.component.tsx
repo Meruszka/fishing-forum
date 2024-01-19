@@ -36,9 +36,8 @@ const Navbar: React.FC = (): ReactElement => {
           </div>
         </LinkCustom>
         <div className="flex space-x-4">
-          <LinkCustom to="/">Home</LinkCustom>
           <LinkCustom to="/fishing-spots">Fishing Spots</LinkCustom>
-          <LinkCustom to="/forum">Forum</LinkCustom>
+          <LinkCustom to="/">Forum</LinkCustom>
           <LinkCustom to="/contact">Contact</LinkCustom>
           {isLoggedIn ? (
             <div className="relative">

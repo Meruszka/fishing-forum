@@ -35,15 +35,16 @@ export interface Post extends Entity {
   content: string;
   creationDate: string;
   type: string;
-  topic: { _id: string };
-  author: { _id: string, username: string };
+  topic: { _id: string, name: string };
+  author: { _id: string, username: string, profilePicture: string };
   responses: Response[];
+  lastResponse: Response | null;
 }
 
 export interface Response extends Entity {
   content: string;
   creationDate: string;
-  author: { _id: string, username: string };
+  author: { _id: string, username: string, profilePicture: string };
   post: { _id: string};
 }
 
