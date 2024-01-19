@@ -11,12 +11,17 @@ export const CurrentUserProvider: React.FC<CurrentUserProviderProps> = ({
   children,
 }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const apiClient = useApiClient();
+  const { apiClient, isLoggedIn } = useApiClient();
   useEffect(() => {
-    apiClient.getCurrentUser().then((res) => {
-      setCurrentUser(res.data);
-    });
-  }, [apiClient]);
+    if (isLoggedIn) {
+      apiClient.getCurrentUser().then((res) => {
+        setCurrentUser(res.data);
+      });
+    } else {
+      setCurrentUser(null);
+    }
+  }, [apiClient, isLoggedIn]);
+
 
   return (
     <CurrentUserContext.Provider value={{ currentUser }}>

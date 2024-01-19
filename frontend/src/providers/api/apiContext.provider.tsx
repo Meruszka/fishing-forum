@@ -9,8 +9,12 @@ interface ApiProviderProps {
 
 export const ApiProvider: React.FC<ApiProviderProps> = ({ children }) => {
   const apiClient = ApiClient;
-
+  const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(
+    apiClient.isLoggedIn()
+  );
   return (
-    <ApiContext.Provider value={{ apiClient }}>{children}</ApiContext.Provider>
+    <ApiContext.Provider value={{ apiClient, isLoggedIn, setIsLoggedIn }}>
+      {children}
+    </ApiContext.Provider>
   );
 };

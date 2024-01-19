@@ -1,18 +1,13 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import LinkCustom from "../../common/linkCustom/LinkCustom.component";
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import Logo from "../../../public/logo.png";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 
 const Navbar: React.FC = (): ReactElement => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const apiClient = useApiClient();
+  const { apiClient, isLoggedIn, setIsLoggedIn } = useApiClient();
   const user = useCurrentUser();
-
-  useEffect(() => {
-    setIsLoggedIn(apiClient.isLogged());
-  }, [apiClient]);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -28,11 +23,7 @@ const Navbar: React.FC = (): ReactElement => {
       <div className="container mx-auto flex justify-between items-center">
         <LinkCustom to="/">
           <div className="text-white font-bold text-xl">
-            <img
-              src={Logo}
-              alt="logo"
-              className="w-10 h-10"
-            />
+            <img src={Logo} alt="logo" className="w-10 h-10" />
           </div>
         </LinkCustom>
         <div className="flex space-x-4">
