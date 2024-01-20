@@ -39,6 +39,24 @@ export const validateAddingSpot = (id: string, value: string): ValidationResult 
   }
 }
 
+export const validateContactMessage = (name: string, message: string): ValidationResult => {
+  const lengthValidationForName = validateLength(name, "Name must have a length greater than 0.");
+  const lengthValidationForMessage = validateLength(message, "Message must have a length greater than 0.");
+  const combinedValidations = [lengthValidationForName, lengthValidationForMessage];
+
+  if (combinedValidations.every((validation) => validation.isValid)) {
+    return { isValid: true };
+  } else {
+    const errors: (string)[] = combinedValidations
+      .filter((validation) => !validation.isValid)
+      .flatMap((validation) => validation.errors)
+      .filter((error) => error !== undefined)
+      .map((error) => error as string);
+
+    return { isValid: false, errors: errors };
+  }
+};
+
 const validateLength = (str: string, error: string): ValidationResult => {
   if (str.length > 0) {
     return { isValid: true };

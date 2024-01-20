@@ -63,9 +63,13 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
   return (
     <ModalCustom isOpen={isOpen_Type.isOpen} onClose={onClose}>
       <div className="flex flex-col relative">
-        <button className="absolute right-1" onClick={onClose}>
+        <ButtonCustom
+          className="absolute right-0 top-0"
+          type="close"
+          onClick={onClose}
+        >
           <IoMdClose />
-        </button>
+        </ButtonCustom>
         <label htmlFor="name">Name</label>
         <input
           type="text"
