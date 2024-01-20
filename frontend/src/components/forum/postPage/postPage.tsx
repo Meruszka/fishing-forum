@@ -8,6 +8,7 @@ import ResponseItem from "./responseItem";
 import LinkCustom from "../../../common/linkCustom/LinkCustom.component";
 import ButtonCustom from "../../../common/buttonCustom/buttonCustom.component";
 import UserCard from "./userCard";
+import { Link } from "react-router-dom"
 
 const PostPage: React.FC = () => {
     const { topicId, postId } = useParams<{ topicId: string, postId: string }>();
@@ -82,7 +83,9 @@ const PostPage: React.FC = () => {
                 />
                 <div className="flex bg-white p-4 mb-4 shadow-md rounded-md">
                     <div className="mr-4 w-1/4">
-                        <UserCard userId={post?.author._id ?? ""}/>
+                        <Link to={`/user-profile/${post?.author._id}`}>
+                            <UserCard userId={post?.author._id ?? ""} usr={null}/>
+                        </Link>
                     </div>
                     <div>
                         <p className="text-gray-600 font-bold">{post?.title}</p>

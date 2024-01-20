@@ -5,9 +5,10 @@ import { useApiClient } from "../../../providers/api/apiContext.hook";
 
 interface UserCardCustomProps {
     userId: string;
+    usr: User | null;
 }
 
-const UserCard: React.FC<UserCardCustomProps> = ({ userId }) => {
+const UserCard: React.FC<UserCardCustomProps> = ({ userId, usr }) => {
     const [user, setUser] = useState<User>();
     const {apiClient} = useApiClient();
 
@@ -19,12 +20,14 @@ const UserCard: React.FC<UserCardCustomProps> = ({ userId }) => {
     });
 
     useEffect(() => {
-      userId.length > 0 &&
+      if(usr) {
+        setUser(usr)
+      } else if(userId.length > 0) {
         getUserById(apiClient, userId).then((user) =>{
-            setUser(user);
-        });
-        
-    }, [apiClient, userId]);
+          setUser(user);
+      });
+      } 
+    }, [apiClient, userId, usr]);
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-md">
