@@ -72,7 +72,11 @@ const TopicPage: React.FC = (): ReactElement => {
         }
       }
     }, [newPostTitle, newPostContent, topicId, posts, apiClient]);
-  
+
+    const handleDeletePost = (postId: string) => {
+      setPosts(posts.filter(post => post._id !== postId))
+    }
+
     return (
       <div className="max-w-screen-lg mx-auto">
         {responseError ? (
@@ -149,6 +153,7 @@ const TopicPage: React.FC = (): ReactElement => {
                     key={post._id}
                     post={post}
                     currentUserId={currentUser?._id}
+                    onDeleteHandler={handleDeletePost}
                   />
                 ))
               )}

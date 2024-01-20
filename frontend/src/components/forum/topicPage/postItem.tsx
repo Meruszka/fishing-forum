@@ -5,13 +5,16 @@ import { useParams } from 'react-router-dom';
 import LastResponseCard from "./lastResponseCard";
 import { ImBin } from "react-icons/im";
 import ButtonCustom from "../../../common/buttonCustom/buttonCustom.component";
+import { deletePostById } from "./topicPage.service";
+import { useApiClient } from "../../../providers/api/apiContext.hook";
 
 interface PostCustomProps {
     post: Post;
     currentUserId: string | undefined;
+    onDeleteHandler: (postId: string) => void;
 }
 
-const PostItem: React.FC<PostCustomProps> = ({ post, currentUserId }) => {
+const PostItem: React.FC<PostCustomProps> = ({ post, currentUserId, onDeleteHandler }) => {
   const creationDate = new Date(post.creationDate)
   const formattedDate = creationDate.toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -19,12 +22,17 @@ const PostItem: React.FC<PostCustomProps> = ({ post, currentUserId }) => {
         year: 'numeric',
   });
   const { topicId } = useParams<{ topicId: string }>();
+  const { apiClient } = useApiClient()
 
-  const scrollToBottom = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    window.scrollTo(0, document.body.scrollHeight);
-  };
-
+    const confirmation = window.confirm("Are you sure you want to delete this post?")
+    if(confirmation) {
+      deletePostById(apiClient, post._id).then(()=>{
+        onDeleteHandler(post._id)
+      })
+    }
+  }
     return (
         <div className="max-w-screen-lg mx-auto"> 
           <div className="bg-white p-4 mb-4 shadow-md rounded-md">
@@ -37,7 +45,7 @@ const PostItem: React.FC<PostCustomProps> = ({ post, currentUserId }) => {
                   {currentUserId && post.author._id === currentUserId && 
                     <span className={"ml-2 self-center"}>
                       <ButtonCustom
-                        onClick={scrollToBottom}
+                        onClick={handleDelete}
                       >
                         <ImBin />
                       </ButtonCustom>

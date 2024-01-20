@@ -26,7 +26,7 @@ const TopicItem: React.FC<TopicCustomProps> = ({ topic }) => {
                       {topic.numberOfPosts}
                     </div>
                   </div>
-                  <div className="self-center">
+                  <div className="self-center max-w-1/3">
                     {topic.lastPost ? <LastPostCard post={topic.lastPost}/> : 'No posts in this topic yet'}
                   </div>
                 </div>
