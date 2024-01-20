@@ -47,6 +47,22 @@ const Chat = () => {
                 });
                 setNewWebsocketMessage(null);
                 setConversations(updatedConversations);
+            } else if (action === 'markAsRead') {
+                const { conversationId } = data;
+                const updatedConversations = conversations.map(conversation => {
+                    if (conversation._id === conversationId) {
+                        return {
+                            ...conversation,
+                            lastMessage: {
+                                ...conversation.lastMessage,
+                                isRead: true,
+                            },
+                        };
+                    }
+                    return conversation;
+                });
+                setNewWebsocketMessage(null);
+                setConversations(updatedConversations);
             }
         }
     }, [newWebsocketMessage, conversations]);

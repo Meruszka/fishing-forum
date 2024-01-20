@@ -55,7 +55,6 @@ const ConversationView = (props: ConversationViewProps): ReactElement => {
 
     useEffect(() => {
         if (websocketMessage) {
-            console.log('websocketMessage in conversationview', websocketMessage);
             setNewWebsocketMessage(websocketMessage);
         }
     }, [websocketMessage]);
@@ -67,6 +66,20 @@ const ConversationView = (props: ConversationViewProps): ReactElement => {
                 if (conversationId === data.conversationId) {
                     setMessages([...messages, data.message]);
                     markAsRead(apiClient, conversationId);
+                    setNewWebsocketMessage(null);
+                }
+            } else if (action === 'markAsRead') {
+                if (conversationId === data.conversationId) {
+                    const updatedMessages = messages.map(message => {
+                        if (message.isRead === false) {
+                            return {
+                                ...message,
+                                isRead: true,
+                            };
+                        }
+                        return message;
+                    });
+                    setMessages(updatedMessages);
                     setNewWebsocketMessage(null);
                 }
             }
