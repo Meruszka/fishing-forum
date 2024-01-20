@@ -17,7 +17,7 @@ import AddingFishingSpotModal, {
 } from "./modal/addingFishingSpotModal.component";
 import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 import SideBar from "./sideBar/sideBar.component";
-import LinkCustom from "../../common/linkCustom/LinkCustom.component";
+import ProfileLinkCustom from "../../common/profileLinkCustom/profileLinkCustom.component";
 
 const FishingSpots: React.FC = (): ReactElement => {
   const mapRef = useRef<Map | null>(null);
@@ -145,12 +145,12 @@ const FishingSpots: React.FC = (): ReactElement => {
                 <div>
                   <div>
                     <div className="font-bold text-xl mb-4">
-                      <LinkCustom
-                        className="mt-2 text-blue-500 hover:underline"
+                      <ProfileLinkCustom
+                        imageUrl={spot.author.profilePicture}
                         to={`/user-profile/${spot.author._id}`}
-                      >
-                        {spot.author.username}
-                      </LinkCustom>
+                        alt="Profile Picture"
+                        type="small"
+                      />
                       <div>{spot.name}</div>
                     </div>
                     <div className="text-gray-700">{spot.description}</div>
@@ -166,3 +166,4 @@ const FishingSpots: React.FC = (): ReactElement => {
 };
 
 export default FishingSpots;
+
