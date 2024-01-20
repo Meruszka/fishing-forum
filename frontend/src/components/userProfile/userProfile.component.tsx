@@ -12,10 +12,14 @@ import UserCard from "../forum/postPage/userCard";
 import { useParams } from 'react-router-dom';
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import { getUserById } from "../forum/topicPage/topicPage.service";
-import { addFriend, removeFriend } from "./userProfile.service";
+import {
+  UpdateProfile,
+  addFriendRest,
+  editProfileRest,
+  removeFriendRest,
+} from "./userProfile.service";
 import { BiEditAlt } from "react-icons/bi";
 import EditModalComponent from "./editModal.component";
-import { UpdateProfile, editProfileRest } from "./editProfile.service";
 
 const UserProfile: React.FC = (): ReactElement => {
   const { userId } = useParams<{ userId: string }>();
@@ -53,10 +57,10 @@ const UserProfile: React.FC = (): ReactElement => {
       e.preventDefault();
       if (userId) {
         if (!isMyFriend) {
-          await addFriend(apiClient, userId);
+          await addFriendRest(apiClient, userId);
           setIsMyFriend(true);
         } else {
-          await removeFriend(apiClient, userId);
+          await removeFriendRest(apiClient, userId);
           setIsMyFriend(false);
         }
       }

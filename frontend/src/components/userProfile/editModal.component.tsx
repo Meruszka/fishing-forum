@@ -44,7 +44,6 @@ const EditModalComponent: React.FC<EditModalProps> = (props) => {
   };
 
   const handleSubmit = () => {
-    console.log("XD");
     props.onConfirm(profileData);
   };
 
