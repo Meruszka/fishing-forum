@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { CoordsCustom } from "./sideBar.type";
+import { CoordsCustom } from "./sideBar/sideBar.type";
 import { Map } from "leaflet";
 import { FishingSpot } from "../../providers/currentUser/currentUser.type";
 import { useApiClient } from "../../providers/api/apiContext.hook";
@@ -11,13 +11,13 @@ import {
   getFishingSpotsREST,
   newFishingSpotREST,
 } from "./fishingSpots.service";
-import { ImBin } from "react-icons/im";
-import AddingFishingspot from "./addingFishingSpot.component";
+import AddingFishingspot from "./modal/addingFishingSpot.component";
 import AddingFishingSpotModal, {
   ModalOpenType,
-} from "./addingFishingSpotModal.component";
+} from "./modal/addingFishingSpotModal.component";
 import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
-import SideBar from "./sideBar.component";
+import SideBar from "./sideBar/sideBar.component";
+import LinkCustom from "../../common/linkCustom/LinkCustom.component";
 
 const FishingSpots: React.FC = (): ReactElement => {
   const mapRef = useRef<Map | null>(null);
@@ -27,8 +27,9 @@ const FishingSpots: React.FC = (): ReactElement => {
   });
   const [isModalVisable, setIsModalVisable] = useState<ModalOpenType>({
     isOpen: false,
-  } as ModalOpenType);
-  const [newSpot, setNewSpot] = useState<FishingSpotDTO>({} as FishingSpotDTO);
+    type: "add",
+    initialSpot: {} as FishingSpotDTO,
+  });
   const [newSpotCoords, setNewSpotCoords] = useState<CoordsCustom>(
     {} as CoordsCustom
   );
@@ -43,20 +44,17 @@ const FishingSpots: React.FC = (): ReactElement => {
   }, [apiClient]);
 
   useEffect(() => {
-    setNewSpot({} as FishingSpotDTO);
-  }, [isModalVisable]);
-
-  useEffect(() => {
     mapRef.current?.invalidateSize();
   }, [isSidebarExpanded]);
 
-  const handleNewSpot = async (newSpot: FishingSpotDTO) => {
+  const handleConfim = async (newSpot: FishingSpotDTO) => {
+    console.log(newSpot);
     try {
       const newSpotReponse = await newFishingSpotREST(apiClient, {
         ...newSpot,
         rating: Number(newSpot.rating),
-        latitude: newSpotCoords.lat,
-        longitude: newSpotCoords.lng,
+        latitude: newSpot.latitude ? newSpot.latitude : newSpotCoords.lat,
+        longitude: newSpot.longitude ? newSpot.longitude : newSpotCoords.lng,
       });
       setFishingSpots((prev) => [...prev, newSpotReponse]);
       setIsModalVisable({ isOpen: false } as ModalOpenType);
@@ -86,8 +84,11 @@ const FishingSpots: React.FC = (): ReactElement => {
   const handleEditSpot = (id: string) => {
     const spotToEdit = fishingSpots.find((spot) => spot._id === id);
     if (spotToEdit) {
-      setNewSpot(spotToEdit);
-      setIsModalVisable({ isOpen: true, type: "edit" } as ModalOpenType);
+      setIsModalVisable({
+        isOpen: true,
+        type: "edit",
+        initialSpot: spotToEdit,
+      });
     }
   };
 
@@ -98,10 +99,9 @@ const FishingSpots: React.FC = (): ReactElement => {
   return (
     <div className="flex flex-row-reverse overflow-hidden relative">
       <AddingFishingSpotModal
-        isOpen_Type={isModalVisable}
+        modalOptions={isModalVisable}
         onClose={() => setIsModalVisable({ isOpen: false } as ModalOpenType)}
-        onConfirm={handleNewSpot}
-        initialSpot={newSpot}
+        onConfirm={handleConfim}
       />
       <div
         className={`lg:w-1/4 ${
@@ -143,14 +143,18 @@ const FishingSpots: React.FC = (): ReactElement => {
             <Popup>
               <div className="flex w-fit min-w-32">
                 <div>
-                  <h2 className="font-bold text-xl mb-4">{spot.name}</h2>
-                  <p className="text-gray-700">{spot.description}</p>
-                  <ButtonCustom
-                    type="removal"
-                    onClick={() => handleDeleteSpot(spot._id)}
-                  >
-                    <ImBin />
-                  </ButtonCustom>
+                  <div>
+                    <div className="font-bold text-xl mb-4">
+                      <LinkCustom
+                        className="mt-2 text-blue-500 hover:underline"
+                        to={`/user-profile/${spot.author._id}`}
+                      >
+                        {spot.author.username}
+                      </LinkCustom>
+                      <div>{spot.name}</div>
+                    </div>
+                    <div className="text-gray-700">{spot.description}</div>
+                  </div>
                 </div>
               </div>
             </Popup>

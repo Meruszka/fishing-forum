@@ -1,38 +1,34 @@
 import React, { FormEvent } from "react";
 import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
-import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import {
   ValidationResult,
   validateContactMessage,
 } from "../../common/utils/validator.utils";
-import { sendMessage } from "../chat/chat.service";
 import { useApiClient } from "../../providers/api/apiContext.hook";
+import { sendaTicketRest } from "./contact.service";
 
 const Contact: React.FC = () => {
   const [isButtonsDisabled, setIsButtonsDisabled] =
     React.useState<boolean>(true);
   const [message, setMessage] = React.useState<string>("");
+  const [email, setEmail] = React.useState<string>("");
   const [errorInForm, setErrorInForm] = React.useState<string[]>([]);
   const [resultMessage, setResultMessage] = React.useState<string>("");
-  const user = useCurrentUser();
   const { apiClient } = useApiClient();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const result = await sendMessage(apiClient, {
-      interlocutorId: "1",
+    const result = await sendaTicketRest(apiClient, {
+      email: email,
       content: message,
     });
-    if (result) {
+    if (result === 201) {
       setResultMessage("Message sent");
     }
   };
 
   const handleFormChange = () => {
-    const result: ValidationResult = validateContactMessage(
-      user?.username || "",
-      message
-    );
+    const result: ValidationResult = validateContactMessage(email, message);
     if (result.isValid) {
       setIsButtonsDisabled(false);
       setErrorInForm([]);
@@ -54,15 +50,16 @@ const Contact: React.FC = () => {
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="name"
+              htmlFor="email"
             >
-              Name
+              E-mail
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="name"
+              id="email"
               type="text"
-              placeholder={user?.username}
+              placeholder={"Enter your email"}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-4">

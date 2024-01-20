@@ -1,37 +1,37 @@
 import { ReactElement, useEffect, useState } from "react";
-import ModalCustom from "../../common/modalCustom/modalCustom.component";
+import ModalCustom from "../../../common/modalCustom/modalCustom.component";
 import { IoMdClose } from "react-icons/io";
-import { FishingSpotDTO } from "./fishingSpots.service";
+import { FishingSpotDTO } from "../fishingSpots.service";
 import {
   ValidationResult,
   validateAddingSpot,
-} from "../../common/utils/validator.utils";
-import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
+} from "../../../common/utils/validator.utils";
+import ButtonCustom from "../../../common/buttonCustom/buttonCustom.component";
 
 interface AddingFishingSpotModalProps {
-  isOpen_Type: ModalOpenType;
+  modalOptions: ModalOpenType;
   onClose: () => void;
   onConfirm: (newFishingspot: FishingSpotDTO) => void;
-  initialSpot: FishingSpotDTO;
 }
 
 export interface ModalOpenType {
   isOpen: boolean;
   type: "add" | "edit";
+  initialSpot: FishingSpotDTO;
 }
 
 const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
   props: AddingFishingSpotModalProps
 ): ReactElement => {
-  const { isOpen_Type, onClose, onConfirm, initialSpot } = props;
+  const { modalOptions, onClose, onConfirm } = props;
   const [errosInForm, setErrorsInForm] = useState<string[]>([]);
   const [newFishingspot, setNewFishingspot] = useState<FishingSpotDTO>(
     {} as FishingSpotDTO
   );
 
   useEffect(() => {
-    setNewFishingspot(initialSpot);
-  }, [initialSpot]);
+    setNewFishingspot(modalOptions.initialSpot);
+  }, [modalOptions.initialSpot]);
 
   const handleFormChange = (
     e:
@@ -57,11 +57,10 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
 
   const handleSubmit = () => {
     onConfirm(newFishingspot);
-    setNewFishingspot({} as FishingSpotDTO);
   };
 
   return (
-    <ModalCustom isOpen={isOpen_Type.isOpen} onClose={onClose}>
+    <ModalCustom isOpen={modalOptions.isOpen} onClose={onClose}>
       <div className="flex flex-col relative">
         <ButtonCustom
           className="absolute right-0 top-0"
@@ -76,7 +75,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           id="name"
           className="border-2 border-gray-500 p-2"
           placeholder="Name of the spot"
-          value={newFishingspot.name}
+          value={newFishingspot?.name}
           onChange={handleFormChange}
         />
         <label htmlFor="description">Description</label>
@@ -85,7 +84,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           id="description"
           className="border-2 border-gray-500 p-2"
           placeholder="Description of the spot"
-          value={newFishingspot.description}
+          value={newFishingspot?.description}
           onChange={handleFormChange}
         />
         <label htmlFor="rating">Rating</label>
@@ -96,7 +95,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           min={1}
           className="border-2 border-gray-500 p-2"
           placeholder="Rating of the spot"
-          value={newFishingspot.rating}
+          value={newFishingspot?.rating}
           onChange={handleFormChange}
         />
         <label htmlFor="type">Type</label>
@@ -104,6 +103,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           id="type"
           onChange={handleFormChange}
           className="border-2 border-gray-500 p-2"
+          value={newFishingspot?.type}
         >
           <option value="River">River</option>
           <option value="Lake">Lake</option>
@@ -118,7 +118,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           id="image"
           className="border-2 border-gray-500 p-2"
           placeholder="Image (URL) of the spot"
-          value={newFishingspot.image}
+          value={newFishingspot?.image}
           onChange={handleFormChange}
         />
         <div>
@@ -131,8 +131,8 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           type="add"
           disabled={errosInForm.length > 0}
         >
-          {isOpen_Type.type?.charAt(0).toUpperCase() +
-            isOpen_Type.type?.slice(1)}
+          {modalOptions.type?.charAt(0).toUpperCase() +
+            modalOptions.type?.slice(1)}
         </ButtonCustom>
       </div>
     </ModalCustom>

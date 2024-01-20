@@ -39,10 +39,11 @@ export const validateAddingSpot = (id: string, value: string): ValidationResult 
   }
 }
 
-export const validateContactMessage = (name: string, message: string): ValidationResult => {
-  const lengthValidationForName = validateLength(name, "Name must have a length greater than 0.");
+export const validateContactMessage = (email: string, message: string): ValidationResult => {
+  const lengthValidationForEmail = validateLength(email, "Email must have a length greater than 0.");
+  const regexValidationForEmail = validateEmail(email, "Email must be a valid email.");
   const lengthValidationForMessage = validateLength(message, "Message must have a length greater than 0.");
-  const combinedValidations = [lengthValidationForName, lengthValidationForMessage];
+  const combinedValidations = [lengthValidationForEmail, lengthValidationForMessage, regexValidationForEmail];
 
   if (combinedValidations.every((validation) => validation.isValid)) {
     return { isValid: true };
@@ -56,6 +57,22 @@ export const validateContactMessage = (name: string, message: string): Validatio
     return { isValid: false, errors: errors };
   }
 };
+
+export const validateEditProfile = (id: string, value: string): ValidationResult => {
+  switch (id) {
+    case "username":
+      return validateLength(value, `${id} must have a length greater than 0.`);
+    case "location":
+      return validateLength(value, `${id} must have a length greater than 0.`);
+    case "description":
+      return validateLength(value, `${id} must have a length greater than 0.`);
+    case "profilePicture":
+      return validateURL(value, `${id} must be a valid URL.`);
+    default:
+      return { isValid: false, errors: ["Invalid id"] };
+  }
+}
+
 
 const validateLength = (str: string, error: string): ValidationResult => {
   if (str.length > 0) {
@@ -86,6 +103,15 @@ const validateURL = (url: string, error: string): ValidationResult => {
 const validateType = (type: string, error: string): ValidationResult => {
   const types = ['Lake', 'River', 'Stream', 'Pond', 'Ocean', 'Sea', 'Other'];
   if (types.includes(type)) {
+    return { isValid: true };
+  } else {
+    return { isValid: false, errors: [error] };
+  }
+}
+
+const validateEmail = (email: string, error: string): ValidationResult => {
+  const regex = /\S+@\S+\.\S+/;
+  if (regex.test(email)) {
     return { isValid: true };
   } else {
     return { isValid: false, errors: [error] };
