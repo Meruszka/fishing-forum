@@ -90,6 +90,7 @@ async function seedDB() {
         rating: 5,
         type: 'River',
         image: 'https://fastly.picsum.photos/id/38/400/400.jpg?hmac=VdxBWTyewM2Fm8d9pexcS4ENL8m0-s6_tqmohKgCSeM',
+        author: user2._id,
     }).save()
 
     // Seed Friends with User IDs
