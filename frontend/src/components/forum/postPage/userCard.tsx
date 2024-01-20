@@ -9,7 +9,7 @@ interface UserCardCustomProps {
 
 const UserCard: React.FC<UserCardCustomProps> = ({ userId }) => {
     const [user, setUser] = useState<User>();
-    const apiClient = useApiClient();
+    const {apiClient} = useApiClient();
 
     const dateOfRegistration = new Date(user?.dateOfRegistration ?? "")
     const formattedDate = dateOfRegistration.toLocaleDateString('en-GB', {
@@ -19,6 +19,7 @@ const UserCard: React.FC<UserCardCustomProps> = ({ userId }) => {
     });
 
     useEffect(() => {
+      userId.length > 0 &&
         getUserById(apiClient, userId).then((user) =>{
             setUser(user);
         });

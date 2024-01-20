@@ -6,19 +6,43 @@ import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import ConversationView from "./components/ConversationView";
 import ConversationsList from "./components/ConversationList";
 import CreateConversationView from "./components/CreateConversationView";
+import { useWebsocket } from "../../providers/websocket/websocket.hook";
 
 
 let searchTimeout: number | null = null;
 
 const Chat = () => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState<ConversationMember[]>([]); // Assuming User is the type for your users
+    const [searchResults, setSearchResults] = useState<ConversationMember[]>([]);
     const [selectedUser, setSelectedUser] = useState<ConversationMember | null>(null);
-    const apiClient = useApiClient();
+    const { apiClient } = useApiClient();
     const currentUser = useCurrentUser();
+    const { val, clearMessage } = useWebsocket();
+
+    useEffect(() => {
+        if (val) {
+            const { action, data } = val;
+            if (action === 'newMessage') {
+                console.warn('newMessage', data);
+                const { conversationId, message } = data;
+                const updatedConversations = conversations.map(conversation => {
+                    if (conversation._id === conversationId) {
+                        return {
+                            ...conversation,
+                            messages: [...conversation.messages, message],
+                            lastMessage: message,
+                        };
+                    }
+                    return conversation;
+                });
+                clearMessage();
+                setConversations(updatedConversations);
+            }
+        }
+    }, [val,conversations,clearMessage]);
 
     useEffect(() => {
         getConversations(apiClient).then(setConversations);
@@ -43,7 +67,7 @@ const Chat = () => {
             getUsers(apiClient, event.target.value).then(results => {
                 setSearchResults(results.filter(user => user._id !== currentUser?._id));
             })
-        }, 500); // 500ms delay
+        }, 500);
     };
 
     const handleSelectUser = (user: ConversationMember) => {
@@ -53,12 +77,12 @@ const Chat = () => {
 
     const handleBackClick = () => {
         setSelectedUser(null);
-        setIsCreating(false); // Also set isCreating to false when going back
+        setIsCreating(false);
     };
-    
+
     return (
         <div className="fixed bottom-4 right-4">
-            {isOpen && (
+            {isChatOpen && (
                 <div className="w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col">
                     <div className="flex-none p-2 border-b border-gray-300 flex items-center justify-between">
                         {selectedUser ? (
@@ -75,7 +99,7 @@ const Chat = () => {
                         )}
                         <button
                             className="text-lg font-semibold"
-                            onClick={selectedUser || isCreating ? handleBackClick : () => setIsOpen(false)}
+                            onClick={selectedUser || isCreating ? handleBackClick : () => setIsChatOpen(false)}
                         >
                             X
                         </button>
@@ -109,10 +133,10 @@ const Chat = () => {
                 </div>
             )}
 
-            {!isOpen && (
+            {!isChatOpen && (
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-                    onClick={() => setIsOpen(true)}
+                    onClick={() => setIsChatOpen(true)}
                 >
                     Open Chat
                 </button>
