@@ -14,6 +14,7 @@ import ResponseItem from "./responseItem";
 import LinkCustom from "../../../common/linkCustom/LinkCustom.component";
 import ButtonCustom from "../../../common/buttonCustom/buttonCustom.component";
 import UserCard from "./userCard";
+import { useCurrentUser } from "../../../providers/currentUser/currentUser.hook";
 
 const PostPage: React.FC = () => {
   const { topicId, postId } = useParams<{ topicId: string; postId: string }>();
@@ -23,6 +24,7 @@ const PostPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [responseError, setResposeError] = useState<boolean>(false);
   const { apiClient } = useApiClient();
+  const user = useCurrentUser();
   const navigate = useNavigate();
   const croppedPostTitle = useMemo(() => {
     if (post?.title.length ?? 0 > 30) {
@@ -108,7 +110,7 @@ const PostPage: React.FC = () => {
           />
           <div className="flex bg-white p-4 mb-4 shadow-md rounded-md">
             <div className="mr-4 w-1/4">
-              <UserCard userId={post?.author._id ?? ""} />
+              <UserCard userId={post?.author._id ?? ""} usr={user} />
             </div>
             <div className="w-3/4">
               <p className="text-gray-600 font-bold">{post?.title}</p>

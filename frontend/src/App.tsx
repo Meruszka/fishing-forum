@@ -48,7 +48,7 @@ const router = createBrowserRouter(
       <Route path="" element={<TopicList />} />
       <Route path="forum/topics/:topicId" element={<TopicPage />} />
       <Route path="forum/topics/:topicId/post/:postId" element={<PostPage />} />
-      <Route path="user-profile" element={<UserProfile />} />
+      <Route path="user-profile/:userId" element={<UserProfile />} />
       <Route path="contact" element={<Contact />} />
       <Route path="*" element={<ErrorBoundry />} />
     </Route>
