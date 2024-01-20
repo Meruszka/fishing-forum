@@ -67,42 +67,70 @@ const UserProfile: React.FC = (): ReactElement => {
           alt="Profile"
           className="w-28 h-28 rounded-full mx-auto"
         />
-        <div className="text-center text-xl font-semibold mt-2">{user.username}</div>
+        <div className="text-center text-xl font-semibold mt-2">
+          {user.username}
+        </div>
       </div>
       <div className="flex flex-wrap mt-4">
         <div className="mx-auto">
           <h2 className="text-xl font-semibold mb-4">Profile Info</h2>
-          <UserCard userId="" usr={user}/>
+          <UserCard userId="" usr={user} />
         </div>
         <div className="mx-auto">
           <h2 className="text-xl font-semibold mb-4">Posts</h2>
           <div className="grid grid-cols-2 gap-4 bg-white p-6 rounded-lg shadow-md">
             {user.posts.slice(0, 6).map((post: Post) => (
-              <div key={post._id} className="flex bg-white p-4 h-16 w-32 justify-center items-center border-solid shadow-md">
-                  <h2 key={post._id} className="text-xs font-bold overflow-hidden whitespace-nowrap truncate">{post.title}</h2>
+              <div
+                key={post._id}
+                className="flex bg-white p-4 h-16 w-32 justify-center items-center border-solid shadow-md"
+              >
+                <h2
+                  key={post._id}
+                  className="text-xs font-bold overflow-hidden whitespace-nowrap truncate"
+                >
+                  {post.title}
+                </h2>
               </div>
-              ))}
-            {Array.from({ length: Math.max(0, 6 - user.posts.length) }).map((_, index) => (
-              <div key={`empty-${index}`} className="bg-white p-4 h-16 w-32 shadow-md"></div>
             ))}
-            {user.posts.length - 6 > 0 && <div className="col-span-2 flex justify-end items-end text-xs">{`And ${user.posts.length - 6} more`}</div>}
+            {Array.from({ length: Math.max(0, 6 - user.posts.length) }).map(
+              (_, index) => (
+                <div
+                  key={`empty-${index}`}
+                  className="bg-white p-4 h-16 w-32 shadow-md"
+                ></div>
+              )
+            )}
+            {user.posts.length - 6 > 0 && (
+              <div className="col-span-2 flex justify-end items-end text-xs">{`And ${
+                user.posts.length - 6
+              } more`}</div>
+            )}
           </div>
         </div>
 
         <div className="mx-auto">
           <h2 className="text-xl font-semibold mb-4">Badges</h2>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            {user.badges.length > 0 ? 
-              <ToolTipCustom className="flex justify-center items-center" content={user.badges[0].name} position="right">
+            {user.badges.length > 0 ? (
+              <ToolTipCustom
+                className="flex justify-center items-center"
+                content={user.badges[0].name}
+                position="right"
+              >
                 <img
                   src={user.badges[0].icon}
                   alt={user.badges[0].name}
                   className="w-10 h-10"
                 />
-              </ToolTipCustom> :
+              </ToolTipCustom>
+            ) : (
               <div className="text-xs text-center">No badges</div>
-            }
-            {user.badges.length - 1 > 0 && <div className="text-xs text-center mt-4">{`And ${user.badges.length - 1} more`}</div>}
+            )}
+            {user.badges.length - 1 > 0 && (
+              <div className="text-xs text-center mt-4">{`And ${
+                user.badges.length - 1
+              } more`}</div>
+            )}
           </div>
         </div>
 
@@ -134,17 +162,43 @@ const UserProfile: React.FC = (): ReactElement => {
         <div className="mx-auto">
           <h2 className="text-xl font-semibold mb-4">Friends</h2>
           <div className="grid grid-cols-2 gap-4 bg-white p-6 rounded-lg shadow-md mb-2">
-            {user.friends.slice(0, 4).map((friend: Friend) => (
-              <div key={friend._id} className="flex bg-white p-4 h-16 w-32 justify-center items-center border-solid shadow-md">
-                  <h2 key={friend._id} className="text-xs font-bold overflow-hidden whitespace-nowrap truncate">{friend.friend.username}</h2>
-              </div>
+            {user.friends
+              .filter((e) => e.friend._id != user._id)
+              .slice(0, 4)
+              .map((friend: Friend) => (
+                <div
+                  key={friend._id}
+                  className="flex bg-white p-4 h-16 w-32 justify-center items-center border-solid shadow-md"
+                >
+                  <h2
+                    key={friend._id}
+                    className="text-xs font-bold overflow-hidden whitespace-nowrap truncate"
+                  >
+                    {friend.friend.username}
+                  </h2>
+                </div>
               ))}
-            {Array.from({ length: Math.max(0, 4 - user.friends.length) }).map((_, index) => (
-              <div key={`empty-${index}`} className="bg-white p-4 h-16 w-32 shadow-md"></div>
-            ))}
-            {user.friends.length - 4 > 0 && <div className="col-span-2 flex justify-end items-end text-xs">{`And ${user.friends.length - 4} more`}</div>}
+            {Array.from({ length: Math.max(0, 4 - user.friends.length) }).map(
+              (_, index) => (
+                <div
+                  key={`empty-${index}`}
+                  className="bg-white p-4 h-16 w-32 shadow-md"
+                ></div>
+              )
+            )}
+            {user.friends.length - 4 > 0 && (
+              <div className="col-span-2 flex justify-end items-end text-xs">{`And ${
+                user.friends.length - 4
+              } more`}</div>
+            )}
           </div>
-          { !isCurrentUser && <ButtonCustom label={isMyFriend ? "Remove Friend" : "Add Friend"} onClick={handleAddPostClick} type="login"/>}
+          {!isCurrentUser && (
+            <ButtonCustom
+              label={isMyFriend ? "Remove Friend" : "Add Friend"}
+              onClick={handleAddPostClick}
+              type="login"
+            />
+          )}
         </div>
       </div>
     </div>
