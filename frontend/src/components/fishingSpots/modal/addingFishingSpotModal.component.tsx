@@ -49,6 +49,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
           : ["Unknown error"]
       );
     }
+    console.log(errosInForm);
     setNewFishingspot((prev) => ({
       ...prev,
       [id]: value,
