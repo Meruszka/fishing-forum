@@ -13,7 +13,6 @@ export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   const [val, setVal] = useState<WebsocketMessage | null>(null)
   const token = localStorage.getItem("token") || ""
   const [onlineCount, setOnlineCount] = useState(0)
-  const clearMessage = () => setVal(null)
 
   const ws = useRef<WebSocket | null>(null)
 
@@ -45,7 +44,7 @@ export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   }
 
   return (
-    <WebsocketContext.Provider value={{ isReady, onlineCount, val, send, clearMessage }}>
+    <WebsocketContext.Provider value={{ isReady, onlineCount, val, send }}>
       {children}
     </WebsocketContext.Provider>
   )

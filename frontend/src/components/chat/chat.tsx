@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { getConversations, getUsers } from "./chat.service";
-import { Conversation, ConversationMember } from "./chat.types";
+import { Conversation, ConversationMember, WebsocketMessage } from "./chat.types";
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import ConversationView from "./components/ConversationView";
@@ -20,12 +20,19 @@ const Chat = () => {
     const [searchResults, setSearchResults] = useState<ConversationMember[]>([]);
     const [selectedUser, setSelectedUser] = useState<ConversationMember | null>(null);
     const { apiClient, isLoggedIn } = useApiClient();
+    const [newWebsocketMessage, setNewWebsocketMessage] = useState<WebsocketMessage | null>(null);
     const currentUser = useCurrentUser();
-    const { val: websocketMessage, clearMessage } = useWebsocket();
+    const { val: websocketMessage } = useWebsocket();
 
     useEffect(() => {
         if (websocketMessage) {
-            const { action, data } = websocketMessage;
+            setNewWebsocketMessage(websocketMessage);
+        }
+    }, [websocketMessage]);
+
+    useEffect(() => {
+        if (newWebsocketMessage) {
+            const { action, data } = newWebsocketMessage;
             if (action === 'newMessage') {
                 const { conversationId, message } = data;
                 const updatedConversations = conversations.map(conversation => {
@@ -38,11 +45,11 @@ const Chat = () => {
                     }
                     return conversation;
                 });
-                clearMessage();
+                setNewWebsocketMessage(null);
                 setConversations(updatedConversations);
             }
         }
-    }, [websocketMessage, conversations, clearMessage]);
+    }, [newWebsocketMessage, conversations]);
 
     useEffect(() => {
         if (selectedUser) {

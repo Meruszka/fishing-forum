@@ -1,9 +1,10 @@
 import { ReactElement, useEffect, useRef, useState } from "react"
-import { getConversation, sendMessage } from ".././chat.service";
-import { ConversationMember, Message } from "../chat.types";
+import { getConversation, markAsRead, sendMessage } from ".././chat.service";
+import { ConversationMember, Message, WebsocketMessage } from "../chat.types";
 import { useApiClient } from "../../../providers/api/apiContext.hook";
 import { User } from "../../../providers/currentUser/currentUser.type";
 import { useCurrentUser } from "../../../providers/currentUser/currentUser.hook";
+import { useWebsocket } from "../../../providers/websocket/websocket.hook";
 
 interface MessageItemProps {
     message: Message;
@@ -47,11 +48,35 @@ const ConversationView = (props: ConversationViewProps): ReactElement => {
     const [newMessage, setNewMessage] = useState('');
     const { apiClient } = useApiClient();
     const currentUser = useCurrentUser();
+    const [conversationId, setConversationId] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [newWebsocketMessage, setNewWebsocketMessage] = useState<WebsocketMessage | null>(null);
+    const { val: websocketMessage } = useWebsocket();
+
+    useEffect(() => {
+        if (websocketMessage) {
+            console.log('websocketMessage in conversationview', websocketMessage);
+            setNewWebsocketMessage(websocketMessage);
+        }
+    }, [websocketMessage]);
+
+    useEffect(() => {
+        if (newWebsocketMessage) {
+            const { action, data } = newWebsocketMessage;
+            if (action === 'newMessage') {
+                if (conversationId === data.conversationId) {
+                    setMessages([...messages, data.message]);
+                    markAsRead(apiClient, conversationId);
+                    setNewWebsocketMessage(null);
+                }
+            }
+        }
+    }, [newWebsocketMessage, messages, conversationId, apiClient]);
 
     useEffect(() => {
         getConversation(apiClient, user._id).then(data => {
             setMessages(data.messages);
+            setConversationId(data._id);
         });
     }, [apiClient, user, currentUser?._id]);
 
