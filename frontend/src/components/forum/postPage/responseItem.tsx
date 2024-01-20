@@ -22,9 +22,9 @@ const ResponseItem: React.FC<ResponseCustomProps> = ({ response, postTitle }) =>
             <UserCard userId={response.author._id ?? ""} usr={null} />
           </div>
           <div className="w-3/4">
-            <p className="text-gray-600 font-bold">{`Re:${postTitle}`}</p>
+            <p className="text-gray-600 font-bold break-all">{`Re:${postTitle}`}</p>
             <p className="text-gray-500">{formattedDate}</p>
-            <div className="mt-2">
+            <div className="mt-2 break-all">
               <p>{response?.content}</p>
             </div>
           </div>
