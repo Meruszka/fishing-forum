@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express'
 import { UserService } from '../service/User.service'
 import { RequestWithUser, verifyTokenMiddleware } from '../middleware/Auth.middleware'
 import { GearValidator } from '../model/Gear.model'
+import { UserUpdateValidator } from '../model/User.model'
 
 class UserController {
     public router: Router
@@ -71,6 +72,10 @@ class UserController {
             return res.status(403).send({ error: 'Forbidden' })
         }
         const userData = req.body
+        const validationResult = UserUpdateValidator.safeParse(userData)
+        if (!validationResult.success) {
+            return res.status(400).send({ error: validationResult.error.format() })
+        }
         const result = await this.userService.updateUser(id, userData)
         if (result.error) {
             return res.status(result.code).send({ error: result.error })
