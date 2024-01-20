@@ -27,6 +27,17 @@ class UserService {
 
     async updateUser(id: string, userData: any) {
         try {
+            const { username, description, location, profilePicture } = userData
+            userData = { username, description, location, profilePicture }
+
+            const user = await User.findById(id)
+            if (!user) return { code: 404, error: 'User not found' }
+
+            if (username && username !== user.username) {
+                const isUsernameTaken = await User.exists({ username })
+                if (isUsernameTaken) return { code: 400, error: 'Username is already taken' }
+            }
+
             const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true, select: '-password' })
             if (!updatedUser) return { code: 404, error: 'User not found' }
 
