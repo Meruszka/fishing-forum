@@ -27,6 +27,10 @@ const ConversationItem = (props: ConversationItemProps): ReactElement => {
         }
     }
 
+    const lastMessageContent = lastMessage.sender._id === currentUser?._id
+        ? (<><span className="text-gray-400">You:</span> {lastMessage.content}</>)
+        : lastMessage.content;
+
     return (
         <div className="flex items-center p-3 border-b border-gray-300 cursor-pointer" onClick={() => openConversation()}>
             <div className="flex-shrink-0 mr-3 relative">
@@ -38,7 +42,7 @@ const ConversationItem = (props: ConversationItemProps): ReactElement => {
             </div>
             <div className="flex-grow">
                 <h5 className="font-bold">{otherMembers.map(member => member.username).join(', ')}</h5>
-                <p className="text-sm text-gray-600">{lastMessage.content}</p>
+                <p className="text-sm text-gray-600">{lastMessageContent}</p>
             </div>
             <div className="text-right">
                 <span className="text-xs text-gray-500">{new Date(lastMessage.date).toLocaleDateString()}</span>
