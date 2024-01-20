@@ -8,4 +8,5 @@ import Post from './Post.model'
 import Response from './Response.model'
 import Topic from './Topic.model'
 import User from './User.model'
-export { Badge, Conversation, FishingSpot, Friend, Gear, Message, Post, Response, Topic, User }
+import Ticket from './Ticket.model'
+export { Badge, Conversation, FishingSpot, Friend, Gear, Message, Post, Response, Topic, User, Ticket }
