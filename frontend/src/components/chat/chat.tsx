@@ -167,11 +167,11 @@ const Chat = () => {
   return (
     <>
       <div
-        className={`fixed bottom-4 right-4 w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col transition-opacity duration-300 ${
+        className={`z-20 fixed bottom-4 right-4 w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col transition-opacity duration-300 ${
           isChatOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
-        <div className="flex-none p-2 border-b border-gray-300 flex items-center justify-between">
+        <div className="flex-none p-2 border-b border-gray-300 flex items-center justify-between h-12">
           {selectedUser ? (
             <div className="flex items-center">
               <ProfileLinkCustom
@@ -229,7 +229,7 @@ const Chat = () => {
         )}
       </div>
       <ButtonCustom
-        className={`transition-transform transition-opacity duration-300 ease-in-out transform hover:scale-105 fixed bottom-4 right-4 ${
+        className={`z-20 transition-transform transition-opacity duration-300 ease-in-out transform hover:scale-105 fixed bottom-4 right-4 ${
           isChatOpen
             ? "opacity-0 pointer-events-none scale-0"
             : "opacity-100 scale-100"
