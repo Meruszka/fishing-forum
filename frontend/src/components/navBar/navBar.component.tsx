@@ -77,7 +77,7 @@ const Navbar: React.FC = (): ReactElement => {
               {isMenuOpen && (
                 <div
                   ref={menuRef}
-                  className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10"
+                  className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-20"
                 >
                   <LinkCustom
                     to={`/user-profile/${user?._id}`}
