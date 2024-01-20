@@ -5,6 +5,7 @@ import { TopicController } from './Topic.controller'
 import { PostController } from './Post.controller'
 import { FishingSpotController } from './FishingSpot.controller'
 import { ConversationController } from './Conversation.controller'
+import { TicketController } from './Ticket.controller'
 
 function registerControllers(app: express.Application): void {
     app.get('/health', (_, res) => {
@@ -28,6 +29,9 @@ function registerControllers(app: express.Application): void {
 
     const conversationController = new ConversationController()
     app.use(conversationController.router)
+
+    const ticketController = new TicketController()
+    app.use(ticketController.router)
 
     console.log('[INFO] Registered controllers')
 }

@@ -30,6 +30,10 @@ class UserService {
             const { username, description, location, profilePicture } = userData
             userData = { username, description, location, profilePicture }
 
+            // check if at least one field is provided
+            const fields = Object.values(userData)
+            if (!fields.some((field) => field)) return { code: 400, error: 'Missing fields' }
+
             const user = await User.findById(id)
             if (!user) return { code: 404, error: 'User not found' }
 
