@@ -31,6 +31,17 @@ const Chat = () => {
   const { val: websocketMessage } = useWebsocket();
 
   useEffect(() => {
+    if (!isLoggedIn) {
+      setIsChatOpen(false);
+      setConversations([]);
+      setSelectedUser(null);
+      setIsCreating(false);
+      setSearchTerm("");
+      setSearchResults([]);
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
     if (websocketMessage) {
       setNewWebsocketMessage(websocketMessage);
     }
@@ -109,8 +120,10 @@ const Chat = () => {
   }, [selectedUser, shouldUpdateConversations, conversations]);
 
   useEffect(() => {
-    getConversations(apiClient).then(setConversations);
-  }, [apiClient]);
+    if (isLoggedIn) {
+      getConversations(apiClient).then(setConversations);
+    }
+  }, [apiClient, isLoggedIn]);
 
   const handleStartNewConversation = () => {
     setIsCreating(true);
@@ -167,9 +180,8 @@ const Chat = () => {
   return (
     <>
       <div
-        className={`z-20 fixed bottom-4 right-4 w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col transition-opacity duration-300 ${
-          isChatOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`z-20 fixed bottom-4 right-4 w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col transition-opacity duration-300 ${isChatOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
       >
         <div className="flex-none p-2 border-b border-gray-300 flex items-center justify-between h-12">
           {selectedUser ? (
@@ -229,11 +241,10 @@ const Chat = () => {
         )}
       </div>
       <ButtonCustom
-        className={`z-20 transition-transform transition-opacity duration-300 ease-in-out transform hover:scale-105 fixed bottom-4 right-4 ${
-          isChatOpen
+        className={`z-20 transition-transform transition-opacity duration-300 ease-in-out transform hover:scale-105 fixed bottom-4 right-4 ${isChatOpen
             ? "opacity-0 pointer-events-none scale-0"
             : "opacity-100 scale-100"
-        }`}
+          }`}
         type="default"
         onClick={() => setIsChatOpen(true)}
       >
