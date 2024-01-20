@@ -52,6 +52,19 @@ class PostService {
 
             await Post.findByIdAndDelete(id)
             await Topic.findByIdAndUpdate(post.topic, { $inc: { numberOfPosts: -1 } })
+            const topic = await Topic.findById(post.topic)
+            if (!topic) {
+                return { code: 500, error: 'That should not happen' }
+            }
+            if (topic.lastPost?.toString() === id) {
+                const posts = await Post.find({ topic: post.topic }).sort({ creationDate: -1 })
+                if (posts.length > 0) {
+                    const lastPost = posts[0]
+                    await Topic.findByIdAndUpdate(post.topic, { lastPost: lastPost._id })
+                } else {
+                    await Topic.findByIdAndUpdate(post.topic, { lastPost: null })
+                }
+            }
             await User.findByIdAndUpdate(authorId, { $pull: { posts: id } })
 
             return { code: 200, data: { message: 'Post deleted' } }
