@@ -10,6 +10,7 @@ import {
   deleteFishingSpotREST,
   getFishingSpotsREST,
   newFishingSpotREST,
+  updateFishingSpotREST,
 } from "./fishingSpots.service";
 import AddingFishingspot from "./modal/addingFishingSpot.component";
 import AddingFishingSpotModal, {
@@ -25,7 +26,7 @@ const FishingSpots: React.FC = (): ReactElement => {
     lat: 54.0364,
     lng: 21.7667,
   });
-  const [isModalVisable, setIsModalVisable] = useState<ModalOpenType>({
+  const [isModalVisible, setIsModalVisible] = useState<ModalOpenType>({
     isOpen: false,
     type: "add",
     initialSpot: {} as FishingSpotDTO,
@@ -35,6 +36,7 @@ const FishingSpots: React.FC = (): ReactElement => {
   );
   const [fishingSpots, setFishingSpots] = useState<FishingSpot[]>([]);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
+  const [selectedSpotId, setSelectedSpotId] = useState<string>("");
   const { apiClient, isLoggedIn } = useApiClient();
 
   useEffect(() => {
@@ -47,19 +49,37 @@ const FishingSpots: React.FC = (): ReactElement => {
     mapRef.current?.invalidateSize();
   }, [isSidebarExpanded]);
 
-  const handleConfim = async (newSpot: FishingSpotDTO) => {
-    console.log(newSpot);
+  const handleConfirm = async (
+    newSpot: FishingSpotDTO,
+    type: "add" | "edit"
+  ) => {
     try {
-      const newSpotReponse = await newFishingSpotREST(apiClient, {
+      const newSpotRequest = {
         ...newSpot,
         rating: Number(newSpot.rating),
         latitude: newSpot.latitude ? newSpot.latitude : newSpotCoords.lat,
         longitude: newSpot.longitude ? newSpot.longitude : newSpotCoords.lng,
-      });
-      setFishingSpots((prev) => [...prev, newSpotReponse]);
-      setIsModalVisable({ isOpen: false } as ModalOpenType);
+      };
+
+      let result: FishingSpot;
+
+      if (type === "add") {
+        result = await newFishingSpotREST(apiClient, newSpotRequest);
+      } else if (type === "edit") {
+        result = await updateFishingSpotREST(
+          apiClient,
+          selectedSpotId,
+          newSpotRequest
+        );
+      }
+      setFishingSpots((prev) => [
+        ...prev.filter((e) => e._id != selectedSpotId),
+        result,
+      ]);
+      setIsModalVisible({ isOpen: false } as ModalOpenType);
+      setSelectedSpotId("");
     } catch (error) {
-      console.error("Error creating new fishing spot:", error);
+      console.error("Error handling fishing spot:", error);
     }
   };
 
@@ -83,8 +103,9 @@ const FishingSpots: React.FC = (): ReactElement => {
 
   const handleEditSpot = (id: string) => {
     const spotToEdit = fishingSpots.find((spot) => spot._id === id);
+    setSelectedSpotId(id);
     if (spotToEdit) {
-      setIsModalVisable({
+      setIsModalVisible({
         isOpen: true,
         type: "edit",
         initialSpot: spotToEdit,
@@ -99,9 +120,9 @@ const FishingSpots: React.FC = (): ReactElement => {
   return (
     <div className="flex flex-row-reverse overflow-hidden relative">
       <AddingFishingSpotModal
-        modalOptions={isModalVisable}
-        onClose={() => setIsModalVisable({ isOpen: false } as ModalOpenType)}
-        onConfirm={handleConfim}
+        modalOptions={isModalVisible}
+        onClose={() => setIsModalVisible({ isOpen: false } as ModalOpenType)}
+        onConfirm={handleConfirm}
       />
       <div
         className={`lg:w-1/4 ${
@@ -132,8 +153,8 @@ const FishingSpots: React.FC = (): ReactElement => {
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {isLoggedIn ? (
           <AddingFishingspot
-            isAdding={isModalVisable}
-            setIsAdding={setIsModalVisable}
+            isAdding={isModalVisible}
+            setIsAdding={setIsModalVisible}
             setCoords={setNewSpotCoords}
           />
         ) : null}

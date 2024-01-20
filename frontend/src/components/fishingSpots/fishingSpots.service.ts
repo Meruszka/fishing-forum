@@ -25,3 +25,8 @@ export const deleteFishingSpotREST = async (apiClient: ApiClient, id: string): P
   const response = await apiClient.delete<void>(`/fishingSpot/${id}`);
   return response.data;
 }
+
+export const updateFishingSpotREST = async (apiClient: ApiClient, id: string, fishingSpot: FishingSpotDTO): Promise<FishingSpot> => {
+  const response = await apiClient.patch<FishingSpot>(`/fishingSpot/${id}`, fishingSpot);
+  return response.data;
+}
