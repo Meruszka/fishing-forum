@@ -3,7 +3,7 @@ import { FishingSpot, User } from '../model'
 class FishingSpotService {
     async getFishingSpots() {
         try {
-            const fishingSpots = await FishingSpot.find().populate('author', 'username _id')
+            const fishingSpots = await FishingSpot.find().populate('author', 'username profilePicture _id')
             return { code: 200, data: fishingSpots }
         } catch (err) {
             console.error(err)
@@ -13,7 +13,7 @@ class FishingSpotService {
 
     async getFishingSpot(id: string) {
         try {
-            const fishingSpot = await FishingSpot.findById(id).populate('author', 'username _id')
+            const fishingSpot = await FishingSpot.findById(id).populate('author', 'username profilePicture _id')
 
             if (!fishingSpot) {
                 return { code: 404, error: 'FishingSpot not found' }
@@ -28,6 +28,19 @@ class FishingSpotService {
 
     async updateFishingSpot(id: string, fishingSpotData: any) {
         try {
+            const { name, longitude, latitude, description, rating, type, image } = fishingSpotData
+            fishingSpotData = { name, longitude, latitude, description, rating, type, image }
+
+            const fields = Object.values(fishingSpotData)
+
+            if (!fields.some((field) => field)) {
+                return { code: 400, error: 'Missing fields' }
+            }
+
+            Object.keys(fishingSpotData).forEach(
+                (key) => fishingSpotData[key] === undefined && delete fishingSpotData[key]
+            )
+
             const fishingSpot = await FishingSpot.findByIdAndUpdate(id, fishingSpotData, { new: true })
             if (!fishingSpot) {
                 return { code: 404, error: 'FishingSpot not found' }
