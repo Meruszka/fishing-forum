@@ -22,6 +22,12 @@ export const getUserById = async (apiClient: ApiClient, userId: string): Promise
   return response.data
 }
 
-// export const deletePostById = async (apiClient: ApiClient, postId: string): Promise<void> =>{
+export const deletePostById = async (apiClient: ApiClient, postId: string): Promise<void> => {
+  const response = await apiClient.delete<void>(`/post/${postId}`)
+  return response.data
+}
 
-// }
+export const deleteResponseById = async (apiClient: ApiClient, postId: string, responseId: string): Promise<void> => {
+  const response = await apiClient.delete<void>(`/post/${postId}/response/${responseId}`)
+  return response.data
+}
