@@ -66,13 +66,22 @@ const PostPage: React.FC = () => {
     };
 
     return (
-        <div className="max-w-screen-lg mx-auto">
-            {responseError ? <div>Post not found</div> : 
-            <div>
-                <LinkCustom to="/" className="text-gray-400" >Home</LinkCustom>
-                <LinkCustom to={`/forum/topics/${topicId}`} className="text-gray-400" >{`>${post?.topic.name}`}</LinkCustom>
-                <LinkCustom to={`/forum/topics/${topicId}/post/${postId}`} className="text-gray-400" >{`>${post?.title}`}</LinkCustom>
-
+      <div className="max-w-screen-lg mx-auto">
+        {responseError ? (
+          <div>Post not found</div>
+        ) : (
+          <div>
+            <LinkCustom to="/" className="text-gray-400">
+              Home
+            </LinkCustom>
+            <LinkCustom
+              to={`/forum/topics/${topicId}`}
+              className="text-gray-400"
+            >{`>${post?.topic.name}`}</LinkCustom>
+            <LinkCustom
+              to={`/forum/topics/${topicId}/post/${postId}`}
+              className="text-gray-400"
+            >{`>${post?.title}`}</LinkCustom>
                 <h1 className="text-2xl font-bold mb-1">{post?.title}</h1>
                 <ButtonCustom
                     label="Add Response"
@@ -87,7 +96,7 @@ const PostPage: React.FC = () => {
                             <UserCard userId={post?.author._id ?? ""} usr={null}/>
                         </Link>
                     </div>
-                    <div>
+                    <div className="w-3/4">
                         <p className="text-gray-600 font-bold">{post?.title}</p>
                         <p className="text-gray-500">{formattedDate}</p>
                         <div className="mt-2">
@@ -103,25 +112,46 @@ const PostPage: React.FC = () => {
                         ))}
                     </ul>
                 </div>
-                <div className="max-w-screen-lg mx-auto">
-                    <h1 className="text-2xl font-bold mb-4">Add Response</h1>
-                    <div className="flex mb-4">
-                        <textarea
-                            value={newResponse}
-                            onChange={(e) => setNewResponse(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-md"
-                            placeholder="Type your response here..."
-                        />
-                    </div>
-                    <ButtonCustom
-                        label="Add Response"
-                        type="login"
-                        onClick={handleButtonClick}
-                        disabled={false}
+              </div>
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold mb-4">Responses</h1>
+              <ul>
+                {responses.length === 0 ? (
+                  <h3 className="text-2xl font-bold mb-4">
+                    No responses for now :((
+                  </h3>
+                ) : (
+                  responses.map((response) => (
+                    <ResponseItem
+                      key={response._id}
+                      response={response}
+                      postTitle={post?.title ?? ""}
                     />
-                </div>
-            </div>}
-        </div>
+                  ))
+                )}
+              </ul>
+            </div>
+            <div className="max-w-screen-lg mx-auto">
+              <h1 className="text-2xl font-bold mb-4">Add Response</h1>
+              <div className="flex mb-4">
+                <textarea
+                  value={newResponse}
+                  onChange={(e) => setNewResponse(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  placeholder="Type your response here..."
+                />
+              </div>
+              <ButtonCustom
+                label="Add Response"
+                type="login"
+                onClick={handleButtonClick}
+                disabled={false}
+              />
+            </div>
+          </div>
+        )}
+      </div>
     );
 };
   
