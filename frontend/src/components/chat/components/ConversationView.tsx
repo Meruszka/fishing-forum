@@ -63,6 +63,9 @@ const ConversationView = (props: ConversationViewProps): ReactElement => {
     }, [messages]);
 
     const handleSendMessage = () => {
+        if (!newMessage) {
+            return;
+        }
         sendMessage(apiClient, { interlocutorId: user._id, content: newMessage })
             .then(newMessage => {
                 const message = {
