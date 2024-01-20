@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { getConversations, getUsers } from "./chat.service";
-import { Conversation, ConversationMember } from "./chat.types";
+import { Conversation, ConversationMember, WebsocketMessage } from "./chat.types";
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import ConversationView from "./components/ConversationView";
@@ -14,19 +14,26 @@ let searchTimeout: number | null = null;
 const Chat = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+    const [shouldUpdateConversations, setShouldUpdateConversations] = useState(false);
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState<ConversationMember[]>([]);
     const [selectedUser, setSelectedUser] = useState<ConversationMember | null>(null);
-    const { apiClient } = useApiClient();
+    const { apiClient, isLoggedIn } = useApiClient();
+    const [newWebsocketMessage, setNewWebsocketMessage] = useState<WebsocketMessage | null>(null);
     const currentUser = useCurrentUser();
-    const { val, clearMessage } = useWebsocket();
+    const { val: websocketMessage } = useWebsocket();
 
     useEffect(() => {
-        if (val) {
-            const { action, data } = val;
+        if (websocketMessage) {
+            setNewWebsocketMessage(websocketMessage);
+        }
+    }, [websocketMessage]);
+
+    useEffect(() => {
+        if (newWebsocketMessage) {
+            const { action, data } = newWebsocketMessage;
             if (action === 'newMessage') {
-                console.warn('newMessage', data);
                 const { conversationId, message } = data;
                 const updatedConversations = conversations.map(conversation => {
                     if (conversation._id === conversationId) {
@@ -38,11 +45,38 @@ const Chat = () => {
                     }
                     return conversation;
                 });
-                clearMessage();
+                setNewWebsocketMessage(null);
                 setConversations(updatedConversations);
             }
         }
-    }, [val,conversations,clearMessage]);
+    }, [newWebsocketMessage, conversations]);
+
+    useEffect(() => {
+        if (selectedUser) {
+            setShouldUpdateConversations(true);
+        }
+    }, [selectedUser]);
+
+
+    useEffect(() => {
+        if (selectedUser && shouldUpdateConversations) {
+            const updatedConversations = conversations.map(conversation => {
+                if (conversation.members.some(member => member._id === selectedUser._id)) {
+                    return {
+                        ...conversation,
+                        lastMessage: {
+                            ...conversation.lastMessage,
+                            isRead: true,
+                        },
+                    };
+                }
+                return conversation;
+            });
+            setConversations(updatedConversations);
+            setShouldUpdateConversations(false);
+        }
+    }, [selectedUser, shouldUpdateConversations, conversations]);
+
 
     useEffect(() => {
         getConversations(apiClient).then(setConversations);
@@ -79,6 +113,10 @@ const Chat = () => {
         setSelectedUser(null);
         setIsCreating(false);
     };
+
+    if (!isLoggedIn) {
+        return null;
+    }
 
     return (
         <div className="fixed bottom-4 right-4">

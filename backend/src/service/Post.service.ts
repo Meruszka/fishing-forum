@@ -39,6 +39,61 @@ class PostService {
         }
     }
 
+    async deletePost(id: string, authorId: string) {
+        try {
+            const post = await Post.findById(id)
+            if (!post) {
+                return { code: 404, error: 'Post not found' }
+            }
+
+            if (!post.author || post.author.toString() !== authorId) {
+                return { code: 403, error: 'Forbidden' }
+            }
+
+            await Post.findByIdAndDelete(id)
+            await Topic.findByIdAndUpdate(post.topic, { $inc: { numberOfPosts: -1 } })
+            await User.findByIdAndUpdate(authorId, { $pull: { posts: id } })
+
+            return { code: 200, data: { message: 'Post deleted' } }
+        } catch (err) {
+            console.error(err)
+            return { code: 500, error: 'Internal Server Error' }
+        }
+    }
+
+    async deleteResponse(id: string, authorId: string) {
+        try {
+            const response = await Response.findById(id)
+            if (!response) {
+                return { code: 404, error: 'Response not found' }
+            }
+
+            if (!response.author || response.author.toString() !== authorId) {
+                return { code: 403, error: 'Forbidden' }
+            }
+
+            await Response.findByIdAndDelete(id)
+            await Post.findByIdAndUpdate(response.post, { $pull: { responses: id } })
+            const post = await Post.findById(response.post)
+
+            if (!post) {
+                return { code: 500, error: 'That should not happen' }
+            }
+
+            if (post.responses.length > 0) {
+                const lastResponse = post.responses[post.responses.length - 1]
+                await Post.findByIdAndUpdate(response.post, { lastResponse })
+            } else {
+                await Post.findByIdAndUpdate(response.post, { lastResponse: null })
+            }
+
+            return { code: 200, data: { message: 'Response deleted' } }
+        } catch (err) {
+            console.error(err)
+            return { code: 500, error: 'Internal Server Error' }
+        }
+    }
+
     async getRecentPosts(count: number) {
         try {
             const posts = await Post.find()
