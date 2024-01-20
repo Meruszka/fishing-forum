@@ -32,7 +32,7 @@ const TopicList: React.FC = (): ReactElement => {
               <TopicItem key={topic._id} topic={topic} />
             ))}
           </ul>
-          <div className="ml-4 h-full bg-white p-4 mb-4 shadow-md rounded-md ">
+          <div className="ml-4 max-w-60 h-full bg-white p-4 mb-4 shadow-md rounded-md ">
             <h1 className="text-center text-xl font-bold mb-4" >Last Posts</h1>
             <ul key={"posts"}>
               {posts.map((post) => (

@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useState, useRef, useEffect } from "react";
 import LinkCustom from "../../common/linkCustom/LinkCustom.component";
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import Logo from "../../../public/logo.png";
@@ -8,6 +8,19 @@ const Navbar: React.FC = (): ReactElement => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { apiClient, isLoggedIn, setIsLoggedIn } = useApiClient();
   const user = useCurrentUser();
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -43,9 +56,9 @@ const Navbar: React.FC = (): ReactElement => {
                 />
               </button>
               {isMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
+                <div ref={menuRef} className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10">
                   <LinkCustom
-                    to="/user-profile"
+                    to={`/user-profile/${user?._id}`}
                     className="block px-4 py-2 text-gray-800"
                   >
                     Profile
