@@ -37,6 +37,8 @@ const FishingSpots: React.FC = (): ReactElement => {
   const [fishingSpots, setFishingSpots] = useState<FishingSpot[]>([]);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
   const [selectedSpotId, setSelectedSpotId] = useState<string>("");
+  const [isFading, setIsFading] = useState(false);
+  const [buttonText, setButtonText] = useState("Show Sidebar");
   const { apiClient, isLoggedIn } = useApiClient();
 
   useEffect(() => {
@@ -114,8 +116,19 @@ const FishingSpots: React.FC = (): ReactElement => {
   };
 
   const toggleSidebar = () => {
-    setIsSidebarExpanded((prev) => !prev);
+    setIsFading(true);
+
+    setTimeout(() => {
+      setIsSidebarExpanded(prev => {
+        setButtonText(!prev ? "Hide Sidebar" : "Show Sidebar");
+        return !prev;
+      });
+      setIsFading(false);
+    }, 150); // Half of your transition duration
   };
+
+
+
 
   return (
     <div className="flex flex-row-reverse overflow-hidden relative">
@@ -125,9 +138,8 @@ const FishingSpots: React.FC = (): ReactElement => {
         onConfirm={handleConfirm}
       />
       <div
-        className={`lg:w-1/4 ${
-          isSidebarExpanded ? "" : "hidden"
-        } p-4 bg-gray-700 h-[calc(100vh-72px)]`}
+        className={`lg:w-1/4 p-4 bg-gray-700 h-[calc(100vh-72px)] absolute top-0 transition-all ease-in-out duration-500 z-10 ${isSidebarExpanded ? "right-0" : "-right-full"
+          }`}
       >
         <SideBar
           handleClick={handleSelectSpot}
@@ -137,11 +149,13 @@ const FishingSpots: React.FC = (): ReactElement => {
         />
       </div>
       <ButtonCustom
-        className="absolute top-15 right-4 z-10"
+        className={`z-10 absolute top-15 right-4 w-40`}
         type="default"
         onClick={toggleSidebar}
       >
-        {isSidebarExpanded ? "Hide Sidebar" : "Show Sidebar"}
+        <span className={`transition-opacity duration-300 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+          {buttonText}
+        </span>
       </ButtonCustom>
       <MapContainer
         center={[coords.lat, coords.lng]}
@@ -176,6 +190,7 @@ const FishingSpots: React.FC = (): ReactElement => {
                     </div>
                     <div className="text-gray-700">{spot.description}</div>
                   </div>
+                  <div className="text-gray-700">{spot.description}</div>
                 </div>
               </div>
             </Popup>
