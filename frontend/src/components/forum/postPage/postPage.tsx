@@ -106,13 +106,17 @@ const PostPage: React.FC = () => {
           >{`>${croppedPostTitle}`}</LinkCustom>
 
           <h1 className="text-2xl font-bold mb-1 break-all">{post?.title}</h1>
-          <ButtonCustom
-            label="Add Response"
-            type="login"
-            onClick={scrollToBottom}
-            disabled={false}
-            className={"mb-4"}
-          />
+          {
+            isLoggedIn && (
+              <ButtonCustom
+                label="Add Response"
+                type="login"
+                onClick={scrollToBottom}
+                disabled={false}
+                className={"mb-4"}
+              />
+            )
+          }
           <div className="flex bg-white p-4 mb-4 shadow-md rounded-md">
             <div className="mr-4 w-1/4">
                 <Link to={`/user-profile/${post?.author._id}`}>
@@ -147,23 +151,27 @@ const PostPage: React.FC = () => {
               )}
             </ul>
           </div>
-          <div className="max-w-screen-lg mx-auto">
-            <h1 className="text-2xl font-bold mb-4">Add Response</h1>
-            <div className="flex mb-4">
-              <textarea
-                value={newResponse}
-                onChange={(e) => setNewResponse(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                placeholder="Type your response here..."
+          {
+            isLoggedIn && (
+              <div className="max-w-screen-lg mx-auto">
+              <h1 className="text-2xl font-bold mb-4">Add Response</h1>
+              <div className="flex mb-4">
+                <textarea
+                  value={newResponse}
+                  onChange={(e) => setNewResponse(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  placeholder="Type your response here..."
+                />
+              </div>
+              <ButtonCustom
+                label="Add Response"
+                type="login"
+                onClick={handleButtonClick}
+                disabled={false}
               />
             </div>
-            <ButtonCustom
-              label="Add Response"
-              type="login"
-              onClick={handleButtonClick}
-              disabled={false}
-            />
-          </div>
+            )
+          }
         </div>
       )}
     </div>
