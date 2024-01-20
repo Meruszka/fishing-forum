@@ -41,7 +41,10 @@ class FishingSpotService {
                 (key) => fishingSpotData[key] === undefined && delete fishingSpotData[key]
             )
 
-            const fishingSpot = await FishingSpot.findByIdAndUpdate(id, fishingSpotData, { new: true })
+            const fishingSpot = await FishingSpot.findByIdAndUpdate(id, fishingSpotData, { new: true }).populate(
+                'author',
+                'username profilePicture _id'
+            )
             if (!fishingSpot) {
                 return { code: 404, error: 'FishingSpot not found' }
             }
