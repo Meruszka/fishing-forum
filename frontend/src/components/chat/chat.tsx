@@ -164,68 +164,73 @@ const Chat = () => {
   }
 
   return (
-    <div className="fixed bottom-4 right-4">
-      {isChatOpen && (
-        <div className="w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col">
-          <div className="flex-none p-2 border-b border-gray-300 flex items-center justify-between">
-            {selectedUser ? (
-              <div className="flex items-center">
-                <img
-                  src={selectedUser.profilePicture || "default-profile.png"}
-                  alt={selectedUser.username}
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-                <h2 className="font-bold">{selectedUser.username}</h2>
-              </div>
-            ) : (
-              <h2 className="font-bold">Chat</h2>
-            )}
-            <ButtonCustom
-              type="close"
-              onClick={
-                selectedUser || isCreating
-                  ? handleBackClick
-                  : () => setIsChatOpen(false)
-              }
-            >
-              <IoMdClose />
-            </ButtonCustom>
-          </div>
-
-          <div className="flex-1 overflow-y-auto">
-            {selectedUser ? (
-              <ConversationView user={selectedUser} addMessage={addMessage} />
-            ) : isCreating ? (
-              <CreateConversationView
-                handleSearchChange={handleSearchChange}
-                handleSelectUser={handleSelectUser}
-                searchTerm={searchTerm}
-                searchResults={searchResults}
+    <>
+      <div
+        className={`fixed bottom-4 right-4 w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col transition-opacity duration-300 ${isChatOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      >
+        <div className="flex-none p-2 border-b border-gray-300 flex items-center justify-between">
+          {selectedUser ? (
+            <div className="flex items-center">
+              <img
+                src={selectedUser.profilePicture || "default-profile.png"}
+                alt={selectedUser.username}
+                className="w-8 h-8 rounded-full mr-2"
               />
-            ) : (
-              <ConversationsList
-                conversations={conversations}
-                setSelectedUser={setSelectedUser}
-              />
-            )}
-          </div>
-
-          {!selectedUser && !isCreating && (
-            <div className="flex-none p-4">
-              <ButtonCustom type="add" onClick={handleStartNewConversation}>
-                New Conversation
-              </ButtonCustom>
+              <h2 className="font-bold">{selectedUser.username}</h2>
             </div>
+          ) : (
+            <h2 className="font-bold">Chat</h2>
+          )}
+          <ButtonCustom
+            type="close"
+            onClick={
+              selectedUser || isCreating
+                ? handleBackClick
+                : () => setIsChatOpen(false)
+            }
+          >
+            <IoMdClose />
+          </ButtonCustom>
+        </div>
+
+        <div className="flex-1 overflow-y-auto">
+          {selectedUser ? (
+            <ConversationView user={selectedUser} addMessage={addMessage} />
+          ) : isCreating ? (
+            <CreateConversationView
+              handleSearchChange={handleSearchChange}
+              handleSelectUser={handleSelectUser}
+              searchTerm={searchTerm}
+              searchResults={searchResults}
+            />
+          ) : (
+            <ConversationsList
+              conversations={conversations}
+              setSelectedUser={setSelectedUser}
+            />
           )}
         </div>
-      )}
 
-      {!isChatOpen && (
-        <ButtonCustom type="default" onClick={() => setIsChatOpen(true)}>
-          Open Chat
-        </ButtonCustom>
-      )}
-    </div>
+        {!selectedUser && !isCreating && (
+          <div className="flex-none p-4">
+            <ButtonCustom
+              className="transition-transform duration-200 ease-in-out transform hover:scale-105"
+              type="add"
+              onClick={handleStartNewConversation}>
+              New Conversation
+            </ButtonCustom>
+          </div>
+        )}
+
+
+      </div>
+      <ButtonCustom
+        className={`transition-transform transition-opacity duration-300 ease-in-out transform hover:scale-105 fixed bottom-4 right-4 ${isChatOpen ? 'opacity-0 pointer-events-none scale-0' : 'opacity-100 scale-100'}`}
+        type="default"
+        onClick={() => setIsChatOpen(true)}>
+        Open Chat
+      </ButtonCustom>
+    </>
   );
 };
 
