@@ -125,7 +125,7 @@ const PostPage: React.FC = () => {
             <ul>
               {responses.length === 0 ? (
                 <h3 className="text-2xl font-bold mb-4">
-                  No responses for now :((
+                  No responses for now 😿
                 </h3>
               ) : (
                 responses.map((response) => (
