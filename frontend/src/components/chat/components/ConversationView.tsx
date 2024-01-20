@@ -39,10 +39,11 @@ const MessageItem = (props: MessageItemProps): ReactElement => {
 
 interface ConversationViewProps {
     user: ConversationMember;
+    addMessage: (conversationId: string, message: Message) => void;
 }
 
 const ConversationView = (props: ConversationViewProps): ReactElement => {
-    const { user } = props;
+    const { user, addMessage } = props;
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
@@ -55,7 +56,6 @@ const ConversationView = (props: ConversationViewProps): ReactElement => {
 
     useEffect(() => {
         if (websocketMessage) {
-            console.log('websocketMessage in conversationview', websocketMessage);
             setNewWebsocketMessage(websocketMessage);
         }
     }, [websocketMessage]);
@@ -65,11 +65,27 @@ const ConversationView = (props: ConversationViewProps): ReactElement => {
             const { action, data } = newWebsocketMessage;
             if (action === 'newMessage') {
                 if (conversationId === data.conversationId) {
-                    setMessages([...messages, data.message]);
-                    markAsRead(apiClient, conversationId);
-                    setNewWebsocketMessage(null);
+                    const lastMessage = messages[messages.length - 1];
+                    if (lastMessage && lastMessage._id !== data.message._id) {
+                        setMessages([...messages, data.message]);
+                        markAsRead(apiClient, conversationId);
+                    }
+                }
+            } else if (action === 'markAsRead') {
+                if (conversationId === data.conversationId) {
+                    const updatedMessages = messages.map(message => {
+                        if (message.isRead === false) {
+                            return {
+                                ...message,
+                                isRead: true,
+                            };
+                        }
+                        return message;
+                    });
+                    setMessages(updatedMessages);
                 }
             }
+            setNewWebsocketMessage(null);
         }
     }, [newWebsocketMessage, messages, conversationId, apiClient]);
 
@@ -97,6 +113,7 @@ const ConversationView = (props: ConversationViewProps): ReactElement => {
                         username: currentUser?.username
                     }
                 } as Message;
+                addMessage(conversationId!, message);
                 setMessages([...messages, message]);
             });
         setNewMessage('');

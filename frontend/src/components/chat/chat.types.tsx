@@ -57,6 +57,13 @@ interface WebsocketNewMessage {
     };
 }
 
+interface WebsocketMarkAsReadMessage {
+    action: 'markAsRead';
+    data: {
+        conversationId: string;
+    };
+}
+
 interface WebsocketPingMessage {
     action: 'ping';
     data: {
@@ -72,4 +79,4 @@ interface WebsocketErrorMessage {
     };
 }
 
-export type WebsocketMessage = WebsocketNewMessage | WebsocketPingMessage | WebsocketErrorMessage;
+export type WebsocketMessage = WebsocketNewMessage | WebsocketMarkAsReadMessage | WebsocketPingMessage | WebsocketErrorMessage;

@@ -116,6 +116,15 @@ class ConversationService {
                     },
                     { $set: { isRead: true } }
                 )
+                const interlocutorId = conversation.members.find((member) => member.toString() !== userId)
+                if (interlocutorId) {
+                    sendWSMessage(interlocutorId.toString(), {
+                        action: 'markAsRead',
+                        data: {
+                            conversationId,
+                        },
+                    })
+                }
                 return { code: 200, data: 'Messages marked as read' }
             } else {
                 return { code: 404, error: 'Conversation not found' }
