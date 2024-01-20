@@ -75,7 +75,6 @@ export class ApiClient {
   }
 
   public async put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    console.log(data)
     return this.axiosInstance.put<T>(url, data, config);
   }
 
