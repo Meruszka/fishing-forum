@@ -65,8 +65,9 @@ const TopicPage: React.FC = (): ReactElement => {
         try {
           const resp = await addPostforTopicId(apiClient, topicId ?? "", newPostTitle, newPostContent);
           setPosts([resp, ...posts])
-          console.log(`added post: ${resp.content}`);
           setIsFormVisible(false)
+          setNewPostTitle("")
+          setNewPostContent("")
         } catch (error) {
           console.error('Error posting response:', error);
         }
@@ -91,13 +92,17 @@ const TopicPage: React.FC = (): ReactElement => {
               className="text-gray-400"
             >{`>${topic?.name}`}</LinkCustom>
             <h1 className="text-2xl font-bold mb-1">Forum</h1>
-            <ButtonCustom
-              label={isFormVisible ? "Hide Form" : "Add Post"}
-              type="login"
-              onClick={handleButtonClick}
-              disabled={false}
-              className={"mb-4"}
-            />
+            {
+              isLoggedIn && (
+                <ButtonCustom
+                  label={isFormVisible ? "Hide Form" : "Add Post"}
+                  type="login"
+                  onClick={handleButtonClick}
+                  disabled={false}
+                  className={"mb-4"}
+                />
+              )
+            }
             {isFormVisible && (
               <form>
                 <div className="mb-4">
