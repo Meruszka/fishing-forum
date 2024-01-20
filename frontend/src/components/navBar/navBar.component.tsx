@@ -4,12 +4,14 @@ import { useApiClient } from "../../providers/api/apiContext.hook";
 import Logo from "../../../public/logo.png";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import { useNavigate } from "react-router-dom";
+import { useWebsocket } from "../../providers/websocket/websocket.hook";
 
 const Navbar: React.FC = (): ReactElement => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const { apiClient, isLoggedIn, setIsLoggedIn } = useApiClient();
   const navigate = useNavigate();
   const user = useCurrentUser();
+  const { onlineCount } = useWebsocket();
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -29,13 +31,18 @@ const Navbar: React.FC = (): ReactElement => {
   };
 
   return (
-    <nav className="bg-gray-800 p-4">
+    <nav className="bg-gray-800 p-4 w-full">
       <div className="container mx-auto flex justify-between items-center">
-        <LinkCustom to="/">
-          <div className="text-white font-bold text-xl">
-            <img src={Logo} alt="logo" className="w-10 h-10" />
-          </div>
-        </LinkCustom>
+        <div className="flex flex-row">
+          <LinkCustom to="/" className="mr-2">
+            <div className="text-white font-bold text-xl">
+              <img src={Logo} alt="logo" className="w-10 h-10" />
+            </div>
+          </LinkCustom>
+          <LinkCustom>
+            <div className="text-white font-bold text-xl">Search</div>
+          </LinkCustom>
+        </div>
         <div className="flex space-x-4">
           <LinkCustom to="/fishing-spots">Fishing Spots</LinkCustom>
           <LinkCustom to="/">Forum</LinkCustom>
@@ -71,6 +78,13 @@ const Navbar: React.FC = (): ReactElement => {
             </div>
           ) : (
             <LinkCustom to="/login">Login</LinkCustom>
+          )}
+          {isLoggedIn && (
+            <LinkCustom>
+              <>
+                Online: <span className="text-green-500">{onlineCount}</span>
+              </>
+            </LinkCustom>
           )}
         </div>
       </div>

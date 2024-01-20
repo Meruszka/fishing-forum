@@ -35,7 +35,6 @@ function ErrorBoundry(): ReactElement {
       <div className="text-center">
         <h1 className="text-6xl font-bold mb-4">Error</h1>
         <p className="text-lg">Something went wrong. Please try again later.</p>
-        {/* You can add additional information or a button to redirect users */}
       </div>
     </div>
   );
