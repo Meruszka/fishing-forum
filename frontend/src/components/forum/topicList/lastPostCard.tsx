@@ -21,9 +21,9 @@ const LastPostCard: React.FC<LastPostCustomProps> = ({ post }) => {
                 alt="Profile"
                 className="w-11 h-11 rounded-full mr-4 self-center"
             />
-            <div>
-                <h2 className="text-xl font-bold">{post.title}</h2>
-                <p className="text-gray-600">{`by ${post.author?.username}, ${formattedDate}`}</p>
+            <div className="">
+                <h2 className="text-xl max-w-28 font-bold overflow-hidden whitespace-nowrap truncate">{post.title}</h2>
+                <p className="text-gray-600 ">{`by ${post.author?.username}, ${formattedDate}`}</p>
             </div>
       </div>
     );

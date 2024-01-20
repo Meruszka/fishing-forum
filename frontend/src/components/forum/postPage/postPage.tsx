@@ -8,6 +8,7 @@ import ResponseItem from "./responseItem";
 import LinkCustom from "../../../common/linkCustom/LinkCustom.component";
 import ButtonCustom from "../../../common/buttonCustom/buttonCustom.component";
 import UserCard from "./userCard";
+import { Link } from "react-router-dom"
 
 const PostPage: React.FC = () => {
     const { topicId, postId } = useParams<{ topicId: string, postId: string }>();
@@ -81,24 +82,35 @@ const PostPage: React.FC = () => {
               to={`/forum/topics/${topicId}/post/${postId}`}
               className="text-gray-400"
             >{`>${post?.title}`}</LinkCustom>
-
-            <h1 className="text-2xl font-bold mb-1">{post?.title}</h1>
-            <ButtonCustom
-              label="Add Response"
-              type="login"
-              onClick={scrollToBottom}
-              disabled={false}
-              className={"mb-4"}
-            />
-            <div className="flex bg-white p-4 mb-4 shadow-md rounded-md">
-              <div className="mr-4 w-1/4">
-                <UserCard userId={post?.author._id ?? ""} />
-              </div>
-              <div className="w-3/4">
-                <p className="text-gray-600 font-bold">{post?.title}</p>
-                <p className="text-gray-500">{formattedDate}</p>
-                <div className="mt-2">
-                  <p>{post?.content}</p>
+                <h1 className="text-2xl font-bold mb-1">{post?.title}</h1>
+                <ButtonCustom
+                    label="Add Response"
+                    type="login"
+                    onClick={scrollToBottom}
+                    disabled={false}
+                    className={"mb-4"}
+                />
+                <div className="flex bg-white p-4 mb-4 shadow-md rounded-md">
+                    <div className="mr-4 w-1/4">
+                        <Link to={`/user-profile/${post?.author._id}`}>
+                            <UserCard userId={post?.author._id ?? ""} usr={null}/>
+                        </Link>
+                    </div>
+                    <div className="w-3/4">
+                        <p className="text-gray-600 font-bold">{post?.title}</p>
+                        <p className="text-gray-500">{formattedDate}</p>
+                        <div className="mt-2">
+                        <p>{post?.content}</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h1 className="text-2xl font-bold mb-4">Responses</h1>
+                    <ul>
+                        {responses.length === 0 ? <h3 className="text-2xl font-bold mb-4">No responses for now :((</h3> : responses.map((response) => (
+                            <ResponseItem key={response._id} response={response} postTitle={post?.title ?? ""} />
+                        ))}
+                    </ul>
                 </div>
               </div>
             </div>
