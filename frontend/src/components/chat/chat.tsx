@@ -14,19 +14,19 @@ let searchTimeout: number | null = null;
 const Chat = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+    const [shouldUpdateConversations, setShouldUpdateConversations] = useState(false);
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState<ConversationMember[]>([]);
     const [selectedUser, setSelectedUser] = useState<ConversationMember | null>(null);
     const { apiClient, isLoggedIn } = useApiClient();
     const currentUser = useCurrentUser();
-    const { val, clearMessage } = useWebsocket();
+    const { val: websocketMessage, clearMessage } = useWebsocket();
 
     useEffect(() => {
-        if (val) {
-            const { action, data } = val;
+        if (websocketMessage) {
+            const { action, data } = websocketMessage;
             if (action === 'newMessage') {
-                console.warn('newMessage', data);
                 const { conversationId, message } = data;
                 const updatedConversations = conversations.map(conversation => {
                     if (conversation._id === conversationId) {
@@ -42,10 +42,17 @@ const Chat = () => {
                 setConversations(updatedConversations);
             }
         }
-    }, [val, conversations, clearMessage]);
+    }, [websocketMessage, conversations, clearMessage]);
 
     useEffect(() => {
         if (selectedUser) {
+            setShouldUpdateConversations(true);
+        }
+    }, [selectedUser]);
+
+
+    useEffect(() => {
+        if (selectedUser && shouldUpdateConversations) {
             const updatedConversations = conversations.map(conversation => {
                 if (conversation.members.some(member => member._id === selectedUser._id)) {
                     return {
@@ -59,8 +66,10 @@ const Chat = () => {
                 return conversation;
             });
             setConversations(updatedConversations);
+            setShouldUpdateConversations(false);
         }
-    }, [selectedUser, conversations]);
+    }, [selectedUser, shouldUpdateConversations, conversations]);
+
 
     useEffect(() => {
         getConversations(apiClient).then(setConversations);

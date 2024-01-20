@@ -40,6 +40,7 @@ export interface IWebsocketContext {
     onlineCount: number
     val: WebsocketMessage | null
     send: (data: string) => void
+    clearMessage: () => void
 }
 
 export interface WebsocketMessageOut {
