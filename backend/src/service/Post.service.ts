@@ -100,6 +100,7 @@ class PostService {
                 .sort({ creationDate: -1 })
                 .limit(count)
                 .populate('author', 'username profilePicture _id')
+                .populate('topic', 'name _id')
 
             return { code: 200, data: posts }
         } catch (err) {
