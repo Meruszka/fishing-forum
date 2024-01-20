@@ -39,6 +39,15 @@ class UserService {
             }
 
             const updatedUser = await User.findByIdAndUpdate(id, userData, { new: true, select: '-password' })
+                .populate('posts', 'title creationDate _id')
+                .populate('badges', 'name icon')
+                .populate('gear', 'name kind _id')
+                .populate({
+                    path: 'friends',
+                    populate: { path: 'friend', select: 'username profilePicture _id' },
+                })
+                .populate('fishingSpots', 'name image _id')
+
             if (!updatedUser) return { code: 404, error: 'User not found' }
 
             return { code: 200, data: updatedUser }
