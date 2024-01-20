@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { getConversations, getUsers } from "./chat.service";
-import { Conversation, ConversationMember, WebsocketMessage } from "./chat.types";
+import { Conversation, ConversationMember, Message, WebsocketMessage } from "./chat.types";
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import ConversationView from "./components/ConversationView";
@@ -36,11 +36,33 @@ const Chat = () => {
             if (action === 'newMessage') {
                 const { conversationId, message } = data;
                 const updatedConversations = conversations.map(conversation => {
+                    // if user is in the conversation with selectedUser (same sender)
+                    // mark as read
+                    const newMessage = {
+                        ...message,
+                        isRead: conversation.members.some(member => member._id === selectedUser?._id),
+                    }
                     if (conversation._id === conversationId) {
                         return {
                             ...conversation,
-                            messages: [...conversation.messages, message],
-                            lastMessage: message,
+                            messages: [...conversation.messages, newMessage],
+                            lastMessage: newMessage,
+                        };
+                    }
+                    return conversation;
+                });
+                setNewWebsocketMessage(null);
+                setConversations(updatedConversations);
+            } else if (action === 'markAsRead') {
+                const { conversationId } = data;
+                const updatedConversations = conversations.map(conversation => {
+                    if (conversation._id === conversationId) {
+                        return {
+                            ...conversation,
+                            lastMessage: {
+                                ...conversation.lastMessage,
+                                isRead: true,
+                            },
                         };
                     }
                     return conversation;
@@ -49,7 +71,7 @@ const Chat = () => {
                 setConversations(updatedConversations);
             }
         }
-    }, [newWebsocketMessage, conversations]);
+    }, [newWebsocketMessage, conversations, selectedUser]);
 
     useEffect(() => {
         if (selectedUser) {
@@ -109,6 +131,20 @@ const Chat = () => {
         setSelectedUser(user);
     };
 
+    const addMessage = (conversationId: string, message: Message) => {
+        const updatedConversations = conversations.map(conversation => {
+            if (conversation._id === conversationId) {
+                return {
+                    ...conversation,
+                    messages: [...conversation.messages, message],
+                    lastMessage: message,
+                };
+            }
+            return conversation;
+        });
+        setConversations(updatedConversations);
+    }
+
     const handleBackClick = () => {
         setSelectedUser(null);
         setIsCreating(false);
@@ -145,7 +181,7 @@ const Chat = () => {
 
                     <div className="flex-1 overflow-y-auto">
                         {selectedUser ? (
-                            <ConversationView user={selectedUser} />
+                            <ConversationView user={selectedUser} addMessage={addMessage} />
                         ) : isCreating ? (
                             <CreateConversationView
                                 handleSearchChange={handleSearchChange}
