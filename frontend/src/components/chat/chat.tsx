@@ -45,6 +45,24 @@ const Chat = () => {
     }, [val, conversations, clearMessage]);
 
     useEffect(() => {
+        if (selectedUser) {
+            const updatedConversations = conversations.map(conversation => {
+                if (conversation.members.some(member => member._id === selectedUser._id)) {
+                    return {
+                        ...conversation,
+                        lastMessage: {
+                            ...conversation.lastMessage,
+                            isRead: true,
+                        },
+                    };
+                }
+                return conversation;
+            });
+            setConversations(updatedConversations);
+        }
+    }, [selectedUser, conversations]);
+
+    useEffect(() => {
         getConversations(apiClient).then(setConversations);
     }, [apiClient]);
 

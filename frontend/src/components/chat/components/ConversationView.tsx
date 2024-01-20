@@ -1,5 +1,5 @@
 import { ReactElement, useEffect, useRef, useState } from "react"
-import { getConversation, markAsRead, sendMessage } from ".././chat.service";
+import { getConversation, sendMessage } from ".././chat.service";
 import { ConversationMember, Message } from "../chat.types";
 import { useApiClient } from "../../../providers/api/apiContext.hook";
 import { User } from "../../../providers/currentUser/currentUser.type";
@@ -52,9 +52,6 @@ const ConversationView = (props: ConversationViewProps): ReactElement => {
     useEffect(() => {
         getConversation(apiClient, user._id).then(data => {
             setMessages(data.messages);
-            if (data.messages.some(message => !message.isRead && message.sender._id !== currentUser?._id)) {
-                markAsRead(apiClient, data._id);
-            }
         });
     }, [apiClient, user, currentUser?._id]);
 
