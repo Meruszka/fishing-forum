@@ -9,6 +9,7 @@ import CreateConversationView from "./components/CreateConversationView";
 import { useWebsocket } from "../../providers/websocket/websocket.hook";
 import ButtonCustom from "../../common/buttonCustom/buttonCustom.component";
 import { IoMdClose } from "react-icons/io";
+import ProfileLinkCustom from "../../common/profileLinkCustom/profileLinkCustom.component";
 
 let searchTimeout: number | null = null;
 
@@ -166,15 +167,19 @@ const Chat = () => {
   return (
     <>
       <div
-        className={`fixed bottom-4 right-4 w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col transition-opacity duration-300 ${isChatOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`fixed bottom-4 right-4 w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col transition-opacity duration-300 ${
+          isChatOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       >
         <div className="flex-none p-2 border-b border-gray-300 flex items-center justify-between">
           {selectedUser ? (
             <div className="flex items-center">
-              <img
-                src={selectedUser.profilePicture || "default-profile.png"}
-                alt={selectedUser.username}
-                className="w-8 h-8 rounded-full mr-2"
+              <ProfileLinkCustom
+                imageUrl={selectedUser.profilePicture || "default-profile.png"}
+                to={`/user-profile/${selectedUser._id}`}
+                alt="Profile Picture"
+                type="small"
+                className="mr-2"
               />
               <h2 className="font-bold">{selectedUser.username}</h2>
             </div>
@@ -216,18 +221,22 @@ const Chat = () => {
             <ButtonCustom
               className="transition-transform duration-200 ease-in-out transform hover:scale-105"
               type="add"
-              onClick={handleStartNewConversation}>
+              onClick={handleStartNewConversation}
+            >
               New Conversation
             </ButtonCustom>
           </div>
         )}
-
-
       </div>
       <ButtonCustom
-        className={`transition-transform transition-opacity duration-300 ease-in-out transform hover:scale-105 fixed bottom-4 right-4 ${isChatOpen ? 'opacity-0 pointer-events-none scale-0' : 'opacity-100 scale-100'}`}
+        className={`transition-transform transition-opacity duration-300 ease-in-out transform hover:scale-105 fixed bottom-4 right-4 ${
+          isChatOpen
+            ? "opacity-0 pointer-events-none scale-0"
+            : "opacity-100 scale-100"
+        }`}
         type="default"
-        onClick={() => setIsChatOpen(true)}>
+        onClick={() => setIsChatOpen(true)}
+      >
         Open Chat
       </ButtonCustom>
     </>
