@@ -3,9 +3,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { CoordsCustom } from "./sideBar.type";
 import { Map } from "leaflet";
-import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import { FishingSpot } from "../../providers/currentUser/currentUser.type";
-import LoadingScreen from "../../common/loadingScreen/loadingScreen.component";
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import {
   FishingSpotDTO,
@@ -36,24 +34,21 @@ const FishingSpots: React.FC = (): ReactElement => {
   );
   const [fishingSpots, setFishingSpots] = useState<FishingSpot[]>([]);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
-  const user = useCurrentUser();
-  const { apiClient } = useApiClient();
+  const { apiClient, isLoggedIn } = useApiClient();
 
   useEffect(() => {
-    if (user) {
-      getFishingSpotsREST(apiClient).then((spots) => {
-        setFishingSpots(spots);
-      });
-    }
-  }, [apiClient, user]);
+    getFishingSpotsREST(apiClient).then((spots) => {
+      setFishingSpots(spots);
+    });
+  }, [apiClient]);
 
   useEffect(() => {
     setNewSpot({} as FishingSpotDTO);
   }, [isModalVisable]);
 
-  if (!user) {
-    return <LoadingScreen />;
-  }
+  useEffect(() => {
+    mapRef.current?.invalidateSize();
+  }, [isSidebarExpanded]);
 
   const handleNewSpot = async (newSpot: FishingSpotDTO) => {
     try {
@@ -98,7 +93,6 @@ const FishingSpots: React.FC = (): ReactElement => {
 
   const toggleSidebar = () => {
     setIsSidebarExpanded((prev) => !prev);
-    mapRef.current?.invalidateSize();
   };
 
   return (
@@ -121,12 +115,13 @@ const FishingSpots: React.FC = (): ReactElement => {
           onEdit={handleEditSpot}
         />
       </div>
-      <button
-        className="absolute top-15 right-0 m-4 p-2 bg-blue-500 text-white rounded-full z-10"
+      <ButtonCustom
+        className="absolute top-15 right-4 z-10"
+        type="default"
         onClick={toggleSidebar}
       >
         {isSidebarExpanded ? "Hide Sidebar" : "Show Sidebar"}
-      </button>
+      </ButtonCustom>
       <MapContainer
         center={[coords.lat, coords.lng]}
         zoom={10}
@@ -135,11 +130,13 @@ const FishingSpots: React.FC = (): ReactElement => {
         style={{ zIndex: 0, height: "calc(100vh - 72px)", width: "100vw" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <AddingFishingspot
-          isAdding={isModalVisable}
-          setIsAdding={setIsModalVisable}
-          setCoords={setNewSpotCoords}
-        />
+        {isLoggedIn ? (
+          <AddingFishingspot
+            isAdding={isModalVisable}
+            setIsAdding={setIsModalVisable}
+            setCoords={setNewSpotCoords}
+          />
+        ) : null}
 
         {fishingSpots.map((spot: FishingSpot) => (
           <Marker key={spot._id} position={[spot.latitude, spot.longitude]}>

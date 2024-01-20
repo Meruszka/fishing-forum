@@ -16,20 +16,20 @@ const ResponseItem: React.FC<ResponseCustomProps> = ({ response, postTitle }) =>
   });
 
     return (
-        <div className="max-w-screen-lg mx-auto">
-            <div className="flex bg-white p-4 mb-4 shadow-md rounded-md">
-                <div className="mr-4 w-1/4">
-                    <UserCard userId={response.author._id ?? ""}/>
-                </div>
-                <div>
-                    <p className="text-gray-600 font-bold">{`Re:${postTitle}`}</p>
-                    <p className="text-gray-500">{formattedDate}</p>
-                    <div className="mt-2">
-                    <p>{response?.content}</p>
-                    </div>
-                </div>
+      <div className="max-w-screen-lg mx-auto">
+        <div className="flex bg-white p-4 mb-4 shadow-md rounded-md">
+          <div className="mr-4 w-1/4">
+            <UserCard userId={response.author._id ?? ""} usr={null} />
+          </div>
+          <div className="w-3/4">
+            <p className="text-gray-600 font-bold">{`Re:${postTitle}`}</p>
+            <p className="text-gray-500">{formattedDate}</p>
+            <div className="mt-2">
+              <p>{response?.content}</p>
             </div>
+          </div>
         </div>
+      </div>
     );
 };
   
