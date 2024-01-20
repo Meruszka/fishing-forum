@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose'
+import { z } from 'zod'
 
 const UserSchema = new Schema({
     username: String,
@@ -17,6 +18,15 @@ const UserSchema = new Schema({
     fishingSpots: [{ type: Schema.Types.ObjectId, ref: 'FishingSpot' }],
 })
 
+const UserUpdateValidator = z.object({
+    username: z.string().min(3).max(20).optional(),
+    description: z.string().max(1000).optional(),
+    location: z.string().max(100).optional(),
+    profilePicture: z.string().url().optional(),
+})
+
 const User = model('User', UserSchema)
 
 export default User
+
+export { UserUpdateValidator }
