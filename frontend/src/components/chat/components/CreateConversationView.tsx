@@ -24,7 +24,7 @@ const CreateConversationView = (props: CreateConversationViewProps) => {
                     <div
                         key={user._id}
                         onClick={() => handleSelectUser(user)}
-                        className="flex items-center p-2 hover:bg-gray-100 cursor-pointer rounded-lg"
+                        className="flex items-center p-2 hover:bg-gray-100 cursor-pointer rounded-lg hover:bg-gray-100 transition-colors"
                     >
                         <img
                             src={user.profilePicture || 'default-profile.png'}

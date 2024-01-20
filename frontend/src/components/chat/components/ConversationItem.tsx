@@ -20,7 +20,6 @@ const ConversationItem = (props: ConversationItemProps): ReactElement => {
     const { apiClient } = useApiClient();
 
     function openConversation() {
-        // mark as read
         setSelectedUser(otherMembers[0]);
         if (isConversationUnread) {
             markAsRead(apiClient, conversation._id);
@@ -32,7 +31,9 @@ const ConversationItem = (props: ConversationItemProps): ReactElement => {
         : lastMessage.content;
 
     return (
-        <div className="flex items-center p-3 border-b border-gray-300 cursor-pointer" onClick={() => openConversation()}>
+        <div 
+        className="flex items-center p-3 border-b border-gray-300 cursor-pointer hover:bg-gray-100 transition-colors"
+        onClick={() => openConversation()}>
             <div className="flex-shrink-0 mr-3 relative">
                 <img
                     src={otherMembers[0]?.profilePicture || 'default-profile.png'}
@@ -47,7 +48,7 @@ const ConversationItem = (props: ConversationItemProps): ReactElement => {
             <div className="text-right">
                 <span className="text-xs text-gray-500">{new Date(lastMessage.date).toLocaleDateString()}</span>
                 {isConversationUnread && (
-                    <div className="mt-1 text-xs font-bold text-blue-500">Unread</div>
+                    <div className="mt-1 text-xs font-bold text-blue-500 animate-pulse">Unread</div>
                 )}
             </div>
         </div>
