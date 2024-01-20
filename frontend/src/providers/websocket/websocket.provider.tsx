@@ -13,7 +13,6 @@ export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   const [val, setVal] = useState<WebsocketMessage | null>(null)
   const token = localStorage.getItem("token") || ""
   const [onlineCount, setOnlineCount] = useState(0)
-  const clearMessage = () => setVal(null)
 
   const ws = useRef<WebSocket | null>(null)
 
@@ -45,20 +44,20 @@ export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   }
 
   return (
-    <WebsocketContext.Provider value={{ isReady, onlineCount, val, send,clearMessage }}>
+    <WebsocketContext.Provider value={{ isReady, onlineCount, val, send }}>
       {children}
     </WebsocketContext.Provider>
   )
 }
 
 function ping(ws: WebSocket, token: string) {
+  if (ws.readyState === ws.OPEN) {
+    ws.send(JSON.stringify({
+      token: token,
+      action: "ping"
+    }));
+  }
   setTimeout(() => {
-    if (ws.readyState === ws.OPEN) {
-      ws.send(JSON.stringify({
-        token: token,
-        action: "ping"
-      }));
-    }
     ping(ws, token);
   }, 10000);
 }

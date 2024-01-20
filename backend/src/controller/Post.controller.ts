@@ -21,6 +21,8 @@ class PostController {
         this.router.post(`${this.path}/topic/:id`, verifyTokenMiddleware, this.createPost)
         this.router.post(`${this.path}/:id`, verifyTokenMiddleware, this.addResponse)
         this.router.get(`${this.path}`, this.getRecentPosts)
+        this.router.delete(`${this.path}/:id`, verifyTokenMiddleware, this.deletePost)
+        this.router.delete(`${this.path}/:postid/response/:id`, verifyTokenMiddleware, this.deleteResponse)
     }
 
     private getRecentPosts = async (req: Request, res: Response) => {
@@ -86,6 +88,32 @@ class PostController {
             return res.status(result.code).send({ error: result.error })
         }
         res.status(201).send(result.data)
+    }
+
+    private deletePost = async (req: RequestWithUser, res: Response) => {
+        const postId = req.params.id
+        const userId = req.user?._id
+        if (!userId) {
+            return res.status(401).send({ error: 'Access Denied: No Token Provided!' })
+        }
+        const result = await this.postService.deletePost(postId, userId)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.status(200).send(result.data)
+    }
+
+    private deleteResponse = async (req: RequestWithUser, res: Response) => {
+        const responseId = req.params.id
+        const userId = req.user?._id
+        if (!userId) {
+            return res.status(401).send({ error: 'Access Denied: No Token Provided!' })
+        }
+        const result = await this.postService.deleteResponse(responseId, userId)
+        if (result.error) {
+            return res.status(result.code).send({ error: result.error })
+        }
+        res.status(200).send(result.data)
     }
 }
 
