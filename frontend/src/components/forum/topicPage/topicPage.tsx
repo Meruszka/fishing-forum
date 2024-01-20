@@ -65,8 +65,9 @@ const TopicPage: React.FC = (): ReactElement => {
         try {
           const resp = await addPostforTopicId(apiClient, topicId ?? "", newPostTitle, newPostContent);
           setPosts([resp, ...posts])
-          console.log(`added post: ${resp.content}`);
           setIsFormVisible(false)
+          setNewPostTitle("")
+          setNewPostContent("")
         } catch (error) {
           console.error('Error posting response:', error);
         }
