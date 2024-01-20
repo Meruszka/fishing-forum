@@ -17,6 +17,7 @@ import TopicPage from "./components/forum/topicPage/topicPage";
 import PostPage from "./components/forum/postPage/postPage";
 import { WebsocketProvider } from "./providers/websocket/websocket.provider";
 import Chat from "./components/chat/chat";
+import Contact from "./components/contact/Contact.component";
 
 function Home(): ReactElement {
   return (
@@ -49,6 +50,7 @@ const router = createBrowserRouter(
       <Route path="forum/topics/:topicId" element={<TopicPage />} />
       <Route path="forum/topics/:topicId/post/:postId" element={<PostPage />} />
       <Route path="user-profile" element={<UserProfile />} />
+      <Route path="contact" element={<Contact />} />
       <Route path="*" element={<ErrorBoundry />} />
     </Route>
   )
