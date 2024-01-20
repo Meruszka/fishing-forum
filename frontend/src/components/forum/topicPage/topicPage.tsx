@@ -72,22 +72,33 @@ const TopicPage: React.FC = (): ReactElement => {
         }
       }
     }, [newPostTitle, newPostContent, topicId, posts, apiClient]);
-  
+
+    const handleDeletePost = (postId: string) => {
+      setPosts(posts.filter(post => post._id !== postId))
+    }
+
     return (
-        <div className="max-w-screen-lg mx-auto">
-          {responseError ? <div>This topic does not exist</div> : 
+      <div className="max-w-screen-lg mx-auto">
+        {responseError ? (
+          <div>This topic does not exist</div>
+        ) : (
           <div>
-            <LinkCustom to="/" className="text-gray-400" >Home</LinkCustom>
-            <LinkCustom to={`/forum/topics/${topicId}`} className="text-gray-400" >{`>${topic?.name}`}</LinkCustom>
+            <LinkCustom to="/" className="text-gray-400">
+              Home
+            </LinkCustom>
+            <LinkCustom
+              to={`/forum/topics/${topicId}`}
+              className="text-gray-400"
+            >{`>${topic?.name}`}</LinkCustom>
             <h1 className="text-2xl font-bold mb-1">Forum</h1>
             <ButtonCustom
-                  label={isFormVisible ? "Hide Form" : "Add Post"}
-                  type="login"
-                  onClick={handleButtonClick}
-                  disabled={false}
-                  className={"mb-4"}
+              label={isFormVisible ? "Hide Form" : "Add Post"}
+              type="login"
+              onClick={handleButtonClick}
+              disabled={false}
+              className={"mb-4"}
             />
-            { isFormVisible && 
+            {isFormVisible && (
               <form>
                 <div className="mb-4">
                   <label
@@ -130,15 +141,27 @@ const TopicPage: React.FC = (): ReactElement => {
                   disabled={false}
                 />
               </form>
-            }
+            )}
             <ul>
-              {posts.length === 0 ? <h3 className="text-2xl font-bold mb-4">No posts in this topic for now :((</h3> : posts.map((post) => (
-                <PostItem key={post._id} post={post} currentUserId={currentUser?._id} />
-              ))}
+              {posts.length === 0 ? (
+                <h3 className="text-2xl font-bold mb-4">
+                  No posts in this topic for now 😿
+                </h3>
+              ) : (
+                posts.map((post) => (
+                  <PostItem
+                    key={post._id}
+                    post={post}
+                    currentUserId={currentUser?._id}
+                    onDeleteHandler={handleDeletePost}
+                  />
+                ))
+              )}
             </ul>
-          </div>}
-        </div>
-      );
+          </div>
+        )}
+      </div>
+    );
   };
   
   export default TopicPage;

@@ -69,7 +69,6 @@ export interface Message {
 }
 
 export interface Friend extends Entity {
-  username: string,
   friend: { username: string, _id: string, profilePicture: string }
 }
 
