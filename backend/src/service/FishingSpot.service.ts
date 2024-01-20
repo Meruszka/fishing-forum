@@ -67,7 +67,12 @@ class FishingSpotService {
 
             await User.findByIdAndUpdate(authorId, { $push: { fishingSpots: savedFishingSpot._id } })
 
-            return { code: 201, data: savedFishingSpot }
+            const populatedFishingSpot = await FishingSpot.findById(savedFishingSpot._id).populate(
+                'author',
+                'username profilePicture _id'
+            )
+
+            return { code: 201, data: populatedFishingSpot }
         } catch (err) {
             console.error(err)
             return { code: 500, error: 'Internal Server Error' }
