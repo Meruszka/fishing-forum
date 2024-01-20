@@ -46,8 +46,8 @@ const Navbar: React.FC = (): ReactElement => {
   };
 
   return (
-    <nav className="bg-gray-800 p-4 w-full">
-      <div className="container mx-auto flex justify-between items-center">
+    <nav className="bg-gray-800 p-4 w-full h-18">
+      <div className="container m-auto flex justify-between items-center">
         <div className="flex flex-row">
           <LinkCustom to="/" className="mr-2">
             <div className="text-white font-bold text-xl">

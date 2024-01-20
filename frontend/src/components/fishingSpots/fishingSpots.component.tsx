@@ -131,15 +131,16 @@ const FishingSpots: React.FC = (): ReactElement => {
 
 
   return (
-    <div className="flex flex-row-reverse overflow-hidden relative">
+    <div className="flex flex-row-reverse overflow-hidden relative h-full">
       <AddingFishingSpotModal
         modalOptions={isModalVisible}
         onClose={() => setIsModalVisible({ isOpen: false } as ModalOpenType)}
         onConfirm={handleConfirm}
       />
       <div
-        className={`lg:w-1/4 p-4 bg-gray-700 h-[calc(100vh-72px)] absolute top-0 transition-all ease-in-out duration-500 z-10 ${isSidebarExpanded ? "right-0" : "-right-full"
-          }`}
+        className={`lg:w-1/4 p-4 bg-gray-700 h-full absolute top-0 transition-all ease-in-out duration-500 z-10 ${
+          isSidebarExpanded ? "right-0" : "-right-full"
+        }`}
       >
         <SideBar
           handleClick={handleSelectSpot}
@@ -153,7 +154,11 @@ const FishingSpots: React.FC = (): ReactElement => {
         type="default"
         onClick={toggleSidebar}
       >
-        <span className={`transition-opacity duration-300 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+        <span
+          className={`transition-opacity duration-300 ${
+            isFading ? "opacity-0" : "opacity-100"
+          }`}
+        >
           {buttonText}
         </span>
       </ButtonCustom>
@@ -162,7 +167,7 @@ const FishingSpots: React.FC = (): ReactElement => {
         zoom={10}
         scrollWheelZoom={true}
         ref={mapRef}
-        style={{ zIndex: 0, height: "calc(100vh - 72px)", width: "100vw" }}
+        style={{ zIndex: 0, height: "calc(100vh - 74px)", width: "100vw" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         {isLoggedIn ? (
@@ -190,7 +195,6 @@ const FishingSpots: React.FC = (): ReactElement => {
                     </div>
                     <div className="text-gray-700">{spot.description}</div>
                   </div>
-                  <div className="text-gray-700">{spot.description}</div>
                 </div>
               </div>
             </Popup>
