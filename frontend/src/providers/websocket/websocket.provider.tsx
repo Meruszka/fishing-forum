@@ -6,12 +6,6 @@ interface WebsocketContextProps {
   children: React.ReactNode
 }
 
-export interface WebsocketMessage {
-    action: string
-    error?: string
-    data?: object
-}
-
 export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
   children
 }) => {
@@ -57,13 +51,13 @@ export const WebsocketProvider: React.FC<WebsocketContextProps> = ({
 }
 
 function ping(ws: WebSocket, token: string) {
+  if (ws.readyState === ws.OPEN) {
+    ws.send(JSON.stringify({
+      token: token,
+      action: "ping"
+    }));
+  }
   setTimeout(() => {
-    if (ws.readyState === ws.OPEN) {
-      ws.send(JSON.stringify({
-        token: token,
-        action: "ping"
-      }));
-    }
     ping(ws, token);
   }, 10000);
 }

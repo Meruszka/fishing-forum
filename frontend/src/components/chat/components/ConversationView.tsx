@@ -1,52 +1,120 @@
 import { ReactElement, useEffect, useRef, useState } from "react"
 import { getConversation, markAsRead, sendMessage } from ".././chat.service";
-import { ConversationMember, Message } from ".././chat.types";
+import { ConversationMember, Message, WebsocketMessage } from "../chat.types";
 import { useApiClient } from "../../../providers/api/apiContext.hook";
 import { User } from "../../../providers/currentUser/currentUser.type";
 import { useCurrentUser } from "../../../providers/currentUser/currentUser.hook";
-
+import { useWebsocket } from "../../../providers/websocket/websocket.hook";
+import ToolTipCustom from "../../../common/toolTipCustom/toolTipCustom.component";
 
 interface MessageItemProps {
-    message: Message;
-    user: ConversationMember;
-    currentUser: User | null;
+  message: Message;
+  user: ConversationMember;
+  currentUser: User | null;
 }
 
-const MessageItem = ({ message, currentUser }: MessageItemProps): ReactElement => {
-    const { content, date, sender, isRead } = message;
-    const isCurrentUser = sender._id === currentUser?._id;
+const MessageItem = (props: MessageItemProps): ReactElement => {
+  const { message, currentUser } = props;
 
-    return (
-        <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} p-2`}>
-            <div className={`max-w-xs bg-white rounded-lg shadow px-4 py-2 ${isCurrentUser ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                <p className="text-sm text-gray-600">{content}</p>
-                <div className="flex justify-between items-center mt-1">
-                    <span className="text-xs text-gray-500">
-                        {new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                    {isCurrentUser && (
-                        <span className={`text-xs ml-2 ${isRead ? 'text-green-500' : 'text-red-500'}`}>
-                            {isRead ? '✓' : '•'}
-                        </span>
-                    )}
-                </div>
-            </div>
+  const { content, date, sender, isRead } = message;
+  const isCurrentUser = sender._id === currentUser?._id;
+
+  return (
+    <div
+      className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} p-2`}
+    >
+      <div
+        className={`max-w-xs bg-white rounded-lg shadow px-4 py-2 ${
+          isCurrentUser ? "bg-blue-100" : "bg-gray-100"
+        }`}
+      >
+        <p className="text-sm text-gray-600">{content}</p>
+        <div className="flex justify-between items-center mt-1">
+          <span className="text-xs text-gray-500">
+            {new Date(date).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </span>
+          {isCurrentUser && (
+            <span
+              className={`text-xs ml-2 ${
+                isRead ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              {isRead ? (
+                <ToolTipCustom position="left" content="seen">
+                  ✓
+                </ToolTipCustom>
+              ) : (
+                <ToolTipCustom position="left" content="unread">
+                  •
+                </ToolTipCustom>
+              )}
+            </span>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
+};
+
+interface ConversationViewProps {
+    user: ConversationMember;
+    addMessage: (conversationId: string, message: Message) => void;
 }
-const ConversationView = ({ user }: { user: ConversationMember }): ReactElement => {
+
+const ConversationView = (props: ConversationViewProps): ReactElement => {
+    const { user, addMessage } = props;
+
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState('');
-    const apiClient = useApiClient();
+    const { apiClient } = useApiClient();
     const currentUser = useCurrentUser();
+    const [conversationId, setConversationId] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [newWebsocketMessage, setNewWebsocketMessage] = useState<WebsocketMessage | null>(null);
+    const { val: websocketMessage } = useWebsocket();
+
+    useEffect(() => {
+        if (websocketMessage) {
+            setNewWebsocketMessage(websocketMessage);
+        }
+    }, [websocketMessage]);
+
+    useEffect(() => {
+        if (newWebsocketMessage) {
+            const { action, data } = newWebsocketMessage;
+            if (action === 'newMessage') {
+                if (conversationId === data.conversationId) {
+                    const lastMessage = messages[messages.length - 1];
+                    if (lastMessage && lastMessage._id !== data.message._id) {
+                        setMessages([...messages, data.message]);
+                        markAsRead(apiClient, conversationId);
+                    }
+                }
+            } else if (action === 'markAsRead') {
+                if (conversationId === data.conversationId) {
+                    const updatedMessages = messages.map(message => {
+                        if (message.isRead === false) {
+                            return {
+                                ...message,
+                                isRead: true,
+                            };
+                        }
+                        return message;
+                    });
+                    setMessages(updatedMessages);
+                }
+            }
+            setNewWebsocketMessage(null);
+        }
+    }, [newWebsocketMessage, messages, conversationId, apiClient]);
 
     useEffect(() => {
         getConversation(apiClient, user._id).then(data => {
             setMessages(data.messages);
-            if (data.messages.some(message => !message.isRead && message.sender._id !== currentUser?._id)) {
-                markAsRead(apiClient, data._id);
-            }
+            setConversationId(data._id);
         });
     }, [apiClient, user, currentUser?._id]);
 
@@ -55,6 +123,9 @@ const ConversationView = ({ user }: { user: ConversationMember }): ReactElement 
     }, [messages]);
 
     const handleSendMessage = () => {
+        if (!newMessage) {
+            return;
+        }
         sendMessage(apiClient, { interlocutorId: user._id, content: newMessage })
             .then(newMessage => {
                 const message = {
@@ -64,6 +135,7 @@ const ConversationView = ({ user }: { user: ConversationMember }): ReactElement 
                         username: currentUser?.username
                     }
                 } as Message;
+                addMessage(conversationId!, message);
                 setMessages([...messages, message]);
             });
         setNewMessage('');
@@ -84,6 +156,7 @@ const ConversationView = ({ user }: { user: ConversationMember }): ReactElement 
                     <input
                         type="text"
                         value={newMessage}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type a message..."
                         className="flex-grow p-2 border rounded-l-lg"

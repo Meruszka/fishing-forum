@@ -73,7 +73,7 @@ class ConversationService {
                 sendWSMessage(interlocutorId, {
                     action: 'newMessage',
                     data: {
-                        sender: userId,
+                        conversationId: conversation._id,
                         message,
                     },
                 })
@@ -87,8 +87,8 @@ class ConversationService {
                 sendWSMessage(interlocutorId, {
                     action: 'newMessage',
                     data: {
-                        sender: userId,
-                        message,
+                        conversationId: newConversation._id,
+                        message: await message.populate('sender', 'username _id'),
                     },
                 })
                 return { code: 200, data: newConversation }
@@ -116,6 +116,15 @@ class ConversationService {
                     },
                     { $set: { isRead: true } }
                 )
+                const interlocutorId = conversation.members.find((member) => member.toString() !== userId)
+                if (interlocutorId) {
+                    sendWSMessage(interlocutorId.toString(), {
+                        action: 'markAsRead',
+                        data: {
+                            conversationId,
+                        },
+                    })
+                }
                 return { code: 200, data: 'Messages marked as read' }
             } else {
                 return { code: 404, error: 'Conversation not found' }

@@ -48,11 +48,35 @@ export interface WebsocketMessageOut {
     data?: object
 }
 
-export interface WebsocketMessage {
-    action: string
-    error?: string
-    data?: {
-        clientCount?: number
-        response?: object
-    }
+
+interface WebsocketNewMessage {
+    action: 'newMessage';
+    data: {
+        conversationId: string;
+        message: Message;
+    };
 }
+
+interface WebsocketMarkAsReadMessage {
+    action: 'markAsRead';
+    data: {
+        conversationId: string;
+    };
+}
+
+interface WebsocketPingMessage {
+    action: 'ping';
+    data: {
+        clientCount: number;
+        response: 'pong';
+    };
+}
+
+interface WebsocketErrorMessage {
+    action: 'error';
+    data: {
+        error: string;
+    };
+}
+
+export type WebsocketMessage = WebsocketNewMessage | WebsocketMarkAsReadMessage | WebsocketPingMessage | WebsocketErrorMessage;

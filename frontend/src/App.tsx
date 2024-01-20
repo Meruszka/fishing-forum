@@ -17,6 +17,7 @@ import TopicPage from "./components/forum/topicPage/topicPage";
 import PostPage from "./components/forum/postPage/postPage";
 import { WebsocketProvider } from "./providers/websocket/websocket.provider";
 import Chat from "./components/chat/chat";
+import Contact from "./components/contact/Contact.component";
 
 function Home(): ReactElement {
   return (
@@ -34,7 +35,6 @@ function ErrorBoundry(): ReactElement {
       <div className="text-center">
         <h1 className="text-6xl font-bold mb-4">Error</h1>
         <p className="text-lg">Something went wrong. Please try again later.</p>
-        {/* You can add additional information or a button to redirect users */}
       </div>
     </div>
   );
@@ -49,6 +49,7 @@ const router = createBrowserRouter(
       <Route path="forum/topics/:topicId" element={<TopicPage />} />
       <Route path="forum/topics/:topicId/post/:postId" element={<PostPage />} />
       <Route path="user-profile/:userId" element={<UserProfile />} />
+      <Route path="contact" element={<Contact />} />
       <Route path="*" element={<ErrorBoundry />} />
     </Route>
   )

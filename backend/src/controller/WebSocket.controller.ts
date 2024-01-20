@@ -6,7 +6,7 @@ class WebSocketController {
             case 'ping':
                 return WebSocketController.ping()
             default:
-                return { action: 'error', error: 'Invalid action' }
+                return { action: 'error', data: { error: 'Invalid action' } }
         }
     }
 
