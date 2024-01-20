@@ -3,7 +3,7 @@ import { FishingSpot, User } from '../model'
 class FishingSpotService {
     async getFishingSpots() {
         try {
-            const fishingSpots = await FishingSpot.find().populate('author', 'username _id')
+            const fishingSpots = await FishingSpot.find().populate('author', 'username profilePicture _id')
             return { code: 200, data: fishingSpots }
         } catch (err) {
             console.error(err)
@@ -13,7 +13,7 @@ class FishingSpotService {
 
     async getFishingSpot(id: string) {
         try {
-            const fishingSpot = await FishingSpot.findById(id).populate('author', 'username _id')
+            const fishingSpot = await FishingSpot.findById(id).populate('author', 'username profilePicture _id')
 
             if (!fishingSpot) {
                 return { code: 404, error: 'FishingSpot not found' }
