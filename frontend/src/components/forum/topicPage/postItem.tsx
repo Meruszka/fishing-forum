@@ -31,7 +31,7 @@ const PostItem: React.FC<PostCustomProps> = ({ post, currentUserId }) => {
             <Link to={`/forum/topics/${topicId}/post/${post._id}`} className="block">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
+                  <h3 className="text-xl font-semibold mb-2 overflow-hidden whitespace-nowrap truncate max-w-xl">{post.title}</h3>
                   <p 
                   className="text-gray-600 mb-2 flex">{`by ${post.author?.username}, ${formattedDate}`}
                   {currentUserId && post.author._id === currentUserId && 
@@ -45,7 +45,7 @@ const PostItem: React.FC<PostCustomProps> = ({ post, currentUserId }) => {
                   }
                   </p>
                 </div>
-                <div className="flex items-end text-center gap-10 w-1/4"> 
+                <div className="flex items-end text-center gap-10 w-1/4 ml-4"> 
                   <div className="flex flex-col items-center"> 
                     <div className="text-gray-700 mb-2">
                       Replies:
