@@ -11,7 +11,7 @@ import ButtonCustom from "../../../common/buttonCustom/buttonCustom.component";
 interface AddingFishingSpotModalProps {
   modalOptions: ModalOpenType;
   onClose: () => void;
-  onConfirm: (newFishingspot: FishingSpotDTO) => void;
+  onConfirm: (newFishingspot: FishingSpotDTO, type: "add" | "edit") => void;
 }
 
 export interface ModalOpenType {
@@ -56,7 +56,7 @@ const AddingFishingSpotModal: React.FC<AddingFishingSpotModalProps> = (
   };
 
   const handleSubmit = () => {
-    onConfirm(newFishingspot);
+    onConfirm(newFishingspot, modalOptions.type);
   };
 
   return (

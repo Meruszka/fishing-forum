@@ -30,7 +30,7 @@ const SideBar: React.FC<SideBarProps> = (props: SideBarProps): ReactElement => {
             <div className="flex bg-white shadow-md rounded-md hover:shadow-lg transition duration-300 ease-in-out relative">
               <img
                 src={spot.image}
-                className="h-24 object-cover rounded-md rounded-r-none md:hidden lg:block"
+                className="h-24 w-24 object-cover rounded-md rounded-r-none md:hidden lg:block"
                 alt={spot.name}
               />
               <div className="text-left m-4">
