@@ -28,6 +28,19 @@ class FishingSpotService {
 
     async updateFishingSpot(id: string, fishingSpotData: any) {
         try {
+            const { name, longitude, latitude, description, rating, type, image } = fishingSpotData
+            fishingSpotData = { name, longitude, latitude, description, rating, type, image }
+
+            const fields = Object.values(fishingSpotData)
+
+            if (!fields.some((field) => field)) {
+                return { code: 400, error: 'Missing fields' }
+            }
+
+            Object.keys(fishingSpotData).forEach(
+                (key) => fishingSpotData[key] === undefined && delete fishingSpotData[key]
+            )
+
             const fishingSpot = await FishingSpot.findByIdAndUpdate(id, fishingSpotData, { new: true })
             if (!fishingSpot) {
                 return { code: 404, error: 'FishingSpot not found' }

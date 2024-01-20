@@ -24,7 +24,17 @@ const FishingSpotValidator = z.object({
     image: z.string().min(1).max(512),
 })
 
+const FishingSpotUpdateValidator = z.object({
+    name: z.string().min(1).max(255).optional(),
+    longitude: z.number().min(-180).max(180).optional(),
+    latitude: z.number().min(-90).max(90).optional(),
+    description: z.string().min(1).max(255).optional(),
+    rating: z.number().min(0).max(5).optional(),
+    type: z.enum(FISHING_SPOT_TYPES_VALUES).optional(),
+    image: z.string().min(1).max(512).optional(),
+})
+
 const FishingSpot = model('FishingSpot', FishingSpotSchema)
 
 export default FishingSpot
-export { FishingSpotValidator }
+export { FishingSpotValidator, FishingSpotUpdateValidator }
