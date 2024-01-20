@@ -1,6 +1,6 @@
 import { ReactElement, useState } from "react";
 import { Marker, useMapEvents } from "react-leaflet";
-import { CoordsCustom } from "./sideBar.type";
+import { CoordsCustom } from "../sideBar/sideBar.type";
 import { LatLng } from "leaflet";
 import { ModalOpenType } from "./addingFishingSpotModal.component";
 

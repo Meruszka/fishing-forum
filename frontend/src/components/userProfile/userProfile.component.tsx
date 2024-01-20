@@ -13,47 +13,64 @@ import { useParams } from 'react-router-dom';
 import { useApiClient } from "../../providers/api/apiContext.hook";
 import { getUserById } from "../forum/topicPage/topicPage.service";
 import { addFriend, removeFriend } from "./userProfile.service";
+import { BiEditAlt } from "react-icons/bi";
+import EditModalComponent from "./editModal.component";
+import { UpdateProfile, editProfileRest } from "./editProfile.service";
 
 const UserProfile: React.FC = (): ReactElement => {
   const { userId } = useParams<{ userId: string }>();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isMyFriend, setIsMyFriend] = useState<boolean>(false);
   const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+
   const currentUser = useCurrentUser();
-  const {apiClient} = useApiClient();
-
-
+  const { apiClient, isLoggedIn } = useApiClient();
 
   useEffect(() => {
-    setIsLoggedIn(apiClient.isLoggedIn())
-    if(userId) {
+    if (userId) {
       getUserById(apiClient, userId).then((user) => {
-        setUser(user)
-      })
-      if(isLoggedIn && currentUser) {
-        if (currentUser._id === userId) {
-          setIsCurrentUser(true)
-          console.log(123)
+        setUser(user);
+      });
+    }
+  }, [apiClient, userId]);
+
+  useEffect(() => {
+    if (isLoggedIn && currentUser) {
+      if (currentUser._id === userId) {
+        setIsCurrentUser(true);
+      } else {
+        setIsMyFriend(
+          currentUser.friends.some((friend) => friend.friend._id === userId)
+        );
+        setIsCurrentUser(false);
+      }
+    }
+  }, [isLoggedIn, currentUser, userId]);
+
+  const handleAddPostClick = useCallback(
+    async (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      if (userId) {
+        if (!isMyFriend) {
+          await addFriend(apiClient, userId);
+          setIsMyFriend(true);
         } else {
-          setIsMyFriend(currentUser.friends.some((friend)=> friend.friend._id === userId))
+          await removeFriend(apiClient, userId);
+          setIsMyFriend(false);
         }
       }
-    }
-  }, [apiClient, isLoggedIn, currentUser, userId])
+    },
+    [apiClient, userId, isMyFriend]
+  );
 
-  const handleAddPostClick = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if(userId) {
-      if(!isMyFriend) {
-        await addFriend(apiClient, userId);
-        setIsMyFriend(true)
-      } else {
-        await removeFriend(apiClient, userId)
-        setIsMyFriend(false)
-      }
+  const handleEditProfile = async (user: UpdateProfile) => {
+    const res = await editProfileRest(apiClient, userId as string, user);
+    if (res) {
+      setUser(res);
     }
-  }, [apiClient, userId, isMyFriend]);
+    setIsEditModalOpen(false);
+  };
 
   if (!user) {
     return <LoadingScreen />;
@@ -71,9 +88,25 @@ const UserProfile: React.FC = (): ReactElement => {
           {user.username}
         </div>
       </div>
+      <EditModalComponent
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onConfirm={handleEditProfile}
+        user={user}
+      />
       <div className="flex flex-wrap mt-4">
         <div className="mx-auto">
-          <h2 className="text-xl font-semibold mb-4">Profile Info</h2>
+          <div className="flex flex-row justify-between items-center mb-4 max-h-5">
+            <h2 className="text-xl font-semibold">Profile Info </h2>
+            {isCurrentUser && (
+              <ButtonCustom
+                type="edit"
+                onClick={() => setIsEditModalOpen(true)}
+              >
+                <BiEditAlt />
+              </ButtonCustom>
+            )}
+          </div>
           <UserCard userId="" usr={user} />
         </div>
         <div className="mx-auto">
@@ -107,7 +140,6 @@ const UserProfile: React.FC = (): ReactElement => {
             )}
           </div>
         </div>
-
         <div className="mx-auto">
           <h2 className="text-xl font-semibold mb-4">Badges</h2>
           <div className="bg-white p-6 rounded-lg shadow-md">
@@ -133,32 +165,6 @@ const UserProfile: React.FC = (): ReactElement => {
             )}
           </div>
         </div>
-
-        {/* <div className="mx-auto">
-          <div className=" mb-4 flex items-center">
-            <div className="text-xl font-semibold">Gear</div>
-            <ToolTipCustom
-              content="Add gear"
-              position="right"
-              className="text-xs flex"
-            >
-              <ButtonCustom
-                className="ml-4 text-xl"
-                onClick={() => {
-                  navigate("/gear/add");
-                }}
-              >
-                <IoAdd />
-              </ButtonCustom>
-            </ToolTipCustom>
-          </div>
-          <ul className="list-disc ml-6">
-            {user.gear.map((gear: Gear) => (
-              <li key={gear._id}>{gear.name}</li>
-            ))}
-          </ul>
-        </div> */}
-
         <div className="mx-auto">
           <h2 className="text-xl font-semibold mb-4">Friends</h2>
           <div className="grid grid-cols-2 gap-4 bg-white p-6 rounded-lg shadow-md mb-2">

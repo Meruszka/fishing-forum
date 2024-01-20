@@ -5,6 +5,7 @@ import Logo from "../../../public/logo.png";
 import { useCurrentUser } from "../../providers/currentUser/currentUser.hook";
 import { useNavigate } from "react-router-dom";
 import { useWebsocket } from "../../providers/websocket/websocket.hook";
+import SearchComponent from "./search.component";
 
 const Navbar: React.FC = (): ReactElement => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -16,12 +17,12 @@ const Navbar: React.FC = (): ReactElement => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false)
+        setIsMenuOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -53,9 +54,9 @@ const Navbar: React.FC = (): ReactElement => {
               <img src={Logo} alt="logo" className="w-10 h-10" />
             </div>
           </LinkCustom>
-          <LinkCustom>
-            <div className="text-white font-bold text-xl">Search</div>
-          </LinkCustom>
+          <div>
+            <SearchComponent />
+          </div>
         </div>
         <div className="flex space-x-4">
           <LinkCustom to="/fishing-spots">Fishing Spots</LinkCustom>
