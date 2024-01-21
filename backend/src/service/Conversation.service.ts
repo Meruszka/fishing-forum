@@ -91,7 +91,7 @@ class ConversationService {
                         message: await message.populate('sender', 'username _id'),
                     },
                 })
-                return { code: 200, data: newConversation }
+                return { code: 200, data: message }
             }
         } catch (err) {
             console.error(err)

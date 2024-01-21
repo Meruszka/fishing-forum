@@ -38,7 +38,7 @@ const FishingSpots: React.FC = (): ReactElement => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState<boolean>(true);
   const [selectedSpotId, setSelectedSpotId] = useState<string>("");
   const [isFading, setIsFading] = useState(false);
-  const [buttonText, setButtonText] = useState("Show Sidebar");
+  const [buttonText, setButtonText] = useState("Hide Sidebar");
   const { apiClient, isLoggedIn } = useApiClient();
 
   useEffect(() => {
