@@ -3,6 +3,8 @@
 ## Overview
 This document provides the API documentation for the Fishing-Forum backend service. The backend is designed to support a forum dedicated to fishing enthusiasts. All requests and responses are formatted in JSON.
 
+# HTTP
+
 ## Base URL
 The base URL for all API endpoints is `http://<your-domain>/`
 
@@ -405,3 +407,97 @@ Represents users of the forum.
   - `conversations`: Array of ObjectId (ref: 'Conversation') - References to conversations participated by the user.
   - `friends`: Array of ObjectId (ref: 'Friend') - References to friends of the user.
   - `fishingSpots`: Array of ObjectId (ref: 'FishingSpot') - References to fishing spots added by the user.
+
+
+# WebSocket
+
+## Base URL
+
+The base URL for all WebSocket endpoints is `ws://<your-domain>/ws`
+
+## Authentication
+
+The Fishing-Forum backend service uses JSON Web Tokens (JWT) for authenticating WebSocket connections. The JWT is expected to be sent in the payload of the every websocket message.
+
+```json
+{
+  "token":"<JWT token>"
+}
+```
+
+## Payload schema
+
+The following schema is used for the payload of WebSocket messages:
+
+```json
+{
+  "token":"<JWT TOKEN>",
+  "action":"<ACTION>",
+  "data": {
+    "field1": "value1",
+    "field2": "value2",
+  }
+}
+```
+
+## Inbound messages
+
+### `ping`
+
+Used for testing the connection. The server will respond with a `pong` message and clientCount.
+
+**Request payload**
+```json
+{
+  "token":"<JWT TOKEN>",
+  "action":"ping",
+}
+```
+
+**Response payload**
+```json
+{
+  "action":"ping",
+  "data": {
+    "response": "pong",
+    "clientCount": 1
+  }
+}
+```
+
+## Outbound messages
+
+### `newMessage`
+
+**Request payload**
+```json
+{
+  "action":"newMessage",
+  "data": {
+    "conversationId": "<CONVERSATION ID>",
+    "message": {
+      "_id": "<MESSAGE ID>",
+      "content": "Message Content",
+      "date": "2021-05-01T12:00:00.000Z",
+      "isRead": false,
+      "sender": {
+        "_id": "<USER ID>",
+        "username": "user123",
+        "profilePicture": "https://example.com/profile.jpg"
+      }
+    }
+  }
+}
+```
+
+### `markAsRead`
+
+**Request payload**
+```json
+{
+  "action":"markAsRead",
+  "data": {
+    "conversationId": "<CONVERSATION ID>",
+  }
+}
+```
